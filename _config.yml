@@ -30,7 +30,7 @@ github:
   username: haelime
 
 twitter:
-  username: ""
+  username:
 
 social:
   # Change to your full name.
@@ -38,7 +38,7 @@ social:
   name: haelime
   email:
   fediverse_handle: # fill in your fediverse handle. E.g. "@username@domain.com"
-  links: []
+  links:
 
 # Site Verification Settings
 webmaster_verifications:
