@@ -18,6 +18,26 @@ Use one of these templates:
 - `docs/templates/post-tech.md`
 - `docs/templates/post-diary.md`
 
+If you want Mermaid diagrams in a post, add `mermaid: true` to the front matter and use a `mermaid` code block in the body.
+
+Example:
+
+````md
+---
+title: "Diagram Post"
+date: 2026-04-07 10:00:00 +0900
+categories: [tech]
+tags: [mermaid]
+mermaid: true
+---
+
+```mermaid
+flowchart TD
+  A[Draft] --> B[Commit]
+  B --> C[Deploy]
+```
+````
+
 ## 2. Change the intro page
 
 Edit `_tabs/about.md`.
