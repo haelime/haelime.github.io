@@ -3,6 +3,10 @@ import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.m
 const root = document.querySelector("[data-home-showcase]");
 
 if (root) {
+  if (root.parentElement !== document.body) {
+    document.body.appendChild(root);
+  }
+
   const canvas = root.querySelector("canvas");
   const cards = Array.from(root.querySelectorAll("[data-portfolio-card]"));
 
@@ -103,13 +107,16 @@ if (root) {
     scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
 
     const resize = () => {
-      const width = Math.max(1, window.innerWidth);
-      const height = Math.max(1, window.innerHeight);
+      const rect = root.getBoundingClientRect();
+      const width = Math.max(1, Math.round(rect.width || window.innerWidth));
+      const height = Math.max(1, Math.round(rect.height || window.innerHeight));
       renderer.setSize(width, height, false);
       uniforms.iResolution.value.set(width, height, 1);
     };
 
     window.addEventListener("resize", resize);
+    window.visualViewport?.addEventListener("resize", resize);
+    window.visualViewport?.addEventListener("scroll", resize);
     resize();
 
     cards.forEach((card) => {

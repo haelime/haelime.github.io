@@ -5,11 +5,15 @@ body:has(.home-field) {
 
 .home-field {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   z-index: 2147483000;
   overflow: hidden;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   margin: 0;
   background: #000;
   isolation: isolate;
@@ -22,6 +26,7 @@ body:has(.home-field) {
   display: block;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
 }
 
 .home-field__cards {
@@ -205,11 +210,14 @@ body:has(.home-field) {
 
 @media (max-width: 640px) {
   .home-field {
+    top: 0;
     height: 100svh;
+    height: 100dvh;
   }
 
   .home-field__canvas {
     height: 100svh;
+    height: 100dvh;
   }
 
   .home-field__cards {
