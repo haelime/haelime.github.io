@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 921" role="img" aria-label="Abstract portfolio card artwork">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#202534"/>
+      <stop offset="0.52" stop-color="#121722"/>
+      <stop offset="1" stop-color="#05070c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="45%" cy="38%" r="58%">
+      <stop offset="0" stop-color="#9bc8ff" stop-opacity="0.9"/>
+      <stop offset="0.45" stop-color="#5278ff" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="660" height="921" rx="34" fill="url(#bg)"/>
+  <rect x="42" y="42" width="576" height="837" rx="28" fill="none" stroke="#d8e9ff" stroke-opacity="0.35" stroke-width="4"/>
+  <circle cx="330" cy="388" r="224" fill="url(#glow)"/>
+  <g fill="none" stroke="#dcecff" stroke-opacity="0.62" stroke-width="5">
+    <path d="M150 570h360M188 520h284M224 470h212"/>
+    <path d="M202 306l128-74 128 74v148l-128 74-128-74z"/>
+    <path d="M330 232v296M202 306l256 148M458 306L202 454"/>
+  </g>
+  <g fill="#fff" fill-opacity="0.7">
+    <circle cx="202" cy="306" r="11"/>
+    <circle cx="458" cy="306" r="11"/>
+    <circle cx="330" cy="232" r="11"/>
+    <circle cx="330" cy="528" r="11"/>
+  </g>
+</svg>

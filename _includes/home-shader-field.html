@@ -1,35 +1,107 @@
 <link rel="stylesheet" href="{{ '/assets/css/home-showcase.css' | relative_url }}">
 
 <section class="home-field" data-home-showcase>
-  <canvas class="home-field__canvas" aria-label="Realtime aurora shader artwork"></canvas>
+  <canvas class="home-field__canvas" aria-label="Realtime shader artwork"></canvas>
 
   <div class="home-field__cards" aria-label="Portfolio showcase">
-    <a class="portfolio-card portfolio-card--spade" href="{{ '/archives/' | relative_url }}" aria-label="Vulkan Renderer" data-portfolio-card>
-      <span class="portfolio-card__texture" aria-hidden="true"></span>
-      <span class="portfolio-card__shine" aria-hidden="true"></span>
-      <span class="portfolio-card__glare" aria-hidden="true"></span>
-      <span class="portfolio-card__meta">Render Graph · Sync · GPU</span>
+    <a
+      class="card interactive water masked"
+      href="{{ '/archives/' | relative_url }}"
+      aria-label="Vulkan Renderer"
+      data-card
+      data-image="{{ '/assets/img/card-render.svg' | relative_url }}"
+      data-rarity="rare holo vmax"
+      data-supertype="pokemon"
+      data-subtypes="vmax"
+      data-set="portfolio"
+      data-number="001"
+    >
+      <span class="card__translater">
+        <span class="card__rotator">
+          <img class="card__back" src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="" width="660" height="921" loading="lazy">
+          <span class="card__front">
+            <img src="{{ '/assets/img/card-render.svg' | relative_url }}" alt="" width="660" height="921" loading="lazy">
+            <span class="card__shine"></span>
+            <span class="card__glare"></span>
+          </span>
+        </span>
+      </span>
     </a>
 
-    <a class="portfolio-card portfolio-card--diamond" href="https://www.shadertoy.com/view/lffGRj" target="_blank" rel="noopener" aria-label="Shader Lab" data-portfolio-card>
-      <span class="portfolio-card__texture" aria-hidden="true"></span>
-      <span class="portfolio-card__shine" aria-hidden="true"></span>
-      <span class="portfolio-card__glare" aria-hidden="true"></span>
-      <span class="portfolio-card__meta">GLSL · WebGL · Effects</span>
+    <a
+      class="card interactive fire masked"
+      href="https://www.shadertoy.com/view/lffGRj"
+      target="_blank"
+      rel="noopener"
+      aria-label="Shader Lab"
+      data-card
+      data-image="{{ '/assets/img/card-shader.svg' | relative_url }}"
+      data-rarity="rare holo cosmos"
+      data-supertype="pokemon"
+      data-subtypes="basic"
+      data-set="portfolio"
+      data-number="002"
+    >
+      <span class="card__translater">
+        <span class="card__rotator">
+          <img class="card__back" src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="" width="660" height="921" loading="lazy">
+          <span class="card__front">
+            <img src="{{ '/assets/img/card-shader.svg' | relative_url }}" alt="" width="660" height="921" loading="lazy">
+            <span class="card__shine"></span>
+            <span class="card__glare"></span>
+          </span>
+        </span>
+      </span>
     </a>
 
-    <a class="portfolio-card portfolio-card--club" href="{{ '/archives/' | relative_url }}" aria-label="Engine Notes" data-portfolio-card>
-      <span class="portfolio-card__texture" aria-hidden="true"></span>
-      <span class="portfolio-card__shine" aria-hidden="true"></span>
-      <span class="portfolio-card__glare" aria-hidden="true"></span>
-      <span class="portfolio-card__meta">C++ · SDL · Architecture</span>
+    <a
+      class="card interactive grass masked"
+      href="{{ '/archives/' | relative_url }}"
+      aria-label="Engine Notes"
+      data-card
+      data-image="{{ '/assets/img/card-engine.svg' | relative_url }}"
+      data-rarity="radiant rare"
+      data-supertype="pokemon"
+      data-subtypes="basic"
+      data-set="portfolio"
+      data-number="003"
+    >
+      <span class="card__translater">
+        <span class="card__rotator">
+          <img class="card__back" src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="" width="660" height="921" loading="lazy">
+          <span class="card__front">
+            <img src="{{ '/assets/img/card-engine.svg' | relative_url }}" alt="" width="660" height="921" loading="lazy">
+            <span class="card__shine"></span>
+            <span class="card__glare"></span>
+          </span>
+        </span>
+      </span>
     </a>
 
-    <a class="portfolio-card portfolio-card--heart" href="https://github.com/haelime" target="_blank" rel="noopener" aria-label="GitHub" data-portfolio-card>
-      <span class="portfolio-card__texture" aria-hidden="true"></span>
-      <span class="portfolio-card__shine" aria-hidden="true"></span>
-      <span class="portfolio-card__glare" aria-hidden="true"></span>
-      <span class="portfolio-card__meta">Code · Projects · Logs</span>
+    <a
+      class="card interactive psychic masked"
+      href="https://github.com/haelime"
+      target="_blank"
+      rel="noopener"
+      aria-label="GitHub"
+      data-card
+      data-image="{{ '/assets/img/card-code.svg' | relative_url }}"
+      data-rarity="rare rainbow"
+      data-supertype="pokemon"
+      data-subtypes="basic"
+      data-set="portfolio"
+      data-number="004"
+    >
+      <span class="card__translater">
+        <span class="card__rotator">
+          <img class="card__back" src="https://tcg.pokemon.com/assets/img/global/tcg-card-back-2x.jpg" alt="" width="660" height="921" loading="lazy">
+          <span class="card__front">
+            <img src="{{ '/assets/img/card-code.svg' | relative_url }}" alt="" width="660" height="921" loading="lazy">
+            <span class="card__shine"></span>
+            <span class="card__glare"></span>
+          </span>
+        </span>
+      </span>
     </a>
   </div>
 

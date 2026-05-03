@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 921" role="img" aria-label="Abstract engine card artwork">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#13251f"/>
+      <stop offset="0.55" stop-color="#11181a"/>
+      <stop offset="1" stop-color="#050806"/>
+    </linearGradient>
+    <radialGradient id="core" cx="50%" cy="42%" r="46%">
+      <stop offset="0" stop-color="#b9ffe4" stop-opacity="0.9"/>
+      <stop offset="0.45" stop-color="#39c987" stop-opacity="0.36"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="660" height="921" rx="34" fill="url(#bg)"/>
+  <rect x="42" y="42" width="576" height="837" rx="28" fill="none" stroke="#c7ffe6" stroke-opacity="0.32" stroke-width="4"/>
+  <circle cx="330" cy="394" r="238" fill="url(#core)"/>
+  <g fill="none" stroke="#ddfff0" stroke-opacity="0.7" stroke-width="6">
+    <circle cx="330" cy="394" r="142"/>
+    <circle cx="330" cy="394" r="72"/>
+    <path d="M330 164v104M330 520v104M100 394h104M456 394h104M168 232l76 76M416 480l76 76M492 232l-76 76M244 480l-76 76"/>
+  </g>
+  <g fill="#ddfff0" fill-opacity="0.65">
+    <circle cx="330" cy="394" r="18"/>
+    <circle cx="330" cy="252" r="10"/>
+    <circle cx="472" cy="394" r="10"/>
+    <circle cx="330" cy="536" r="10"/>
+    <circle cx="188" cy="394" r="10"/>
+  </g>
+</svg>
