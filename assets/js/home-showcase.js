@@ -110,8 +110,16 @@ if (root) {
 
     cards.forEach((card) => {
       const image = card.dataset.image || card.querySelector(".card__front img")?.getAttribute("src") || "";
+      const label = card.querySelector(".card__label");
       const seedX = Math.random();
       const seedY = Math.random();
+
+      if (label) {
+        const title = label.querySelector(".card__label-title");
+        const subtitle = label.querySelector(".card__label-subtitle");
+        if (title && card.dataset.title) title.textContent = card.dataset.title;
+        if (subtitle && card.dataset.subtitle) subtitle.textContent = card.dataset.subtitle;
+      }
 
       card.style.setProperty("--seedx", seedX.toFixed(6));
       card.style.setProperty("--seedy", seedY.toFixed(6));

@@ -121,6 +121,62 @@ body:has(.home-field) {
   object-fit: cover;
 }
 
+.home-field__cards .card__label {
+  position: absolute;
+  right: 7.5%;
+  bottom: 7%;
+  left: 7.5%;
+  z-index: 2;
+  display: flex;
+  width: auto;
+  aspect-ratio: auto;
+  flex-direction: column;
+  justify-content: flex-end;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 5.5% / 8%;
+  padding: 0.64rem 0.7rem;
+  color: rgba(255, 255, 255, 0.92);
+  background:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.18), transparent 58%),
+    linear-gradient(135deg, rgba(5, 7, 12, 0.24), rgba(5, 7, 12, 0.62));
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.32);
+  text-align: left;
+  text-shadow:
+    0 1px 12px rgba(0, 0, 0, 0.85),
+    0 0 calc(8px + var(--pointer-from-center) * 14px) var(--card-glow);
+  transform: translateZ(1.2px) translateY(calc(var(--pointer-from-center) * -3px));
+  transition: transform 180ms ease, text-shadow 180ms ease, border-color 180ms ease;
+}
+
+.home-field__cards .card__label-title,
+.home-field__cards .card__label-subtitle {
+  display: block;
+  width: auto;
+  aspect-ratio: auto;
+  overflow: visible;
+  border-radius: 0;
+}
+
+.home-field__cards .card__label-title {
+  font-size: clamp(1rem, 1.45vw, 1.25rem);
+  font-weight: 850;
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+
+.home-field__cards .card__label-subtitle {
+  margin-top: 0.34rem;
+  color: rgba(234, 241, 255, 0.78);
+  font-size: clamp(0.62rem, 0.82vw, 0.72rem);
+  font-weight: 720;
+  line-height: 1.24;
+  letter-spacing: 0;
+}
+
+.home-field__cards .card.interacting .card__label {
+  border-color: rgba(255, 255, 255, 0.44);
+}
+
 .home-field__links {
   position: fixed;
   top: clamp(0.75rem, 2vw, 1.5rem);
