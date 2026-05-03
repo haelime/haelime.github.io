@@ -1,29 +1,13 @@
 <link rel="stylesheet" href="{{ '/assets/css/home-showcase.css' | relative_url }}">
 
-<section class="home-field" data-home-showcase aria-labelledby="home-field-title">
-  <canvas class="home-field__canvas" aria-label="Realtime shader field"></canvas>
+<section class="home-field" data-home-showcase>
+  <canvas class="home-field__canvas" aria-label="Realtime aurora shader artwork"></canvas>
 
-  <div class="home-field__overlay">
-    <p class="home-field__kicker">C++ Graphics / Vulkan / Shader</p>
-    <h1 id="home-field-title">Realtime rendering, from engine code to shader pixels.</h1>
-    <p class="home-field__lead">
-      Vulkan 렌더러를 직접 만들고, GLSL 셰이더로 화면을 실험하며, 그래픽스 파이프라인을 기록합니다.
-    </p>
-    <nav class="home-field__links" aria-label="Portfolio links">
-      <a href="https://github.com/haelime" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://www.shadertoy.com/view/lffGRj" target="_blank" rel="noopener">Shadertoy</a>
-      <a href="{{ '/archives/' | relative_url }}">Posts</a>
-    </nav>
-  </div>
-
-  <div class="home-field__hud" aria-hidden="true">
-    <span>Shader Field</span>
-    <span data-home-fps>-- fps</span>
-  </div>
-
-  <p class="home-field__fallback" data-home-fallback>
-    WebGL preview is unavailable. Use the links above to view the portfolio.
-  </p>
+  <nav class="home-field__links" aria-label="Portfolio links">
+    <a href="https://github.com/haelime" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.shadertoy.com/view/lffGRj" target="_blank" rel="noopener">Shadertoy</a>
+    <a href="{{ '/archives/' | relative_url }}">Posts</a>
+  </nav>
 </section>
 
 <script type="module" src="{{ '/assets/js/home-showcase.js' | relative_url }}"></script>
