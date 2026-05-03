@@ -49,8 +49,16 @@ body:has(.home-field) {
 .portfolio-card {
   --mx: 50%;
   --my: 50%;
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --pointer-from-center: 0;
+  --pointer-from-left: 0.5;
+  --pointer-from-top: 0.5;
+  --background-x: 50%;
+  --background-y: 50%;
   --rx: 0deg;
   --ry: 0deg;
+  --holo-opacity: 0.48;
   --accent: 255, 244, 218;
   position: relative;
   isolation: isolate;
@@ -111,37 +119,117 @@ body:has(.home-field) {
   --accent: 255, 86, 148;
 }
 
-.portfolio-card::before,
-.portfolio-card::after {
-  content: "";
+.portfolio-card__texture,
+.portfolio-card__shine,
+.portfolio-card__glare {
   position: absolute;
   inset: 0;
-  z-index: -1;
+  display: block;
+  border-radius: inherit;
   pointer-events: none;
-  transition: opacity 180ms ease;
+  transform: translateZ(1px);
+  transition: opacity 180ms ease, filter 180ms ease;
 }
 
-.portfolio-card::before {
+.portfolio-card__texture {
+  z-index: 0;
   background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(255, 255, 255, 0.88), transparent 16%),
-    conic-gradient(from 140deg at var(--mx) var(--my), rgba(255, 64, 168, 0.0), rgba(255, 64, 168, 0.45), rgba(255, 230, 92, 0.48), rgba(78, 255, 214, 0.46), rgba(122, 126, 255, 0.44), rgba(255, 64, 168, 0.0));
-  filter: saturate(150%) brightness(1.18);
-  mix-blend-mode: color-dodge;
-  opacity: 0.3;
-}
-
-.portfolio-card::after {
-  background:
-    radial-gradient(circle at calc(var(--mx) * 0.82) calc(var(--my) * 1.08), rgba(255, 255, 255, 0.46), transparent 10%),
-    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.24) 0 0.12rem, transparent 0.16rem),
-    radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.22) 0 0.1rem, transparent 0.15rem),
-    radial-gradient(circle at 28% 76%, rgba(255, 255, 255, 0.2) 0 0.11rem, transparent 0.16rem),
-    radial-gradient(circle at 82% 66%, rgba(255, 255, 255, 0.2) 0 0.08rem, transparent 0.13rem),
-    radial-gradient(circle at 48% 42%, rgba(var(--accent), 0.28), transparent 30%),
-    linear-gradient(126deg, transparent 18%, rgba(255, 255, 255, 0.24) 42%, transparent 62%);
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.22) 0 0.11rem, transparent 0.15rem),
+    radial-gradient(circle at 72% 18%, rgba(255, 255, 255, 0.18) 0 0.09rem, transparent 0.13rem),
+    radial-gradient(circle at 28% 76%, rgba(255, 255, 255, 0.18) 0 0.1rem, transparent 0.14rem),
+    radial-gradient(circle at 82% 66%, rgba(255, 255, 255, 0.18) 0 0.075rem, transparent 0.12rem),
+    radial-gradient(circle at 52% 46%, rgba(var(--accent), 0.28), transparent 35%);
   filter: contrast(120%) saturate(130%);
   mix-blend-mode: screen;
-  opacity: 0.4;
+  opacity: 0.38;
+}
+
+.portfolio-card__shine {
+  z-index: 1;
+  background:
+    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.22) 16%, transparent 38%),
+    conic-gradient(from calc(140deg + (var(--pointer-from-left) * 80deg)) at var(--pointer-x) var(--pointer-y), transparent 0deg, rgba(255, 55, 150, 0.46) 48deg, rgba(255, 230, 88, 0.52) 112deg, rgba(72, 255, 215, 0.48) 176deg, rgba(112, 125, 255, 0.5) 238deg, transparent 312deg),
+    linear-gradient(115deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.02));
+  background-position:
+    center,
+    var(--background-x) var(--background-y),
+    center;
+  background-size:
+    cover,
+    240% 240%,
+    cover;
+  filter: brightness(calc(0.8 + var(--pointer-from-center) * 0.5)) contrast(1.55) saturate(1.55);
+  mix-blend-mode: color-dodge;
+  opacity: var(--holo-opacity);
+}
+
+.portfolio-card__glare {
+  z-index: 2;
+  background:
+    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.2) 24%, rgba(0, 0, 0, 0.34) 86%);
+  filter: brightness(0.96) contrast(1.45);
+  mix-blend-mode: overlay;
+  opacity: calc(0.22 + var(--pointer-from-center) * 0.42);
+}
+
+.portfolio-card.holo-regular .portfolio-card__shine {
+  background:
+    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.78), rgba(160, 255, 245, 0.22) 22%, transparent 46%),
+    linear-gradient(105deg, rgba(255, 75, 132, 0.1), rgba(255, 231, 90, 0.48), rgba(71, 255, 215, 0.44), rgba(96, 121, 255, 0.42), rgba(255, 75, 132, 0.1));
+  background-size: cover, 260% 260%;
+  background-position: center, var(--background-x) var(--background-y);
+  mix-blend-mode: color-dodge;
+}
+
+.portfolio-card.holo-cosmos .portfolio-card__texture {
+  background:
+    radial-gradient(circle at 15% 18%, rgba(255, 255, 255, 0.64) 0 0.08rem, transparent 0.13rem),
+    radial-gradient(circle at 42% 32%, rgba(144, 239, 255, 0.62) 0 0.11rem, transparent 0.17rem),
+    radial-gradient(circle at 73% 27%, rgba(255, 206, 122, 0.58) 0 0.075rem, transparent 0.14rem),
+    radial-gradient(circle at 29% 72%, rgba(255, 111, 221, 0.62) 0 0.1rem, transparent 0.16rem),
+    radial-gradient(circle at 82% 76%, rgba(178, 255, 214, 0.58) 0 0.08rem, transparent 0.14rem),
+    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.34), transparent 48%),
+    linear-gradient(82deg, rgba(255, 220, 86, 0.28), rgba(88, 255, 206, 0.26), rgba(120, 118, 255, 0.3), rgba(255, 92, 183, 0.26));
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, cover, 260% 500%;
+  background-position: center, center, center, center, center, center, var(--background-x) var(--background-y);
+  opacity: 0.58;
+}
+
+.portfolio-card.holo-cosmos .portfolio-card__shine {
+  filter: brightness(1.05) contrast(1.8) saturate(1.05);
+  mix-blend-mode: overlay;
+}
+
+.portfolio-card.holo-radiant .portfolio-card__shine {
+  background:
+    radial-gradient(farthest-corner ellipse at calc((var(--pointer-x) * 0.5) + 25%) calc((var(--pointer-y) * 0.5) + 25%), rgba(255, 255, 255, 0.7), rgba(var(--accent), 0.28) 48%, transparent 82%),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0 0.22rem, rgba(255, 255, 255, 0.26) 0.24rem 0.36rem, rgba(0, 0, 0, 0.22) 0.38rem 0.54rem),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.08) 0 0.22rem, rgba(255, 255, 255, 0.22) 0.24rem 0.36rem, rgba(0, 0, 0, 0.24) 0.38rem 0.54rem);
+  background-size: cover, 210% 210%, 210% 210%;
+  background-position:
+    center,
+    calc(((var(--background-x) - 50%) * 1.5) + 50%) calc(((var(--background-y) - 50%) * 1.5) + 50%),
+    calc(((var(--background-x) - 50%) * 1.5) + 50%) calc(((var(--background-y) - 50%) * 1.5) + 50%);
+  background-blend-mode: exclusion, darken, color-dodge;
+  filter: brightness(0.62) contrast(2.1) saturate(1.8);
+}
+
+.portfolio-card.holo-rainbow .portfolio-card__shine {
+  background:
+    linear-gradient(-45deg, rgba(155, 36, 52, 0.68), rgba(154, 116, 44, 0.6), rgba(58, 132, 80, 0.62), rgba(46, 124, 151, 0.66), rgba(95, 62, 148, 0.7)),
+    radial-gradient(farthest-corner circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.56), transparent 42%),
+    linear-gradient(-30deg, rgba(255, 65, 102, 0.42), rgba(255, 226, 96, 0.42), rgba(79, 255, 184, 0.42), rgba(81, 145, 255, 0.42), rgba(205, 75, 255, 0.42), rgba(255, 65, 102, 0.42));
+  background-size: 220% 220%, cover, 420% 420%;
+  background-position:
+    calc(25% + (50% * var(--pointer-from-left))) calc(25% + (50% * var(--pointer-from-top))),
+    center,
+    calc(25% + (var(--pointer-x) / 2)) calc(25% + (var(--pointer-y) / 2));
+  filter: brightness(calc((var(--pointer-from-center) * 0.25) + 0.62)) contrast(2.1) saturate(1.05);
+}
+
+.portfolio-card.holo-rainbow .portfolio-card__glare {
+  mix-blend-mode: hard-light;
+  opacity: calc(var(--pointer-from-center) * 0.72 + 0.18);
 }
 
 .portfolio-card:hover,
@@ -153,9 +241,14 @@ body:has(.home-field) {
   text-decoration: none;
 }
 
-.portfolio-card:hover::before,
-.portfolio-card:focus-visible::before {
-  opacity: 0.58;
+.portfolio-card:hover .portfolio-card__shine,
+.portfolio-card:focus-visible .portfolio-card__shine {
+  opacity: 0.76;
+}
+
+.portfolio-card:hover .portfolio-card__texture,
+.portfolio-card:focus-visible .portfolio-card__texture {
+  opacity: 0.64;
 }
 
 .portfolio-card__meta {

@@ -9,6 +9,7 @@ if (root) {
 
   const canvas = root.querySelector("canvas");
   const cards = Array.from(root.querySelectorAll("[data-portfolio-card]"));
+  const holoEffects = ["holo-regular", "holo-cosmos", "holo-radiant", "holo-rainbow"];
 
   try {
     const renderer = new THREE.WebGLRenderer({
@@ -119,7 +120,11 @@ if (root) {
     window.visualViewport?.addEventListener("scroll", resize);
     resize();
 
-    cards.forEach((card) => {
+    cards.forEach((card, index) => {
+      const effect = holoEffects[Math.floor(Math.random() * holoEffects.length)];
+      card.classList.add(effect);
+      card.style.setProperty("--holo-seed", String(index + Math.random()));
+
       card.addEventListener("pointermove", (event) => {
         if (event.pointerType === "touch") return;
 
@@ -128,18 +133,37 @@ if (root) {
         const y = (event.clientY - rect.top) / rect.height;
         const rotateY = (x - 0.5) * 18;
         const rotateX = (0.5 - y) * 18;
+        const fromCenter = Math.min(1, Math.hypot(x - 0.5, y - 0.5) * 2);
+        const backgroundX = 37 + x * 26;
+        const backgroundY = 33 + y * 34;
 
         card.style.setProperty("--mx", `${x * 100}%`);
         card.style.setProperty("--my", `${y * 100}%`);
+        card.style.setProperty("--pointer-x", `${x * 100}%`);
+        card.style.setProperty("--pointer-y", `${y * 100}%`);
+        card.style.setProperty("--pointer-from-center", fromCenter.toFixed(3));
+        card.style.setProperty("--pointer-from-left", x.toFixed(3));
+        card.style.setProperty("--pointer-from-top", y.toFixed(3));
+        card.style.setProperty("--background-x", `${backgroundX.toFixed(2)}%`);
+        card.style.setProperty("--background-y", `${backgroundY.toFixed(2)}%`);
         card.style.setProperty("--rx", `${rotateX.toFixed(2)}deg`);
         card.style.setProperty("--ry", `${rotateY.toFixed(2)}deg`);
+        card.style.setProperty("--holo-opacity", "0.72");
       });
 
       card.addEventListener("pointerleave", () => {
         card.style.setProperty("--mx", "50%");
         card.style.setProperty("--my", "50%");
+        card.style.setProperty("--pointer-x", "50%");
+        card.style.setProperty("--pointer-y", "50%");
+        card.style.setProperty("--pointer-from-center", "0");
+        card.style.setProperty("--pointer-from-left", "0.5");
+        card.style.setProperty("--pointer-from-top", "0.5");
+        card.style.setProperty("--background-x", "50%");
+        card.style.setProperty("--background-y", "50%");
         card.style.setProperty("--rx", "0deg");
         card.style.setProperty("--ry", "0deg");
+        card.style.setProperty("--holo-opacity", "0.48");
       });
     });
 
