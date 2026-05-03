@@ -1,0 +1,248 @@
+.gfx-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+  gap: 1.5rem;
+  align-items: stretch;
+  margin: 0 0 2.25rem;
+}
+
+.gfx-hero__copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 360px;
+}
+
+.gfx-kicker,
+.shader-card__eyebrow {
+  margin: 0 0 0.6rem;
+  color: #57d7b7;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.gfx-hero h1 {
+  margin: 0;
+  color: var(--heading-color);
+  font-size: 2.15rem;
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+.gfx-lead {
+  margin: 1rem 0 0;
+  color: var(--text-muted-color);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.gfx-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 1.35rem;
+}
+
+.gfx-actions a,
+.shader-card a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  border: 1px solid rgba(87, 215, 183, 0.35);
+  border-radius: 6px;
+  padding: 0.45rem 0.85rem;
+  color: #d8fff4;
+  background: rgba(87, 215, 183, 0.08);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.gfx-actions a:hover,
+.shader-card a:hover {
+  border-color: rgba(255, 202, 87, 0.55);
+  color: #fff0c2;
+  background: rgba(255, 202, 87, 0.1);
+  text-decoration: none;
+}
+
+.gfx-stage {
+  position: relative;
+  overflow: hidden;
+  min-height: 360px;
+  border: 1px solid rgba(142, 154, 175, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    #11161d;
+  background-size: 28px 28px, 28px 28px, auto;
+}
+
+.gfx-stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.gfx-stage__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+}
+
+.gfx-stage__hud,
+.gfx-stage__toolbar {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.gfx-stage__hud {
+  top: 0.75rem;
+  left: 0.75rem;
+}
+
+.gfx-stage__hud span {
+  min-width: 4.4rem;
+  border: 1px solid rgba(142, 154, 175, 0.2);
+  border-radius: 6px;
+  padding: 0.32rem 0.45rem;
+  color: #cfdae8;
+  background: rgba(10, 15, 20, 0.72);
+  font-size: 0.74rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.gfx-stage__toolbar {
+  right: 0.75rem;
+  bottom: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.gfx-stage__toolbar button {
+  min-width: 4.5rem;
+  border: 1px solid rgba(142, 154, 175, 0.25);
+  border-radius: 6px;
+  padding: 0.42rem 0.55rem;
+  color: #cfdae8;
+  background: rgba(10, 15, 20, 0.74);
+  font: inherit;
+  font-size: 0.78rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gfx-stage__toolbar button:hover,
+.gfx-stage__toolbar button.is-active {
+  border-color: rgba(87, 215, 183, 0.7);
+  color: #d8fff4;
+  background: rgba(87, 215, 183, 0.14);
+}
+
+.gfx-stage__fallback {
+  display: none;
+  position: absolute;
+  inset: auto 1rem 1rem;
+  z-index: 3;
+  margin: 0;
+  color: #cfdae8;
+  font-size: 0.86rem;
+}
+
+.gfx-stage.is-unavailable .gfx-stage__fallback {
+  display: block;
+}
+
+.shader-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 2rem;
+}
+
+.shader-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 170px;
+  border: 1px solid rgba(142, 154, 175, 0.22);
+  border-radius: 8px;
+  padding: 1rem;
+  background: rgba(20, 27, 36, 0.42);
+}
+
+.shader-card h3 {
+  margin: 0 0 0.45rem;
+  color: var(--heading-color);
+  font-size: 1.05rem;
+  letter-spacing: 0;
+}
+
+.shader-card p:not(.shader-card__eyebrow) {
+  margin: 0;
+  color: var(--text-muted-color);
+  line-height: 1.65;
+}
+
+.shader-card a {
+  align-self: flex-end;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gfx-stage__canvas {
+    scroll-behavior: auto;
+  }
+}
+
+@media (max-width: 980px) {
+  .gfx-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .gfx-hero__copy {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .gfx-hero h1 {
+    font-size: 1.7rem;
+  }
+
+  .gfx-stage,
+  .gfx-stage__canvas {
+    min-height: 300px;
+  }
+
+  .gfx-stage__hud {
+    right: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .gfx-stage__toolbar {
+    left: 0.75rem;
+    justify-content: flex-start;
+  }
+
+  .gfx-stage__toolbar button {
+    min-width: 3.9rem;
+  }
+
+  .shader-card {
+    flex-direction: column;
+  }
+
+  .shader-card a {
+    align-self: flex-start;
+  }
+}
