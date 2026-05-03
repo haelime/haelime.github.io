@@ -1,0 +1,34 @@
+<link rel="stylesheet" href="{{ '/assets/css/about-showcase.css' | relative_url }}">
+
+<section class="gfx-hero" aria-labelledby="gfx-hero-title">
+  <div class="gfx-hero__copy">
+    <p class="gfx-kicker">C++ / Graphics / Game Tech</p>
+    <h1 id="gfx-hero-title">Vulkan과 셰이더를 직접 만지며 렌더러를 만들어갑니다.</h1>
+    <p class="gfx-lead">
+      C++ 기반 게임 엔진 구조, Vulkan 렌더링 파이프라인, GLSL 셰이더 실험을 기록하는 개발자 포트폴리오 겸 블로그입니다.
+    </p>
+    <div class="gfx-actions" aria-label="Profile links">
+      <a href="https://github.com/haelime" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.shadertoy.com/view/lffGRj" target="_blank" rel="noopener">Shadertoy</a>
+      <a href="{{ '/archives/' | relative_url }}">Posts</a>
+    </div>
+  </div>
+
+  <div class="gfx-stage" data-about-showcase>
+    <canvas class="gfx-stage__canvas" aria-label="Realtime renderer preview"></canvas>
+    <div class="gfx-stage__hud" aria-hidden="true">
+      <span data-gfx-frame>-- ms</span>
+      <span data-gfx-fps>-- fps</span>
+    </div>
+    <div class="gfx-stage__toolbar" aria-label="Render view mode">
+      <button type="button" class="is-active" data-gfx-mode="pbr">PBR</button>
+      <button type="button" data-gfx-mode="normal">Normal</button>
+      <button type="button" data-gfx-mode="wire">Wire</button>
+    </div>
+    <p class="gfx-stage__fallback" data-gfx-fallback>
+      WebGL preview is unavailable in this browser.
+    </p>
+  </div>
+</section>
+
+<script type="module" src="{{ '/assets/js/about-showcase.js' | relative_url }}"></script>

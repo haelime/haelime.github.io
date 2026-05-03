@@ -1,4 +1,30 @@
 ---
-layout: home
-# Index page
+layout: page
+title: Home
 ---
+
+{% include gfx-showcase.html %}
+
+## Renderer Notes
+
+Vulkan 렌더러를 직접 만들면서 배운 그래픽스 개념과 설계 판단을 기록합니다. 지금은 frame flow, synchronization, render graph, shader pipeline을 중심으로 정리하고 있습니다.
+
+<section class="shader-grid" aria-label="Main portfolio links">
+  <article class="shader-card">
+    <div>
+      <p class="shader-card__eyebrow">Engine Log</p>
+      <h3>Vulkan Renderer</h3>
+      <p>프레임 구성, GPU 동기화, 리소스 생명주기, 렌더 패스 구조를 구현하면서 정리한 개발 로그입니다.</p>
+    </div>
+    <a href="{{ '/archives/' | relative_url }}">Read Posts</a>
+  </article>
+
+  <article class="shader-card">
+    <div>
+      <p class="shader-card__eyebrow">Shader</p>
+      <h3>Shadertoy Study 01</h3>
+      <p>GLSL fragment shader 실험입니다. 새 셰이더를 만들면 이 영역에 계속 추가합니다.</p>
+    </div>
+    <a href="https://www.shadertoy.com/view/lffGRj" target="_blank" rel="noopener">Open Shadertoy</a>
+  </article>
+</section>
