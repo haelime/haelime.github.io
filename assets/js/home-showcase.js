@@ -37,101 +37,60 @@ if (root) {
         uniform vec3 iResolution;
         uniform float iTime;
 
-        //I would like to express my gratitude to Yohei for the following source code
-        //https://x.com/YoheiNishitsuji/status/2050206104211398785?s=20
+        // Original by localthunk (https://www.playbalatro.com)
 
-        // rotate2D builds a 2D rotation matrix.
-        // Visual effect: this makes the whole fractal structure slowly spin in space.
-        mat2 rotate2D(float a)
-        {
-            // c and s are cosine and sine of the angle.
-            // Visual effect: these values define the rotation amount used for the animated twist.
-            float c = cos(a), s = sin(a);
+        // Configuration (modify these values to change the effect)
+        #define SPIN_ROTATION -2.0
+        #define SPIN_SPEED 7.0
+        #define OFFSET vec2(0.0)
+        #define COLOUR_1 vec4(0.871, 0.267, 0.231, 1.0)
+        #define COLOUR_2 vec4(0.0, 0.42, 0.706, 1.0)
+        #define COLOUR_3 vec4(0.086, 0.137, 0.145, 1.0)
+        #define CONTRAST 3.5
+        #define LIGTHING 0.4
+        #define SPIN_AMOUNT 0.25
+        #define PIXEL_FILTER 745.0
+        #define SPIN_EASE 1.0
+        #define PI 3.14159265359
+        #define IS_ROTATE false
 
-            // Return the standard 2D rotation matrix.
-            // Visual effect: rotating the zx-plane creates the drifting, orbital motion of the glowing structure.
-            return mat2(c, -s, s, c);
-        }
+        vec4 effect(vec2 screenSize, vec2 screen_coords) {
+            float pixel_size = length(screenSize.xy) / PIXEL_FILTER;
+            vec2 uv = (floor(screen_coords.xy*(1./pixel_size))*pixel_size - 0.5*screenSize.xy)/length(screenSize.xy) - OFFSET;
+            float uv_len = length(uv);
 
-        // hsv converts hue, saturation, and value into RGB color.
-        // Visual effect: this gives the fractal its neon-like pink, violet, and gold color shifts.
-        vec3 hsv(float h, float s, float v)
-        {
-            // Build a rainbow-like RGB basis from the hue value.
-            // Visual effect: hue changes along the shape, producing color variation across the glowing network.
-            vec3 rgb = clamp(abs(fract(h + vec3(0.0, 2.0/3.0, 1.0/3.0)) * 6.0 - 3.0) - 1.0, 0.0, 1.0);
+            float speed = (SPIN_ROTATION*SPIN_EASE*0.2);
+            if(IS_ROTATE){
+               speed = iTime * speed;
+            }
+            speed += 302.2;
+            float new_pixel_angle = atan(uv.y, uv.x) + speed - SPIN_EASE*20.*(1.*SPIN_AMOUNT*uv_len + (1. - 1.*SPIN_AMOUNT));
+            vec2 mid = (screenSize.xy/length(screenSize.xy))/2.;
+            uv = (vec2((uv_len * cos(new_pixel_angle) + mid.x), (uv_len * sin(new_pixel_angle) + mid.y)) - mid);
 
-            // Mix pure white with the hue-based color using saturation, then scale by brightness.
-            // Visual effect: bright zones glow vividly while dim zones stay soft and smoky.
-            return v * mix(vec3(1.0), rgb, s);
-        }
+            uv *= 30.;
+            speed = iTime*(SPIN_SPEED);
+            vec2 uv2 = vec2(uv.x+uv.y);
 
-        // mainImage is the entry point for each pixel.
-        // Visual effect: every screen pixel traces through the same fractal field and accumulates light.
-        void mainImage(out vec4 fragColor, in vec2 fragCoord)
-        {
-            // r stores the screen resolution.
-            // Visual effect: this keeps the image correctly proportioned regardless of screen size.
-            vec2 r = iResolution.xy;
-
-            // t stores elapsed time.
-            // Visual effect: time drives the slow rotation and makes the structure feel alive.
-            float t = iTime;
-
-            // o accumulates the final color output.
-            // Visual effect: repeated additions create the glowing, layered, volumetric appearance.
-            vec4 o = vec4(0.0);
-
-            // FC is a short alias for fragCoord.
-            // Visual effect: no visual change by itself; it simply shortens the formula syntax.
-            #define FC fragCoord
-
-            // Outer loop marches through the scene many times.
-            // Visual effect: this behaves like a lightweight raymarch, layering many samples into one luminous image.
-            for (float i = 0.0, g = 0.0, e = 0.0, s = 0.0; ++i < 79.0;)
-            {
-                // Build a 3D point from the current pixel and the marching depth g.
-                // Visual effect: x and y come from the screen, while z evolves through the loop, giving depth to the fractal.
-                vec3 p = vec3((FC.xy - 0.5 * r) / r.y * 2.0 + vec2(0.0, 1.0), g - 0.5);
-
-                // Rotate the zx-plane over time.
-                // Visual effect: the entire crystalline web slowly turns, which enhances the hypnotic motion.
-                p.zx *= rotate2D(t * 0.5);
-
-                // Reset the scale accumulator.
-                // Visual effect: each marched sample starts with neutral brightness contribution.
-                s = 1.0;
-
-                // Inner loop repeatedly folds space into a fractal pattern.
-                // Visual effect: this is the core generator of the clustered, cellular, web-like geometry.
-                for (int j = 0; j++ < 16;
-                     p = vec3(2.0, 5.0, 3.0) - abs(abs(p) * e - vec3(3.0, 1.4, 4.5)))
-                {
-                    // Compute an expansion factor from distance to the origin.
-                    // Visual effect: points near key regions expand more, sharpening bright nodes and dense filaments.
-                    e = max(1.005, 8.0 / dot(p, p));
-
-                    // Accumulate that expansion into s.
-                    // Visual effect: repeated scaling builds the intensity that later becomes glow.
-                    s *= e;
-                }
-
-                // Advance the march depth using a modulated radial measure.
-                // Visual effect: this creates the layered shell-like spacing and contributes to the netted, bubble-like structure.
-                g += mod(length(p.xz), p.y) / s;
-
-                // Convert accumulated scale into a brightness-like quantity.
-                // Visual effect: logarithmic compression turns huge fractal values into manageable glow levels.
-                s = log(s) / g;
-
-                // Add colored light based on height and intensity.
-                // Visual effect: p.y shifts hue and saturation, while s controls the brightness of the luminous bloom.
-                o.rgb += hsv(0.4 * p.y, 1.0 - p.y, s / 2e4);
+            for(int i=0; i < 5; i++) {
+                uv2 += sin(max(uv.x, uv.y)) + uv;
+                uv  += 0.5*vec2(cos(5.1123314 + 0.353*uv2.y + speed*0.131121),sin(uv2.x - 0.113*speed));
+                uv  -= 1.0*cos(uv.x + uv.y) - 1.0*sin(uv.x*0.711 - uv.y);
             }
 
-            // Write the accumulated color to the screen.
-            // Visual effect: the final image appears as a dark scene filled with sparkling fractal energy.
-            fragColor = o;
+            float contrast_mod = (0.25*CONTRAST + 0.5*SPIN_AMOUNT + 1.2);
+            float paint_res = min(2., max(0.,length(uv)*(0.035)*contrast_mod));
+            float c1p = max(0.,1. - contrast_mod*abs(1.-paint_res));
+            float c2p = max(0.,1. - contrast_mod*abs(paint_res));
+            float c3p = 1. - min(1., c1p + c2p);
+            float light = (LIGTHING - 0.2)*max(c1p*5. - 4., 0.) + LIGTHING*max(c2p*5. - 4., 0.);
+            return (0.3/CONTRAST)*COLOUR_1 + (1. - 0.3/CONTRAST)*(COLOUR_1*c1p + COLOUR_2*c2p + vec4(c3p*COLOUR_3.rgb, c3p*COLOUR_1.a)) + light;
+        }
+
+        void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+            vec2 uv = fragCoord/iResolution.xy;
+
+            fragColor = effect(iResolution.xy, uv * iResolution.xy);
         }
 
         void main() {
