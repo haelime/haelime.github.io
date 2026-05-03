@@ -4,6 +4,7 @@ const root = document.querySelector("[data-home-showcase]");
 
 if (root) {
   const canvas = root.querySelector("canvas");
+  const cards = Array.from(root.querySelectorAll("[data-portfolio-card]"));
 
   try {
     const renderer = new THREE.WebGLRenderer({
@@ -110,6 +111,30 @@ if (root) {
 
     window.addEventListener("resize", resize);
     resize();
+
+    cards.forEach((card) => {
+      card.addEventListener("pointermove", (event) => {
+        if (event.pointerType === "touch") return;
+
+        const rect = card.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width;
+        const y = (event.clientY - rect.top) / rect.height;
+        const rotateY = (x - 0.5) * 18;
+        const rotateX = (0.5 - y) * 18;
+
+        card.style.setProperty("--mx", `${x * 100}%`);
+        card.style.setProperty("--my", `${y * 100}%`);
+        card.style.setProperty("--rx", `${rotateX.toFixed(2)}deg`);
+        card.style.setProperty("--ry", `${rotateY.toFixed(2)}deg`);
+      });
+
+      card.addEventListener("pointerleave", () => {
+        card.style.setProperty("--mx", "50%");
+        card.style.setProperty("--my", "50%");
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+      });
+    });
 
     const animate = (now) => {
       uniforms.iTime.value = now * 0.001;
