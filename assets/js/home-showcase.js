@@ -49,9 +49,9 @@ if (root) {
         #define SPIN_ROTATION -2.0
         #define SPIN_SPEED 7.0
         #define OFFSET vec2(0.0)
-        #define COLOUR_1 vec4(1.00, 0.28, 0.42, 1.0)
-        #define COLOUR_2 vec4(1.00, 0.78, 0.18, 1.0)
-        #define COLOUR_3 vec4(0.06, 0.05, 0.10, 1.0)
+        #define COLOUR_1 vec4(0.10, 0.88, 1.00, 1.0)
+        #define COLOUR_2 vec4(0.95, 0.18, 0.86, 1.0)
+        #define COLOUR_3 vec4(0.05, 0.04, 0.09, 1.0)
         #define CONTRAST 3.5
         #define LIGTHING 0.4
         #define SPIN_AMOUNT 0.25
