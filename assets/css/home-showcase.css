@@ -79,8 +79,12 @@ body:has(.home-field) {
   --pointer-from-center: 0;
   --pointer-from-top: var(--pointer-from-center);
   --pointer-from-left: var(--pointer-from-center);
+  display: flex;
   flex: 0 0 clamp(155px, 17vw, 220px);
+  flex-direction: column;
+  gap: 0.75rem;
   width: clamp(155px, 17vw, 220px);
+  aspect-ratio: auto;
   opacity: 0.96;
 }
 
@@ -116,24 +120,31 @@ body:has(.home-field) {
 }
 
 .home-field__cards .card__front img {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 1;
+  visibility: visible;
+}
+
+.home-field__cards .card__shine,
+.home-field__cards .card__glare {
+  z-index: 2;
 }
 
 .home-field__cards .card__label {
-  position: absolute;
-  right: 7.5%;
-  top: calc(100% + 0.75rem);
-  left: 7.5%;
+  position: static;
   z-index: 2;
   display: flex;
-  width: auto;
+  width: 100%;
+  min-height: 4.25rem;
   aspect-ratio: auto;
   flex-direction: column;
   justify-content: flex-start;
   border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 5.5% / 8%;
+  border-radius: 12px;
   padding: 0.64rem 0.7rem;
   color: rgba(255, 255, 255, 0.92);
   background:
@@ -145,7 +156,7 @@ body:has(.home-field) {
     0 1px 12px rgba(0, 0, 0, 0.85),
     0 0 calc(8px + var(--pointer-from-center) * 14px) var(--card-glow);
   backdrop-filter: blur(10px) saturate(120%);
-  transform: translateY(calc(var(--pointer-from-center) * -3px));
+  transform: translateY(calc(var(--pointer-from-center) * -2px));
   transition: transform 180ms ease, text-shadow 180ms ease, border-color 180ms ease;
 }
 

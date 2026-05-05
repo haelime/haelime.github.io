@@ -124,10 +124,7 @@ if (root) {
       card.style.setProperty("--seedx", seedX.toFixed(6));
       card.style.setProperty("--seedy", seedY.toFixed(6));
       card.style.setProperty("--cosmosbg", `${Math.floor(seedX * 734)}px ${Math.floor(seedY * 1280)}px`);
-      if (image) {
-        card.style.setProperty("--mask", `url("${image}")`);
-        card.style.setProperty("--foil", `url("${image}")`);
-      }
+      card.style.setProperty("--mask", "none");
 
       card.addEventListener("pointermove", (event) => {
         if (event.pointerType === "touch") return;
