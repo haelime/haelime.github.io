@@ -110,7 +110,8 @@ if (root) {
 
     cards.forEach((card) => {
       const image = card.dataset.image || card.querySelector(".card__front img")?.getAttribute("src") || "";
-      const label = card.querySelector(".card__label");
+      const slot = card.closest(".card-slot");
+      const label = slot?.querySelector(".card-caption");
       const seedX = Math.random();
       const seedY = Math.random();
 
@@ -125,6 +126,9 @@ if (root) {
       card.style.setProperty("--seedy", seedY.toFixed(6));
       card.style.setProperty("--cosmosbg", `${Math.floor(seedX * 734)}px ${Math.floor(seedY * 1280)}px`);
       card.style.setProperty("--mask", "none");
+      if (image) {
+        card.style.setProperty("--card-image", `url("${image}")`);
+      }
 
       card.addEventListener("pointermove", (event) => {
         if (event.pointerType === "touch") return;

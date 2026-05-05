@@ -65,6 +65,14 @@ body:has(.home-field) {
   transform: translate(-50%, -50%);
 }
 
+.home-field__cards .card-slot {
+  display: flex;
+  flex: 0 0 clamp(155px, 17vw, 220px);
+  flex-direction: column;
+  gap: 0.75rem;
+  width: clamp(155px, 17vw, 220px);
+}
+
 .home-field__cards .card {
   --pointer-x: 50%;
   --pointer-y: 50%;
@@ -79,28 +87,25 @@ body:has(.home-field) {
   --pointer-from-center: 0;
   --pointer-from-top: var(--pointer-from-center);
   --pointer-from-left: var(--pointer-from-center);
-  display: flex;
-  flex: 0 0 clamp(155px, 17vw, 220px);
-  flex-direction: column;
-  gap: 0.75rem;
-  width: clamp(155px, 17vw, 220px);
-  aspect-ratio: auto;
+  display: block;
+  width: 100%;
+  aspect-ratio: var(--card-aspect);
   opacity: 0.96;
 }
 
-.home-field__cards .card:nth-child(1) {
+.home-field__cards .card-slot:nth-child(1) {
   transform: rotate(-7deg) translateY(0.4rem);
 }
 
-.home-field__cards .card:nth-child(2) {
+.home-field__cards .card-slot:nth-child(2) {
   transform: rotate(-2deg) translateY(-0.65rem);
 }
 
-.home-field__cards .card:nth-child(3) {
+.home-field__cards .card-slot:nth-child(3) {
   transform: rotate(2.5deg) translateY(-0.55rem);
 }
 
-.home-field__cards .card:nth-child(4) {
+.home-field__cards .card-slot:nth-child(4) {
   transform: rotate(7deg) translateY(0.3rem);
 }
 
@@ -114,13 +119,16 @@ body:has(.home-field) {
 }
 
 .home-field__cards .card__front {
+  --card-image: none;
   background:
+    var(--card-image) center / cover no-repeat,
     linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.2)),
     #10131a;
 }
 
 .home-field__cards .card__front img {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 1;
   width: 100%;
   height: 100%;
@@ -134,8 +142,7 @@ body:has(.home-field) {
   z-index: 2;
 }
 
-.home-field__cards .card__label {
-  position: static;
+.home-field__cards .card-caption {
   z-index: 2;
   display: flex;
   width: 100%;
@@ -185,7 +192,7 @@ body:has(.home-field) {
   letter-spacing: 0;
 }
 
-.home-field__cards .card.interacting .card__label {
+.home-field__cards .card-slot:has(.card.interacting) .card-caption {
   border-color: rgba(255, 255, 255, 0.44);
 }
 
@@ -251,8 +258,9 @@ body:has(.home-field) {
     display: none;
   }
 
-  .home-field__cards .card {
+  .home-field__cards .card-slot {
     flex-basis: min(72vw, 258px);
+    width: min(72vw, 258px);
     scroll-snap-align: center;
     transform: none;
   }
