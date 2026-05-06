@@ -109,7 +109,7 @@ if (root) {
     };
 
     cards.forEach((card) => {
-      const image = card.dataset.image || card.querySelector(".card__front img")?.getAttribute("src") || "";
+      const image = card.dataset.image || "";
       const slot = card.closest(".card-slot");
       const label = slot?.querySelector(".card-caption");
       const seedX = Math.random();

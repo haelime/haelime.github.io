@@ -134,21 +134,6 @@ body:has(.home-field) {
     0 0 34px color-mix(in srgb, var(--card-glow), transparent 42%);
 }
 
-.home-field__cards .card__front {
-  position: absolute;
-  inset: 0;
-  display: block;
-  overflow: hidden;
-  border-radius: inherit;
-  background:
-    radial-gradient(circle at 50% 32%, rgba(255, 255, 255, 0.16), transparent 42%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.16));
-}
-
-.home-field__cards .card__front img {
-  display: none;
-}
-
 .home-field__cards .card__shine,
 .home-field__cards .card__glare {
   position: absolute;
