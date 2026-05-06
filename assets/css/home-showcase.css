@@ -42,6 +42,8 @@ body:has(.home-field) {
 }
 
 .home-field__cards .card-slot {
+  --rest-rotate: 0deg;
+  --rest-y: 0rem;
   display: flex;
   flex: 0 0 clamp(155px, 17vw, 220px);
   align-items: center;
@@ -54,8 +56,14 @@ body:has(.home-field) {
   --pointer-x: 50%;
   --pointer-y: 50%;
   --pointer-from-center: 0;
+  --background-x: var(--pointer-x);
+  --background-y: var(--pointer-y);
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --card-opacity: 0;
   --card-glow: hsl(175, 100%, 90%);
   position: relative;
+  isolation: isolate;
   display: block;
   width: 100%;
   aspect-ratio: 0.718;
@@ -69,23 +77,33 @@ body:has(.home-field) {
   opacity: 0.96;
   text-decoration: none;
   transform-style: preserve-3d;
+  transform:
+    translateY(var(--rest-y))
+    rotate(var(--rest-rotate))
+    rotateY(var(--rotate-x))
+    rotateX(var(--rotate-y));
   transition: box-shadow 180ms ease, opacity 180ms ease, transform 180ms ease;
+  will-change: transform;
 }
 
-.home-field__cards .card-slot:nth-child(1) .card {
-  transform: rotate(-7deg) translateY(0.4rem);
+.home-field__cards .card-slot:nth-child(1) {
+  --rest-rotate: -7deg;
+  --rest-y: 0.4rem;
 }
 
-.home-field__cards .card-slot:nth-child(2) .card {
-  transform: rotate(-2deg) translateY(-0.65rem);
+.home-field__cards .card-slot:nth-child(2) {
+  --rest-rotate: -2deg;
+  --rest-y: -0.65rem;
 }
 
-.home-field__cards .card-slot:nth-child(3) .card {
-  transform: rotate(2.5deg) translateY(-0.55rem);
+.home-field__cards .card-slot:nth-child(3) {
+  --rest-rotate: 2.5deg;
+  --rest-y: -0.55rem;
 }
 
-.home-field__cards .card-slot:nth-child(4) .card {
-  transform: rotate(7deg) translateY(0.3rem);
+.home-field__cards .card-slot:nth-child(4) {
+  --rest-rotate: 7deg;
+  --rest-y: 0.3rem;
 }
 
 .home-field__cards .card.water {
@@ -117,6 +135,8 @@ body:has(.home-field) {
   position: absolute;
   inset: 0;
   display: block;
+  overflow: hidden;
+  border-radius: inherit;
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.22)),
     #10131a;
@@ -142,15 +162,26 @@ body:has(.home-field) {
 .home-field__cards .card__shine {
   background:
     repeating-linear-gradient(
-      110deg,
+      115deg,
       transparent 0%,
-      rgba(255, 255, 255, 0.08) 8%,
-      rgba(255, 255, 255, 0.22) 11%,
-      transparent 18%
+      rgba(255, 255, 255, 0.03) 7%,
+      color-mix(in srgb, var(--card-glow), white 18%) 10%,
+      transparent 16%
+    ),
+    linear-gradient(
+      125deg,
+      transparent 24%,
+      rgba(255, 255, 255, 0.5) 45%,
+      transparent 62%
     ),
     radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.36), transparent 42%);
+  background-position:
+    var(--background-x) var(--background-y),
+    calc(var(--background-x) - 50%) calc(var(--background-y) - 50%),
+    center;
+  background-size: 220% 220%, 180% 180%, cover;
   mix-blend-mode: screen;
-  opacity: calc(0.14 + var(--pointer-from-center) * 0.3);
+  opacity: calc(0.03 + var(--card-opacity) * 0.48);
 }
 
 .home-field__cards .card__glare {
@@ -160,8 +191,8 @@ body:has(.home-field) {
     rgba(255, 255, 255, 0.08) 28%,
     rgba(0, 0, 0, 0.24) 84%
   );
-  mix-blend-mode: overlay;
-  opacity: calc(0.12 + var(--pointer-from-center) * 0.32);
+  mix-blend-mode: soft-light;
+  opacity: calc(0.04 + var(--card-opacity) * 0.42);
 }
 
 .home-field__cards .card-caption {
@@ -279,13 +310,19 @@ body:has(.home-field) {
   }
 
   .home-field__cards .card-slot {
+    --rest-rotate: 0deg;
+    --rest-y: 0rem;
     flex-basis: min(72vw, 258px);
     width: min(72vw, 258px);
     scroll-snap-align: center;
   }
 
   .home-field__cards .card-slot .card {
-    transform: none;
+    transform:
+      translateY(var(--rest-y))
+      rotate(var(--rest-rotate))
+      rotateY(var(--rotate-x))
+      rotateX(var(--rotate-y));
   }
 
   .home-field__links {

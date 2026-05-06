@@ -124,8 +124,6 @@ if (root) {
 
       card.style.setProperty("--seedx", seedX.toFixed(6));
       card.style.setProperty("--seedy", seedY.toFixed(6));
-      card.style.setProperty("--cosmosbg", `${Math.floor(seedX * 734)}px ${Math.floor(seedY * 1280)}px`);
-      card.style.setProperty("--mask", "none");
       if (image) {
         card.style.setProperty("--card-image", `url("${image}")`);
       }
@@ -150,8 +148,8 @@ if (root) {
         card.style.setProperty("--pointer-from-top", `${percentY / 100}`);
         card.style.setProperty("--background-x", `${adjust(percentX, 0, 100, 37, 63).toFixed(3)}%`);
         card.style.setProperty("--background-y", `${adjust(percentY, 0, 100, 33, 67).toFixed(3)}%`);
-        card.style.setProperty("--rotate-x", `${round(-(centerX / 3.5))}deg`);
-        card.style.setProperty("--rotate-y", `${round(centerY / 3.5)}deg`);
+        card.style.setProperty("--rotate-x", `${round(centerX / 5.5)}deg`);
+        card.style.setProperty("--rotate-y", `${round(-(centerY / 5.5))}deg`);
         card.style.setProperty("--card-opacity", "1");
       });
 
