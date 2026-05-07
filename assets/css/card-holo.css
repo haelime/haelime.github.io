@@ -3137,12 +3137,12 @@
 
 .home-field [data-holo-card][data-rarity="rare holo vstar"] .card__shine,
 .home-field [data-holo-card][data-rarity="rare holo vstar"] .card__shine::after {
-  filter: brightness(1.02) contrast(1.85) saturate(1.05) !important;
-  opacity: calc(var(--card-opacity) * 0.78) !important;
+  filter: brightness(0.9) contrast(1.45) saturate(0.78) !important;
+  opacity: calc(var(--card-opacity) * 0.48) !important;
 }
 
 .home-field [data-holo-card][data-rarity="rare holo vstar"] .card__glare {
-  opacity: calc(var(--card-opacity) * 0.42) !important;
+  opacity: calc(var(--card-opacity) * 0.28) !important;
 }
 
 .home-field [data-holo-card][data-rarity="rare rainbow alt"] .card__shine,
