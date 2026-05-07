@@ -1,149 +1,385 @@
-.card[data-holo] .card__shine,
-.card[data-holo] .card__shine::before,
-.card[data-holo] .card__shine::after,
-.card[data-holo] .card__glare {
+.home-field [data-holo-card] {
+  --holo-grain: url("/img/grain.webp");
+  --holo-glitter: url("/img/glitter.png");
+  --holo-cosmos-bottom: url("/img/cosmos-bottom.png");
+  --holo-cosmos-middle: url("/img/cosmos-middle-trans.png");
+  --holo-cosmos-top: url("/img/cosmos-top-trans.png");
+  --holo-illusion: url("/img/illusion.png");
+  --holo-geometric: url("/img/geometric.png");
+  --holo-ancient: url("/img/ancient.png");
+  --holo-space: 5%;
+  --holo-glitter-size: 24%;
+  --holo-red: hsl(2, 100%, 68%);
+  --holo-yellow: hsl(53, 100%, 69%);
+  --holo-green: hsl(93, 100%, 69%);
+  --holo-cyan: hsl(176, 100%, 76%);
+  --holo-blue: hsl(228, 100%, 74%);
+  --holo-violet: hsl(283, 100%, 73%);
+}
+
+.home-field [data-holo-card] .card__shine,
+.home-field [data-holo-card] .card__shine::before,
+.home-field [data-holo-card] .card__shine::after,
+.home-field [data-holo-card] .card__glare,
+.home-field [data-holo-card] .card__glare::before,
+.home-field [data-holo-card] .card__glare::after {
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
 }
 
-.card[data-holo] .card__shine {
+.home-field [data-holo-card] .card__shine {
   z-index: 2;
+  display: grid;
   overflow: hidden;
+  background-color: transparent;
+  background-position: center;
+  background-size: cover;
+  filter: brightness(1.08) contrast(1.65) saturate(1.4);
+  mix-blend-mode: color-dodge;
+  opacity: var(--card-opacity);
+  transform: translateZ(1px);
+  will-change: opacity, filter, background-position;
+}
+
+.home-field [data-holo-card] .card__shine::before,
+.home-field [data-holo-card] .card__shine::after,
+.home-field [data-holo-card] .card__glare::before,
+.home-field [data-holo-card] .card__glare::after {
+  content: "";
+  grid-area: 1 / 1;
+}
+
+.home-field [data-holo-card] .card__shine::before {
+  z-index: 2;
+}
+
+.home-field [data-holo-card] .card__shine::after {
+  z-index: 3;
+}
+
+.home-field [data-holo-card] .card__glare {
+  z-index: 3;
+  overflow: hidden;
+  background-image:
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.86) 0%,
+      rgba(255, 255, 255, 0.36) 18%,
+      rgba(30, 34, 50, 0.18) 48%,
+      rgba(0, 0, 0, 0.48) 100%
+    );
+  filter: brightness(0.9) contrast(1.45);
+  mix-blend-mode: overlay;
+  opacity: var(--card-opacity);
+  transform: translateZ(1.4px);
+  will-change: opacity, background-position;
+}
+
+.home-field [data-holo-card][data-holo-effect="regular"] .card__shine {
+  background-image:
+    repeating-linear-gradient(
+      110deg,
+      var(--holo-violet),
+      var(--holo-blue),
+      var(--holo-green),
+      var(--holo-yellow),
+      var(--holo-red),
+      var(--holo-violet)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      black 0 2px,
+      rgba(190, 190, 190, 0.9) 2px 4px
+    );
+  background-blend-mode: overlay;
+  background-position:
+    var(--background-x) var(--background-y),
+    center;
+  background-size: 420% 420%, cover;
+  filter: brightness(1.08) contrast(1.2) saturate(1.35);
+}
+
+.home-field [data-holo-card][data-holo-effect="regular"] .card__shine::before {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      black 10%,
+      rgba(235, 235, 235, 0.9) 15%,
+      black 17.5%,
+      rgba(235, 235, 235, 0.86) 20%,
+      black 25%,
+      black 65%
+    );
+  background-position:
+    var(--background-y) var(--background-x);
+  background-size: 220% 220%;
+  filter: brightness(1.15) contrast(1.1);
+  mix-blend-mode: hard-light;
+}
+
+.home-field [data-holo-card][data-holo-effect="regular"] .card__shine::after {
+  background-image:
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgba(240, 255, 255, 0.82) 0%,
+      rgba(205, 205, 205, 0.16) 26%,
+      black 92%
+    );
+  filter: brightness(0.65) contrast(4);
+  mix-blend-mode: luminosity;
+}
+
+.home-field [data-holo-card][data-holo-effect="cosmos"] .card__shine {
+  --holo-space: 4%;
+  background-image:
+    var(--holo-cosmos-bottom),
+    repeating-linear-gradient(
+      82deg,
+      hsl(53, 65%, 60%) 4%,
+      hsl(93, 56%, 50%) 8%,
+      hsl(176, 54%, 49%) 12%,
+      hsl(228, 59%, 55%) 16%,
+      hsl(283, 60%, 55%) 20%,
+      hsl(326, 59%, 51%) 24%,
+      hsl(53, 65%, 60%) 48%
+    ),
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgba(205, 255, 255, 0.52) 5%,
+      rgba(120, 132, 155, 0.26) 42%,
+      black 130%
+    );
+  background-blend-mode: color-burn, multiply, normal;
+  background-position:
+    var(--cosmosbg),
+    var(--background-x) var(--background-y),
+    center;
+  background-size: cover, 400% 900%, cover;
+  filter: brightness(1.05) contrast(1.2) saturate(0.95);
+}
+
+.home-field [data-holo-card][data-holo-effect="cosmos"] .card__shine::before {
+  background-image:
+    var(--holo-cosmos-middle),
+    repeating-linear-gradient(
+      82deg,
+      hsl(53, 65%, 60%) 4%,
+      hsl(93, 56%, 50%) 8%,
+      hsl(176, 54%, 49%) 12%,
+      hsl(228, 59%, 55%) 16%,
+      hsl(283, 60%, 55%) 20%,
+      hsl(326, 59%, 51%) 24%,
+      hsl(53, 65%, 60%) 48%
+    );
+  background-blend-mode: lighten, multiply;
+  background-position:
+    var(--cosmosbg),
+    var(--pointer-x) var(--pointer-y);
+  background-size: cover, 400% 900%;
+  filter: brightness(1.25) contrast(1.75) saturate(0.85);
+  mix-blend-mode: overlay;
+}
+
+.home-field [data-holo-card][data-holo-effect="cosmos"] .card__shine::after {
+  background-image:
+    var(--holo-cosmos-top),
+    radial-gradient(circle at var(--holo-spark-a), rgba(255, 255, 255, 0.94) 0 1.3px, transparent 3px),
+    radial-gradient(circle at var(--holo-spark-b), rgba(150, 210, 255, 0.8) 0 1.7px, transparent 4px);
+  background-position:
+    var(--cosmosbg),
+    var(--background-x) var(--background-y),
+    var(--pointer-x) var(--pointer-y);
+  background-size: cover, var(--holo-small-x) var(--holo-small-y), var(--holo-large-x) var(--holo-large-y);
+  filter: brightness(1.28) contrast(1.65);
+  mix-blend-mode: screen;
+}
+
+.home-field [data-holo-card][data-holo-effect="sunpillar"] .card__shine {
+  background-image:
+    var(--holo-grain),
+    repeating-linear-gradient(
+      0deg,
+      var(--holo-red) 5%,
+      var(--holo-yellow) 10%,
+      var(--holo-green) 15%,
+      var(--holo-cyan) 20%,
+      var(--holo-blue) 25%,
+      var(--holo-violet) 30%,
+      var(--holo-red) 35%
+    ),
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.62), transparent 45%);
+  background-blend-mode: screen, color-dodge, overlay;
   background-position:
     var(--holo-shift) var(--background-y),
     var(--background-x) var(--background-y),
     center;
-  background-size:
-    var(--holo-scale) var(--holo-scale),
-    220% 220%,
-    cover;
-  filter: brightness(calc(0.82 + var(--pointer-from-center) * 0.42)) contrast(1.45) saturate(1.55);
+  background-size: 210px 210px, 180% 560%, cover;
+  filter: brightness(1.05) contrast(1.55) saturate(1.85);
+}
+
+.home-field [data-holo-card][data-holo-effect="sunpillar"] .card__shine::before {
+  background-image:
+    linear-gradient(
+      var(--holo-angle),
+      transparent 18%,
+      rgba(255, 255, 255, 0.7) 48%,
+      color-mix(in srgb, var(--card-glow), white 38%) 52%,
+      transparent 72%
+    );
+  background-position: calc(var(--background-x) - 50%) calc(var(--background-y) - 50%);
+  background-size: 240% 240%;
+  filter: blur(0.25px);
+  mix-blend-mode: screen;
+}
+
+.home-field [data-holo-card][data-holo-effect="rainbow"] .card__shine {
+  background-image:
+    var(--holo-glitter),
+    repeating-linear-gradient(
+      var(--holo-angle),
+      var(--holo-red) 0%,
+      var(--holo-yellow) 9%,
+      var(--holo-green) 18%,
+      var(--holo-cyan) 27%,
+      var(--holo-blue) 36%,
+      var(--holo-violet) 45%,
+      var(--holo-red) 54%
+    ),
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.55), transparent 48%);
+  background-blend-mode: screen, color, overlay;
+  background-position:
+    var(--holo-shift) var(--background-y),
+    var(--background-x) var(--background-y),
+    center;
+  background-size: var(--holo-glitter-size) var(--holo-glitter-size), 360% 360%, cover;
+  filter: brightness(1.08) contrast(1.45) saturate(1.7);
+}
+
+.home-field [data-holo-card][data-holo-effect="rainbow"] .card__shine::before {
+  background-image: var(--holo-illusion);
+  background-position: calc(100% - var(--background-x)) calc(100% - var(--background-y));
+  background-size: cover;
+  filter: brightness(0.8) contrast(1.9);
+  mix-blend-mode: darken;
+}
+
+.home-field [data-holo-card][data-holo-effect="rainbow"] .card__shine::after {
+  background-image:
+    var(--holo-glitter),
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.04) 28%, transparent 58%);
+  background-position:
+    calc(100% - var(--background-x)) var(--background-y),
+    center;
+  background-size: var(--holo-glitter-size) var(--holo-glitter-size), cover;
   mix-blend-mode: color-dodge;
-  opacity: calc(0.08 + var(--card-opacity) * var(--holo-strength));
 }
 
-.card[data-holo] .card__shine::before,
-.card[data-holo] .card__shine::after {
-  content: "";
-  z-index: 1;
+.home-field [data-holo-card][data-holo-effect="etched"] .card__shine {
+  background-image:
+    var(--holo-ancient),
+    repeating-linear-gradient(
+      var(--holo-angle),
+      transparent 0 4px,
+      rgba(255, 255, 255, 0.28) 5px,
+      color-mix(in srgb, var(--card-glow), transparent 24%) 7px,
+      rgba(0, 0, 0, 0.35) 10px
+    ),
+    repeating-linear-gradient(
+      var(--holo-cross-angle),
+      transparent 0 12px,
+      rgba(255, 255, 255, 0.32) 14px,
+      transparent 18px
+    );
+  background-blend-mode: overlay, hard-light, screen;
+  background-position:
+    var(--background-x) var(--background-y),
+    var(--background-x) var(--background-y),
+    calc(100% - var(--background-x)) calc(100% - var(--background-y));
+  background-size: cover, 180% 180%, 240% 240%;
+  filter: brightness(1) contrast(1.8) saturate(0.9);
 }
 
-.card[data-holo] .card__shine::before {
-  background:
-    radial-gradient(circle at var(--holo-dot-a), rgba(255, 255, 255, 0.95) 0 1px, transparent 2.6px),
-    radial-gradient(circle at var(--holo-dot-b), rgba(255, 255, 255, 0.66) 0 1.4px, transparent 3px),
-    radial-gradient(circle at var(--holo-dot-c), color-mix(in srgb, var(--card-glow), white 24%) 0 1px, transparent 3.2px);
+.home-field [data-holo-card][data-holo-effect="etched"] .card__shine::after {
+  background-image:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.62), transparent 44%);
+  filter: brightness(1.35) contrast(1.15);
+  mix-blend-mode: soft-light;
+}
+
+.home-field [data-holo-card][data-holo-effect="glitter"] .card__shine {
+  background-image:
+    var(--holo-glitter),
+    var(--holo-glitter),
+    var(--holo-geometric),
+    conic-gradient(
+      from var(--holo-angle) at var(--pointer-x) var(--pointer-y),
+      var(--holo-cyan),
+      var(--holo-violet),
+      var(--holo-red),
+      var(--holo-yellow),
+      var(--holo-green),
+      var(--holo-cyan)
+    );
+  background-blend-mode: screen, color-dodge, overlay, color;
+  background-position:
+    var(--background-x) var(--background-y),
+    calc(100% - var(--background-x)) calc(100% - var(--background-y)),
+    center,
+    var(--pointer-x) var(--pointer-y);
   background-size:
-    var(--holo-small-x) var(--holo-small-y),
-    var(--holo-mid-x) var(--holo-mid-y),
-    var(--holo-large-x) var(--holo-large-y);
+    var(--holo-glitter-size) var(--holo-glitter-size),
+    17% 17%,
+    cover,
+    260% 260%;
+  filter: brightness(1.1) contrast(1.55) saturate(1.45);
+}
+
+.home-field [data-holo-card][data-holo-effect="glitter"] .card__shine::before {
+  background-image:
+    radial-gradient(circle at var(--holo-spark-a), rgba(255, 255, 255, 0.95) 0 1px, transparent 3px),
+    radial-gradient(circle at var(--holo-spark-b), color-mix(in srgb, var(--card-glow), white 42%) 0 1.6px, transparent 4px),
+    radial-gradient(circle at var(--holo-spark-c), rgba(255, 255, 255, 0.68) 0 1.2px, transparent 3.4px);
   background-position:
     var(--background-x) var(--background-y),
     var(--pointer-x) var(--pointer-y),
     center;
-  filter: blur(0.15px) brightness(1.35);
+  background-size:
+    var(--holo-small-x) var(--holo-small-y),
+    var(--holo-mid-x) var(--holo-mid-y),
+    var(--holo-large-x) var(--holo-large-y);
+  filter: blur(0.1px) brightness(1.4);
   mix-blend-mode: screen;
-  opacity: calc(0.1 + var(--card-opacity) * 0.74);
 }
 
-.card[data-holo] .card__shine::after {
-  background:
+.home-field [data-holo-card][data-holo-effect="glitter"] .card__shine::after {
+  background-image:
     linear-gradient(
       var(--holo-angle),
-      transparent 16%,
-      rgba(255, 255, 255, 0.04) 32%,
-      rgba(255, 255, 255, 0.68) 48%,
-      color-mix(in srgb, var(--card-glow), white 34%) 52%,
-      transparent 70%
+      transparent 20%,
+      rgba(255, 255, 255, 0.74) 47%,
+      transparent 68%
     );
   background-position: calc(var(--background-x) - 50%) calc(var(--background-y) - 50%);
   background-size: 220% 220%;
   mix-blend-mode: screen;
-  opacity: calc(var(--card-opacity) * 0.7);
+  opacity: var(--card-opacity);
 }
 
-.card[data-holo] .card__glare {
-  z-index: 3;
-  background:
-    radial-gradient(
-      farthest-corner circle at var(--pointer-x) var(--pointer-y),
-      rgba(255, 255, 255, 0.86) 0%,
-      rgba(255, 255, 255, 0.2) 18%,
-      rgba(0, 0, 0, 0.2) 78%
-    );
-  filter: brightness(1.15) contrast(1.15);
+.home-field [data-holo-card][data-holo-effect="cosmos"] .card__glare {
+  filter: brightness(0.78) contrast(2) saturate(1.8);
+  mix-blend-mode: overlay;
+  opacity: var(--card-opacity);
+}
+
+.home-field [data-holo-card][data-holo-effect="rainbow"] .card__glare,
+.home-field [data-holo-card][data-holo-effect="glitter"] .card__glare {
+  filter: brightness(0.9) contrast(1.8) saturate(1.5);
+  mix-blend-mode: hard-light;
+}
+
+.home-field [data-holo-card][data-holo-effect="etched"] .card__glare {
+  filter: brightness(0.85) contrast(2.2) saturate(0.8);
   mix-blend-mode: soft-light;
-  opacity: calc(0.06 + var(--card-opacity) * 0.38);
-}
-
-.card[data-holo="aurora"] .card__shine {
-  background-image:
-    repeating-linear-gradient(
-      var(--holo-angle),
-      hsl(2 90% 66%) 0%,
-      hsl(48 96% 68%) 8%,
-      hsl(126 78% 64%) 16%,
-      hsl(186 92% 68%) 24%,
-      hsl(260 88% 72%) 32%,
-      hsl(330 88% 70%) 40%,
-      hsl(2 90% 66%) 48%
-    ),
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.7), transparent 44%),
-    linear-gradient(145deg, transparent, rgba(255, 255, 255, 0.22), transparent);
-  background-blend-mode: color, screen, overlay;
-}
-
-.card[data-holo="prism"] .card__shine {
-  background-image:
-    conic-gradient(
-      from var(--holo-angle) at var(--pointer-x) var(--pointer-y),
-      hsl(192 100% 72%),
-      hsl(282 95% 74%),
-      hsl(338 95% 72%),
-      hsl(45 100% 70%),
-      hsl(145 88% 68%),
-      hsl(192 100% 72%)
-    ),
-    repeating-linear-gradient(
-      72deg,
-      transparent 0 7%,
-      rgba(255, 255, 255, 0.34) 8% 10%,
-      transparent 12% 17%
-    ),
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.62), transparent 48%);
-  background-blend-mode: hue, screen, overlay;
-}
-
-.card[data-holo="cosmos"] .card__shine {
-  background-image:
-    radial-gradient(circle at var(--holo-dot-a), rgba(255, 255, 255, 0.96) 0 1px, transparent 2.8px),
-    radial-gradient(circle at var(--holo-dot-b), color-mix(in srgb, var(--card-glow), white 38%) 0 1.8px, transparent 4px),
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.62), rgba(120, 170, 255, 0.22) 28%, transparent 64%);
-  background-blend-mode: screen, color-dodge, overlay;
-  background-size:
-    var(--holo-cosmos-small-x) var(--holo-cosmos-small-y),
-    var(--holo-cosmos-large-x) var(--holo-cosmos-large-y),
-    cover;
-}
-
-.card[data-holo="etched"] .card__shine {
-  background-image:
-    repeating-linear-gradient(
-      var(--holo-angle),
-      rgba(255, 255, 255, 0) 0 4px,
-      rgba(255, 255, 255, 0.2) 5px,
-      color-mix(in srgb, var(--card-glow), transparent 28%) 7px,
-      rgba(0, 0, 0, 0.24) 10px
-    ),
-    repeating-linear-gradient(
-      var(--holo-cross-angle),
-      rgba(255, 255, 255, 0) 0 12px,
-      rgba(255, 255, 255, 0.28) 14px,
-      rgba(255, 255, 255, 0) 18px
-    ),
-    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.62), transparent 48%);
-  background-blend-mode: hard-light, screen, overlay;
-  background-size: 180% 180%, 240% 240%, cover;
 }

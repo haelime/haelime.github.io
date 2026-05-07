@@ -216,6 +216,7 @@ exclude:
   - "*.gemspec"
   - docs
   - tools
+  - pokemon-cards-css
   - README.md
   - LICENSE
   - purgecss.js
