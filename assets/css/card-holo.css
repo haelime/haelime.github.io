@@ -399,7 +399,7 @@
   z-index: 2;
 
   background-image: 
-    url("/img/cosmos-middle-trans.png"), 
+    url("/img/cosmos-middle.png"), 
     repeating-linear-gradient(
       82deg, 
       hsl(53, 65%, 60%) calc(var(--space)*1), 
@@ -439,7 +439,7 @@
   z-index: 3;
 
   background-image: 
-    url("/img/cosmos-top-trans.png"), 
+    url("/img/cosmos-top.png"), 
     repeating-linear-gradient(
       82deg, 
       hsl(53, 65%, 60%) calc(var(--space)*1), 
@@ -1298,7 +1298,7 @@
 
 .home-field [data-holo-card]:not(.masked)[data-rarity="rare rainbow"] .card__shine {
 
-  --foil: url("/img/illusion-mask.png"); 
+  --foil: url("/img/illusion.png"); 
   --imgsize: 33%;
 
 }
@@ -3050,4 +3050,70 @@
 	filter: brightness(1) contrast(1);
 	opacity: calc( var(--card-opacity) * var(--pointer-from-center) * 0.85 );
 
+}
+
+/* Landing cards use full-card artwork, so the Pokemon illustration-frame clips create a visible brightness seam. */
+.home-field [data-holo-card] {
+  --clip: inset(0);
+  --clip-invert: inset(0);
+  --clip-stage: inset(0);
+  --clip-stage-invert: inset(0);
+  --clip-trainer: inset(0);
+  --clip-trainer-invert: inset(0);
+  --clip-borders: inset(0 round var(--card-radius));
+  --imgsize: 34%;
+  --glittersize: 22%;
+}
+
+.home-field [data-holo-card] .card__shine,
+.home-field [data-holo-card] .card__shine::before,
+.home-field [data-holo-card] .card__shine::after,
+.home-field [data-holo-card] .card__glare,
+.home-field [data-holo-card] .card__glare::before,
+.home-field [data-holo-card] .card__glare::after {
+  clip-path: none !important;
+}
+
+.home-field [data-holo-card] .card__shine,
+.home-field [data-holo-card] .card__shine::before,
+.home-field [data-holo-card] .card__shine::after,
+.home-field [data-holo-card] .card__glare,
+.home-field [data-holo-card] .card__glare::before,
+.home-field [data-holo-card] .card__glare::after {
+  -webkit-mask: none !important;
+  mask: none !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  -webkit-mask-size: auto !important;
+  mask-size: auto !important;
+  -webkit-mask-position: 0 0 !important;
+  mask-position: 0 0 !important;
+  -webkit-mask-repeat: repeat !important;
+  mask-repeat: repeat !important;
+}
+
+.home-field [data-holo-card] .card__shine,
+.home-field [data-holo-card] .card__shine::before,
+.home-field [data-holo-card] .card__shine::after {
+  background-repeat: repeat, repeat, repeat, repeat !important;
+}
+
+.home-field [data-holo-card][data-rarity="rare holo cosmos"] .card__shine,
+.home-field [data-holo-card][data-rarity="rare holo cosmos"] .card__shine::before,
+.home-field [data-holo-card][data-rarity="rare holo cosmos"] .card__shine::after {
+  background-size: 42% 42%, 360% 760%, cover !important;
+}
+
+.home-field [data-holo-card][data-rarity*="v"] .card__shine,
+.home-field [data-holo-card][data-rarity*="v"] .card__shine::after,
+.home-field [data-holo-card][data-rarity="rare ultra"] .card__shine,
+.home-field [data-holo-card][data-rarity="rare ultra"] .card__shine::after,
+.home-field [data-holo-card][data-rarity="radiant rare"] .card__shine::after,
+.home-field [data-holo-card][data-rarity="rare rainbow"] .card__shine::before,
+.home-field [data-holo-card][data-rarity="rare rainbow alt"] .card__shine::before,
+.home-field [data-holo-card][data-rarity="rare secret"] .card__shine::before,
+.home-field [data-holo-card][data-rarity="rare shiny"] .card__shine,
+.home-field [data-holo-card][data-rarity="rare shiny v"] .card__shine,
+.home-field [data-holo-card][data-rarity="rare shiny vmax"] .card__shine::before {
+  background-size: var(--imgsize) var(--imgsize), 220% 520%, 260% 120%, 200% 100% !important;
 }

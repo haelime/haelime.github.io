@@ -115,6 +115,8 @@ if (root) {
       const label = slot?.querySelector(".card-caption");
       const seedX = Math.random();
       const seedY = Math.random();
+      let pendingInteraction = null;
+      let interactionFrame = 0;
 
       if (label) {
         const title = label.querySelector(".card__label-title");
@@ -130,14 +132,7 @@ if (root) {
       }
       installCardHolo(card, index);
 
-      card.addEventListener("pointermove", (event) => {
-        if (event.pointerType === "touch") return;
-
-        const rect = card.getBoundingClientRect();
-        const absoluteX = event.clientX - rect.left;
-        const absoluteY = event.clientY - rect.top;
-        const percentX = clamp(round((100 / rect.width) * absoluteX));
-        const percentY = clamp(round((100 / rect.height) * absoluteY));
+      const applyInteraction = ({ percentX, percentY }) => {
         const centerX = percentX - 50;
         const centerY = percentY - 50;
         const fromCenter = clamp(Math.sqrt(centerY * centerY + centerX * centerX) / 50, 0, 1);
@@ -150,12 +145,41 @@ if (root) {
         card.style.setProperty("--pointer-from-top", `${percentY / 100}`);
         card.style.setProperty("--background-x", `${adjust(percentX, 0, 100, 37, 63).toFixed(3)}%`);
         card.style.setProperty("--background-y", `${adjust(percentY, 0, 100, 33, 67).toFixed(3)}%`);
-        card.style.setProperty("--rotate-x", `${round(centerX / 5.5)}deg`);
-        card.style.setProperty("--rotate-y", `${round(-(centerY / 5.5))}deg`);
+        card.style.setProperty("--rotate-x", `${round(-(centerX / 3.5))}deg`);
+        card.style.setProperty("--rotate-y", `${round(centerY / 3.5)}deg`);
         card.style.setProperty("--card-opacity", "1");
-      });
+      };
+
+      const scheduleInteraction = (event) => {
+        if (event.pointerType === "touch") return;
+
+        const rect = card.getBoundingClientRect();
+        const absoluteX = event.clientX - rect.left;
+        const absoluteY = event.clientY - rect.top;
+        pendingInteraction = {
+          percentX: clamp(round((100 / rect.width) * absoluteX)),
+          percentY: clamp(round((100 / rect.height) * absoluteY)),
+        };
+
+        if (interactionFrame) return;
+        interactionFrame = requestAnimationFrame(() => {
+          if (pendingInteraction) {
+            applyInteraction(pendingInteraction);
+            pendingInteraction = null;
+          }
+          interactionFrame = 0;
+        });
+      };
+
+      card.addEventListener("pointerenter", scheduleInteraction);
+      card.addEventListener("pointermove", scheduleInteraction);
 
       card.addEventListener("pointerleave", () => {
+        if (interactionFrame) {
+          cancelAnimationFrame(interactionFrame);
+          interactionFrame = 0;
+        }
+        pendingInteraction = null;
         card.classList.remove("interacting");
         card.style.setProperty("--pointer-x", "50%");
         card.style.setProperty("--pointer-y", "50%");
