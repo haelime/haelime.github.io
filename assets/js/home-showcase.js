@@ -171,6 +171,16 @@ if (root) {
         });
       };
 
+      card.addEventListener("pointerenter", () => {
+        console.debug("[card-holo]", {
+          index,
+          effect: card.dataset.holoEffect,
+          rarity: card.dataset.rarity,
+          subtypes: card.dataset.subtypes,
+          supertype: card.dataset.supertype,
+          trainerGallery: card.dataset.trainerGallery,
+        });
+      });
       card.addEventListener("pointerenter", scheduleInteraction);
       card.addEventListener("pointermove", scheduleInteraction);
 
