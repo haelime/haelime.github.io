@@ -3101,7 +3101,8 @@
 .home-field [data-holo-card][data-rarity="rare holo cosmos"] .card__shine,
 .home-field [data-holo-card][data-rarity="rare holo cosmos"] .card__shine::before,
 .home-field [data-holo-card][data-rarity="rare holo cosmos"] .card__shine::after {
-  background-size: 42% 42%, 360% 760%, cover !important;
+  background-repeat: no-repeat, repeat, no-repeat !important;
+  background-size: cover, 360% 760%, cover !important;
 }
 
 .home-field [data-holo-card][data-rarity*="v"] .card__shine,
