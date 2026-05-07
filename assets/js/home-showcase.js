@@ -1,4 +1,5 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js";
+import { installCardHolo } from "./card-holo.js";
 
 const root = document.querySelector("[data-home-showcase]");
 
@@ -108,7 +109,7 @@ if (root) {
       return toMin + progress * (toMax - toMin);
     };
 
-    cards.forEach((card) => {
+    cards.forEach((card, index) => {
       const image = card.dataset.image || "";
       const slot = card.closest(".card-slot");
       const label = slot?.querySelector(".card-caption");
@@ -127,6 +128,7 @@ if (root) {
       if (image) {
         card.style.setProperty("--card-image", `url("${image}")`);
       }
+      installCardHolo(card, index);
 
       card.addEventListener("pointermove", (event) => {
         if (event.pointerType === "touch") return;

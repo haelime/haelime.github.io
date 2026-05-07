@@ -1,0 +1,149 @@
+.card[data-holo] .card__shine,
+.card[data-holo] .card__shine::before,
+.card[data-holo] .card__shine::after,
+.card[data-holo] .card__glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.card[data-holo] .card__shine {
+  z-index: 2;
+  overflow: hidden;
+  background-position:
+    var(--holo-shift) var(--background-y),
+    var(--background-x) var(--background-y),
+    center;
+  background-size:
+    var(--holo-scale) var(--holo-scale),
+    220% 220%,
+    cover;
+  filter: brightness(calc(0.82 + var(--pointer-from-center) * 0.42)) contrast(1.45) saturate(1.55);
+  mix-blend-mode: color-dodge;
+  opacity: calc(0.08 + var(--card-opacity) * var(--holo-strength));
+}
+
+.card[data-holo] .card__shine::before,
+.card[data-holo] .card__shine::after {
+  content: "";
+  z-index: 1;
+}
+
+.card[data-holo] .card__shine::before {
+  background:
+    radial-gradient(circle at var(--holo-dot-a), rgba(255, 255, 255, 0.95) 0 1px, transparent 2.6px),
+    radial-gradient(circle at var(--holo-dot-b), rgba(255, 255, 255, 0.66) 0 1.4px, transparent 3px),
+    radial-gradient(circle at var(--holo-dot-c), color-mix(in srgb, var(--card-glow), white 24%) 0 1px, transparent 3.2px);
+  background-size:
+    var(--holo-small-x) var(--holo-small-y),
+    var(--holo-mid-x) var(--holo-mid-y),
+    var(--holo-large-x) var(--holo-large-y);
+  background-position:
+    var(--background-x) var(--background-y),
+    var(--pointer-x) var(--pointer-y),
+    center;
+  filter: blur(0.15px) brightness(1.35);
+  mix-blend-mode: screen;
+  opacity: calc(0.1 + var(--card-opacity) * 0.74);
+}
+
+.card[data-holo] .card__shine::after {
+  background:
+    linear-gradient(
+      var(--holo-angle),
+      transparent 16%,
+      rgba(255, 255, 255, 0.04) 32%,
+      rgba(255, 255, 255, 0.68) 48%,
+      color-mix(in srgb, var(--card-glow), white 34%) 52%,
+      transparent 70%
+    );
+  background-position: calc(var(--background-x) - 50%) calc(var(--background-y) - 50%);
+  background-size: 220% 220%;
+  mix-blend-mode: screen;
+  opacity: calc(var(--card-opacity) * 0.7);
+}
+
+.card[data-holo] .card__glare {
+  z-index: 3;
+  background:
+    radial-gradient(
+      farthest-corner circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.86) 0%,
+      rgba(255, 255, 255, 0.2) 18%,
+      rgba(0, 0, 0, 0.2) 78%
+    );
+  filter: brightness(1.15) contrast(1.15);
+  mix-blend-mode: soft-light;
+  opacity: calc(0.06 + var(--card-opacity) * 0.38);
+}
+
+.card[data-holo="aurora"] .card__shine {
+  background-image:
+    repeating-linear-gradient(
+      var(--holo-angle),
+      hsl(2 90% 66%) 0%,
+      hsl(48 96% 68%) 8%,
+      hsl(126 78% 64%) 16%,
+      hsl(186 92% 68%) 24%,
+      hsl(260 88% 72%) 32%,
+      hsl(330 88% 70%) 40%,
+      hsl(2 90% 66%) 48%
+    ),
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.7), transparent 44%),
+    linear-gradient(145deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  background-blend-mode: color, screen, overlay;
+}
+
+.card[data-holo="prism"] .card__shine {
+  background-image:
+    conic-gradient(
+      from var(--holo-angle) at var(--pointer-x) var(--pointer-y),
+      hsl(192 100% 72%),
+      hsl(282 95% 74%),
+      hsl(338 95% 72%),
+      hsl(45 100% 70%),
+      hsl(145 88% 68%),
+      hsl(192 100% 72%)
+    ),
+    repeating-linear-gradient(
+      72deg,
+      transparent 0 7%,
+      rgba(255, 255, 255, 0.34) 8% 10%,
+      transparent 12% 17%
+    ),
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.62), transparent 48%);
+  background-blend-mode: hue, screen, overlay;
+}
+
+.card[data-holo="cosmos"] .card__shine {
+  background-image:
+    radial-gradient(circle at var(--holo-dot-a), rgba(255, 255, 255, 0.96) 0 1px, transparent 2.8px),
+    radial-gradient(circle at var(--holo-dot-b), color-mix(in srgb, var(--card-glow), white 38%) 0 1.8px, transparent 4px),
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.62), rgba(120, 170, 255, 0.22) 28%, transparent 64%);
+  background-blend-mode: screen, color-dodge, overlay;
+  background-size:
+    var(--holo-cosmos-small-x) var(--holo-cosmos-small-y),
+    var(--holo-cosmos-large-x) var(--holo-cosmos-large-y),
+    cover;
+}
+
+.card[data-holo="etched"] .card__shine {
+  background-image:
+    repeating-linear-gradient(
+      var(--holo-angle),
+      rgba(255, 255, 255, 0) 0 4px,
+      rgba(255, 255, 255, 0.2) 5px,
+      color-mix(in srgb, var(--card-glow), transparent 28%) 7px,
+      rgba(0, 0, 0, 0.24) 10px
+    ),
+    repeating-linear-gradient(
+      var(--holo-cross-angle),
+      rgba(255, 255, 255, 0) 0 12px,
+      rgba(255, 255, 255, 0.28) 14px,
+      rgba(255, 255, 255, 0) 18px
+    ),
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y), rgba(255, 255, 255, 0.62), transparent 48%);
+  background-blend-mode: hard-light, screen, overlay;
+  background-size: 180% 180%, 240% 240%, cover;
+}
