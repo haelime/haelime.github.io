@@ -131,6 +131,17 @@ if (root) {
         card.style.setProperty("--card-image", `url("${image}")`);
       }
       installCardHolo(card, index);
+      const logHolo = (eventName) => {
+        console.log("[card-holo]", eventName, {
+          index,
+          effect: card.dataset.holoEffect,
+          rarity: card.dataset.rarity,
+          subtypes: card.dataset.subtypes,
+          supertype: card.dataset.supertype,
+          trainerGallery: card.dataset.trainerGallery,
+        });
+      };
+      logHolo("init");
 
       const applyInteraction = ({ percentX, percentY }) => {
         const centerX = percentX - 50;
@@ -171,16 +182,8 @@ if (root) {
         });
       };
 
-      card.addEventListener("pointerenter", () => {
-        console.debug("[card-holo]", {
-          index,
-          effect: card.dataset.holoEffect,
-          rarity: card.dataset.rarity,
-          subtypes: card.dataset.subtypes,
-          supertype: card.dataset.supertype,
-          trainerGallery: card.dataset.trainerGallery,
-        });
-      });
+      card.addEventListener("pointerenter", () => logHolo("pointerenter"));
+      card.addEventListener("mouseover", () => logHolo("mouseover"));
       card.addEventListener("pointerenter", scheduleInteraction);
       card.addEventListener("pointermove", scheduleInteraction);
 

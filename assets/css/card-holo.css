@@ -3118,23 +3118,3 @@
 .home-field [data-holo-card][data-rarity="rare shiny vmax"] .card__shine::before {
   background-size: var(--imgsize) var(--imgsize), 220% 520%, 260% 120%, 200% 100% !important;
 }
-
-.home-field [data-holo-card][data-rarity="rare rainbow"] .card__shine::before,
-.home-field [data-holo-card][data-rarity="rare rainbow alt"] .card__shine::before {
-  background-repeat: no-repeat !important;
-  background-size: cover !important;
-  opacity: calc(var(--card-opacity) * 0.28) !important;
-  mix-blend-mode: soft-light !important;
-}
-
-.home-field [data-holo-card][data-rarity="rare rainbow"] .card__shine,
-.home-field [data-holo-card][data-rarity="rare rainbow"] .card__shine::after,
-.home-field [data-holo-card][data-rarity="rare rainbow alt"] .card__shine,
-.home-field [data-holo-card][data-rarity="rare rainbow alt"] .card__shine::after {
-  filter: brightness(0.72) contrast(1.45) saturate(0.85) !important;
-}
-
-.home-field [data-holo-card][data-rarity="rare rainbow"] .card__glare,
-.home-field [data-holo-card][data-rarity="rare rainbow alt"] .card__glare {
-  opacity: calc(var(--card-opacity) * 0.42) !important;
-}
