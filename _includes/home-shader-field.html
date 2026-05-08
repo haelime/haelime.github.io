@@ -1,7 +1,14 @@
 <link rel="stylesheet" href="{{ '/assets/css/home-showcase.css' | relative_url }}">
 
 <section class="home-field" data-home-showcase>
-  <canvas class="home-field__canvas" aria-label="Domain repetition shader artwork"></canvas>
+  <canvas class="home-field__canvas" aria-label="Water shader artwork"></canvas>
+
+  <nav class="home-field__links" aria-label="Portfolio links">
+    <a href="{{ '/about/' | relative_url }}">about</a>
+    <a href="{{ '/projects/' | relative_url }}">projects</a>
+    <a href="{{ '/resume/' | relative_url }}">resume</a>
+    <a href="mailto:loreminder@gmail.com">contact</a>
+  </nav>
 
   <div class="home-field__progress" aria-hidden="true">
     <span data-home-progress></span>
