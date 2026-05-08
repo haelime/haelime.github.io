@@ -1,97 +1,56 @@
 <link rel="stylesheet" href="{{ '/assets/css/home-showcase.css' | relative_url }}">
-<link rel="stylesheet" href="{{ '/assets/css/card-holo.css' | relative_url }}">
 
 <section class="home-field" data-home-showcase>
-  <canvas class="home-field__canvas" aria-label="Realtime shader artwork"></canvas>
+  <canvas class="home-field__canvas" aria-label="Domain repetition shader artwork"></canvas>
 
-  <div class="home-field__cards" aria-label="Portfolio showcase">
-    <div class="card-slot">
-      <a
-        class="card interactive water"
-        href="{{ '/about/' | relative_url }}"
-        aria-label="about"
-        data-card
-        data-image="{{ '/assets/img/card-render.svg' | relative_url }}"
-        data-title="about"
-        data-subtitle="haelime / graphics dev"
-        style="--card-image: url('{{ '/assets/img/card-render.svg' | relative_url }}');"
-      >
-        <span class="card__shine"></span>
-        <span class="card__glare"></span>
-      </a>
-      <div class="card-caption" aria-hidden="true">
-        <span class="card__label-title">about</span>
-        <span class="card__label-subtitle">haelime / graphics dev</span>
-      </div>
-    </div>
-
-    <div class="card-slot">
-      <a
-        class="card interactive fire"
-        href="{{ '/projects/' | relative_url }}"
-        aria-label="projects"
-        data-card
-        data-image="{{ '/assets/img/card-shader.svg' | relative_url }}"
-        data-title="projects"
-        data-subtitle="renderers / shaders / games"
-        style="--card-image: url('{{ '/assets/img/card-shader.svg' | relative_url }}');"
-      >
-        <span class="card__shine"></span>
-        <span class="card__glare"></span>
-      </a>
-      <div class="card-caption" aria-hidden="true">
-        <span class="card__label-title">projects</span>
-        <span class="card__label-subtitle">renderers / shaders / games</span>
-      </div>
-    </div>
-
-    <div class="card-slot">
-      <a
-        class="card interactive grass"
-        href="{{ '/resume/' | relative_url }}"
-        aria-label="resume"
-        data-card
-        data-image="{{ '/assets/img/card-engine.svg' | relative_url }}"
-        data-title="resume"
-        data-subtitle="C++ / Vulkan / engine"
-        style="--card-image: url('{{ '/assets/img/card-engine.svg' | relative_url }}');"
-      >
-        <span class="card__shine"></span>
-        <span class="card__glare"></span>
-      </a>
-      <div class="card-caption" aria-hidden="true">
-        <span class="card__label-title">resume</span>
-        <span class="card__label-subtitle">C++ / Vulkan / engine</span>
-      </div>
-    </div>
-
-    <div class="card-slot">
-      <a
-        class="card interactive psychic"
-        href="{{ '/archives/' | relative_url }}"
-        aria-label="more+"
-        data-card
-        data-image="{{ '/assets/img/card-code.svg' | relative_url }}"
-        data-title="more+"
-        data-subtitle="posts / notes / links"
-        style="--card-image: url('{{ '/assets/img/card-code.svg' | relative_url }}');"
-      >
-        <span class="card__shine"></span>
-        <span class="card__glare"></span>
-      </a>
-      <div class="card-caption" aria-hidden="true">
-        <span class="card__label-title">more+</span>
-        <span class="card__label-subtitle">posts / notes / links</span>
-      </div>
-    </div>
+  <div class="home-field__progress" aria-hidden="true">
+    <span data-home-progress></span>
   </div>
 
-  <nav class="home-field__links" aria-label="Portfolio links">
-    <a href="{{ '/about/' | relative_url }}">about</a>
-    <a href="{{ '/projects/' | relative_url }}">projects</a>
-    <a href="{{ '/resume/' | relative_url }}">resume</a>
-    <a href="{{ '/archives/' | relative_url }}">more+</a>
-  </nav>
+  <div class="home-field__slides" aria-live="polite">
+    <article class="home-slide is-active" data-home-slide="0">
+      <div class="home-slide__copy">
+        <p class="home-slide__kicker">about</p>
+        <h1>haelime</h1>
+        <p>로우레벨 엔지니어링과 그래픽스 최적화를 함께 다루는 C++ 개발자입니다.</p>
+      </div>
+      <img src="{{ '/assets/img/IMG_8923.jpg' | relative_url }}" alt="haelime profile">
+    </article>
+
+    <article class="home-slide" data-home-slide="1">
+      <div class="home-slide__copy">
+        <p class="home-slide__kicker">projects</p>
+        <h2>graphics / simulation / systems</h2>
+        <p>렌더링 파이프라인, Compute Shader, 대규모 시뮬레이션, 커스텀 네트워크 구조를 실험합니다.</p>
+        <a href="{{ '/projects/' | relative_url }}">open projects</a>
+      </div>
+      <img src="{{ '/assets/img/card-shader.svg' | relative_url }}" alt="Shader project card">
+    </article>
+
+    <article class="home-slide" data-home-slide="2">
+      <div class="home-slide__copy">
+        <p class="home-slide__kicker">resume</p>
+        <h2>autonomous shuttle systems</h2>
+        <p>인천국제공항 T2 자율주행 셔틀 시스템에서 FSM 제어, watchdog 복구, LiDAR 검증 툴을 개발했습니다.</p>
+        <a href="{{ '/resume/' | relative_url }}">open resume</a>
+      </div>
+      <img src="{{ '/assets/img/card-engine.svg' | relative_url }}" alt="Engine project card">
+    </article>
+
+    <article class="home-slide" data-home-slide="3">
+      <div class="home-slide__copy">
+        <p class="home-slide__kicker">more+</p>
+        <h2>notes and links</h2>
+        <p>개발 기록, 그래픽스 실험, 프로젝트 링크를 한 곳에 정리합니다.</p>
+        <div class="home-slide__links">
+          <a href="https://github.com/haelime" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.shadertoy.com/view/lffGRj" target="_blank" rel="noopener">Shadertoy</a>
+          <a href="{{ '/archives/' | relative_url }}">Posts</a>
+        </div>
+      </div>
+      <img src="{{ '/assets/img/card-code.svg' | relative_url }}" alt="Code project card">
+    </article>
+  </div>
 </section>
 
 <script type="module" src="{{ '/assets/js/home-showcase.js' | relative_url }}"></script>

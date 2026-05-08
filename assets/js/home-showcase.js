@@ -1,5 +1,4 @@
 import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js";
-import { installCardHolo } from "./card-holo.js";
 
 const root = document.querySelector("[data-home-showcase]");
 
@@ -9,7 +8,9 @@ if (root) {
   }
 
   const canvas = root.querySelector("canvas");
-  const cards = Array.from(root.querySelectorAll("[data-card]"));
+  const slides = Array.from(root.querySelectorAll("[data-home-slide]"));
+  const progressBar = root.querySelector("[data-home-progress]");
+  const maxProgress = Math.max(0, slides.length - 1);
 
   try {
     const renderer = new THREE.WebGLRenderer({
@@ -20,337 +21,228 @@ if (root) {
     });
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-    renderer.setClearColor(0x02030a, 1);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 240);
-    const raycaster = new THREE.Raycaster();
-    const pointerNdc = new THREE.Vector2(0, 0);
-    const pointerWorld = new THREE.Vector3(0, 0, 0);
-    const particlePlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-    const orbitTarget = new THREE.Vector3(0, 0, 0);
-    const orbit = {
-      yaw: 0,
-      pitch: 0.22,
-      radius: 42,
-      dragging: false,
-      x: 0,
-      y: 0,
-    };
-    const particleLimit = 70000;
-    const emitRate = 620;
-    const positions = new Float32Array(particleLimit * 3);
-    const colors = new Float32Array(particleLimit * 3);
-    const velocities = new Float32Array(particleLimit * 3);
-    const ages = new Float32Array(particleLimit);
-    const lifetimes = new Float32Array(particleLimit);
-    const geometry = new THREE.BufferGeometry();
-    const color = new THREE.Color();
-    const pointer = {
-      x: 0,
-      y: 0,
-      z: 0,
-      active: false,
-      down: false,
-    };
-    let width = 1;
-    let height = 1;
-    let particleCursor = 0;
-    let activeParticles = 0;
-
-    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-    geometry.setDrawRange(0, 0);
-
-    const particles = new THREE.Points(
-      geometry,
-      new THREE.PointsMaterial({
-        size: 0.18,
-        sizeAttenuation: true,
-        transparent: true,
-        opacity: 0.68,
-        vertexColors: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        depthTest: false,
-      }),
-    );
-    scene.add(particles);
-
-    const colorForTime = (seconds) => {
-      color.setRGB(
-        (Math.sin(seconds) + 1) * 0.5,
-        (Math.sin(seconds + (4 * Math.PI) / 3) + 1) * 0.5,
-        1,
-      );
-      return color;
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    const uniforms = {
+      iTime: { value: 0 },
+      iResolution: { value: new THREE.Vector3(1, 1, 1) },
+      uProgress: { value: 0 },
+      uClick: { value: 0 },
     };
 
-    const syncCamera = () => {
-      const radiusXZ = Math.cos(orbit.pitch) * orbit.radius;
-      camera.position.set(
-        Math.sin(orbit.yaw) * radiusXZ,
-        Math.sin(orbit.pitch) * orbit.radius,
-        Math.cos(orbit.yaw) * radiusXZ,
-      );
-      camera.lookAt(orbitTarget);
-    };
+    const material = new THREE.ShaderMaterial({
+      depthWrite: false,
+      depthTest: false,
+      uniforms,
+      vertexShader: `
+        void main() {
+          gl_Position = vec4(position.xy, 0.0, 1.0);
+        }
+      `,
+      fragmentShader: `
+        precision highp float;
 
-    const updatePointerWorld = (clientX, clientY) => {
-      const rect = root.getBoundingClientRect();
-      pointerNdc.x = ((clientX - rect.left) / Math.max(1, rect.width)) * 2 - 1;
-      pointerNdc.y = -(((clientY - rect.top) / Math.max(1, rect.height)) * 2 - 1);
-      raycaster.setFromCamera(pointerNdc, camera);
-      raycaster.ray.intersectPlane(particlePlane, pointerWorld);
-      pointer.x = pointerWorld.x;
-      pointer.y = pointerWorld.y;
-      pointer.z = pointerWorld.z;
-      pointer.active = true;
-    };
+        uniform vec3 iResolution;
+        uniform float iTime;
+        uniform float uProgress;
+        uniform float uClick;
 
-    const emitParticle = (x, y, z, seconds) => {
-      const index = particleCursor;
-      const angle = Math.random() * Math.PI * 2;
-      const radial = Math.sqrt(Math.random()) * 3.8;
-      const zSpread = (Math.random() - 0.5) * 3.8;
-      const speed = 4 + Math.random() * 7.5;
-      const particleColor = colorForTime(seconds);
+        #define PALETTE vec3(6.0, 4.0, 2.0)
 
-      positions[index * 3] = x + Math.cos(angle) * radial;
-      positions[index * 3 + 1] = y + Math.sin(angle) * radial;
-      positions[index * 3 + 2] = z + zSpread;
-      colors[index * 3] = particleColor.r;
-      colors[index * 3 + 1] = particleColor.g;
-      colors[index * 3 + 2] = particleColor.b;
-      velocities[index * 3] = Math.cos(angle) * speed;
-      velocities[index * 3 + 1] = Math.sin(angle) * speed;
-      velocities[index * 3 + 2] = (Math.random() - 0.5) * speed;
-      ages[index] = 0;
-      lifetimes[index] = 2.2 + Math.random() * 2.8;
-
-      particleCursor = (particleCursor + 1) % particleLimit;
-      activeParticles = Math.min(activeParticles + 1, particleLimit);
-    };
-
-    const emitBurst = (count, seconds) => {
-      for (let i = 0; i < count; i += 1) {
-        emitParticle(pointer.x, pointer.y, pointer.z, seconds);
-      }
-      geometry.setDrawRange(0, activeParticles);
-    };
-
-    const updateParticles = (deltaSeconds) => {
-      const strength = pointer.down ? 270 : 74;
-      const drag = Math.max(0, 1 - deltaSeconds * 1.8);
-
-      for (let i = 0; i < activeParticles; i += 1) {
-        ages[i] += deltaSeconds;
-
-        if (ages[i] > lifetimes[i]) {
-          colors[i * 3] = 0;
-          colors[i * 3 + 1] = 0;
-          colors[i * 3 + 2] = 0;
-          continue;
+        mat2 rot(float a) {
+          float s = sin(a);
+          float c = cos(a);
+          return mat2(c, -s, s, c);
         }
 
-        const px = positions[i * 3];
-        const py = positions[i * 3 + 1];
-        const pz = positions[i * 3 + 2];
-        const dx = pointer.x - px;
-        const dy = pointer.y - py;
-        const dz = pointer.z - pz;
-        const distanceSq = Math.max(dx * dx + dy * dy + dz * dz, 1.6);
-        const distance = Math.sqrt(distanceSq);
-        const acceleration = (strength / distanceSq) * deltaSeconds;
-        const life = Math.max(0, 1 - ages[i] / lifetimes[i]);
+        float fractal(vec3 p) {
+          float i = 0.0;
+          float s = 0.0;
+          float w = 1.2;
+          vec3 b = vec3(0.5, 1.0, 1.5);
 
-        velocities[i * 3] = (velocities[i * 3] + (dx / distance) * acceleration) * drag;
-        velocities[i * 3 + 1] = (velocities[i * 3 + 1] + (dy / distance) * acceleration) * drag;
-        velocities[i * 3 + 2] = (velocities[i * 3 + 2] + (dz / distance) * acceleration) * drag;
-        positions[i * 3] += velocities[i * 3] * deltaSeconds;
-        positions[i * 3 + 1] += velocities[i * 3 + 1] * deltaSeconds;
-        positions[i * 3 + 2] += velocities[i * 3 + 2] * deltaSeconds;
+          p /= 12.0;
+          for (; i++ < 5.0;) {
+            p = mod(p + b, 2.0 * b) - b;
+            s = 2.0 / dot(p, p);
+            p *= s;
+            w *= s;
+          }
+          return length(p) / w * 6.0;
+        }
 
-        colors[i * 3] *= 0.985 + life * 0.015;
-        colors[i * 3 + 1] *= 0.985 + life * 0.015;
-        colors[i * 3 + 2] *= 0.985 + life * 0.015;
+        float sdBox(vec3 p, vec3 b) {
+          vec3 q = abs(p) - b;
+          return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
+        }
+
+        float sceneMap(vec3 p, out float fogDensity) {
+          float morph = smoothstep(0.0, 3.0, uProgress);
+          float cell = mix(4.4, 2.25, morph) + 0.32 * sin(iTime + uProgress * 2.4);
+          float twist = 0.08 * p.z + uProgress * 0.32 + uClick * 0.35;
+          p.xy *= rot(twist);
+          p.xz *= rot(sin(uProgress * 1.7) * 0.18);
+
+          vec3 rp = mod(p + cell * 0.5, cell) - cell * 0.5;
+          rp.xy *= rot(p.z * (0.035 + uProgress * 0.018));
+
+          float boxSize = mix(0.62, 1.12, 0.5 + 0.5 * sin(uProgress * 2.1 + iTime * 0.7));
+          float cube = sdBox(rp, vec3(boxSize));
+          float shell = abs(cube) - mix(0.06, 0.16, morph);
+
+          float cloud = fractal(p + vec3(0.0, 0.0, iTime * 1.2 + uProgress * 4.0));
+          fogDensity = 0.045 / (0.035 + cloud * cloud);
+          fogDensity += 0.022 / (0.04 + abs(shell));
+          fogDensity *= 1.0 + uClick * 1.8;
+
+          return shell;
+        }
+
+        vec3 getNormal(vec3 p) {
+          float fog;
+          vec2 e = vec2(0.004, 0.0);
+          return normalize(vec3(
+            sceneMap(p + e.xyy, fog) - sceneMap(p - e.xyy, fog),
+            sceneMap(p + e.yxy, fog) - sceneMap(p - e.yxy, fog),
+            sceneMap(p + e.yyx, fog) - sceneMap(p - e.yyx, fog)
+          ));
+        }
+
+        void mainImage(out vec4 o, vec2 fragCoord) {
+          vec2 uv = (fragCoord + fragCoord - iResolution.xy) / iResolution.y;
+          float t = iTime * 0.32;
+          float camTravel = uProgress * 7.5 + t * 2.2;
+          vec3 ro = vec3(
+            sin(uProgress * 0.9) * 2.2,
+            0.5 + sin(uProgress * 1.4) * 0.65,
+            -12.0 + camTravel
+          );
+          vec3 target = vec3(
+            sin(uProgress * 0.72) * 1.8,
+            cos(uProgress * 1.2) * 0.55,
+            camTravel + 4.0
+          );
+
+          vec3 forward = normalize(target - ro);
+          vec3 right = normalize(cross(forward, vec3(0.0, 1.0, 0.0)));
+          vec3 up = cross(right, forward);
+          vec3 rd = normalize(forward + uv.x * right + uv.y * up);
+
+          vec3 color = vec3(0.0);
+          float total = 0.0;
+          float hitGlow = 0.0;
+          bool hit = false;
+
+          for (int i = 0; i < 72; i++) {
+            vec3 p = ro + rd * total;
+            float fog;
+            float d = sceneMap(p, fog);
+            float stepSize = clamp(abs(d) * 0.55 + 0.035, 0.035, 0.32);
+            float depthFade = exp(-total * 0.025);
+            vec3 cloudColor = 1.0 + cos(4.0 * t + 0.6 * p.z + float(i) * 0.4 + PALETTE);
+
+            color += cloudColor * fog * depthFade;
+            color += vec3(4.0, 2.0, 1.0) * 0.0015 * depthFade / max(0.15, length(uv - vec2(0.8, 0.1)));
+
+            if (d < 0.018 && !hit) {
+              vec3 n = getNormal(p);
+              float fresnel = pow(1.0 - max(dot(n, -rd), 0.0), 3.0);
+              float edge = 0.18 + fresnel * 1.8 + uClick * 0.8;
+              color += vec3(0.005, 0.004, 0.004) + vec3(7.0, 2.0, 1.0) * edge * 0.22;
+              hitGlow += edge;
+              hit = true;
+            }
+
+            total += stepSize;
+            if (total > 46.0) break;
+          }
+
+          color += hitGlow * vec3(0.8, 0.25, 0.08);
+          color = mix(color, color.yzx, smoothstep(2.0, 0.1, length(uv)));
+          color *= 1.0 + uClick * 0.35;
+          color = color * color / 3.0;
+          o.rgb = color / (1.0 + color);
+          o.a = 1.0;
+        }
+
+        void main() {
+          mainImage(gl_FragColor, gl_FragCoord.xy);
+        }
+      `,
+    });
+
+    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+
+    let targetProgress = 0;
+    let progress = 0;
+    let clickImpulse = 0;
+    let touchStartY = 0;
+
+    const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+
+    const updateSlides = () => {
+      slides.forEach((slide, index) => {
+        const distance = Math.abs(progress - index);
+        const visible = distance < 0.72;
+        const opacity = clamp(1 - distance * 1.65, 0, 1);
+        slide.classList.toggle("is-active", visible);
+        slide.style.setProperty("--slide-opacity", opacity.toFixed(3));
+        slide.style.setProperty("--slide-shift", `${((index - progress) * 42).toFixed(2)}px`);
+        slide.style.setProperty("--slide-scale", (0.94 + opacity * 0.06).toFixed(3));
+      });
+
+      if (progressBar) {
+        progressBar.style.transform = `scaleX(${(progress / maxProgress).toFixed(4)})`;
       }
-
-      geometry.attributes.position.needsUpdate = true;
-      geometry.attributes.color.needsUpdate = true;
     };
 
     const resize = () => {
       const rect = root.getBoundingClientRect();
-      width = Math.max(1, Math.round(rect.width || window.innerWidth));
-      height = Math.max(1, Math.round(rect.height || window.innerHeight));
+      const width = Math.max(1, Math.round(rect.width || window.innerWidth));
+      const height = Math.max(1, Math.round(rect.height || window.innerHeight));
       renderer.setSize(width, height, false);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
-      syncCamera();
+      uniforms.iResolution.value.set(width, height, 1);
     };
 
     window.addEventListener("resize", resize);
     window.visualViewport?.addEventListener("resize", resize);
     window.visualViewport?.addEventListener("scroll", resize);
-    window.addEventListener("contextmenu", (event) => {
-      if (root.contains(event.target)) event.preventDefault();
-    });
-    window.addEventListener("pointermove", (event) => {
-      updatePointerWorld(event.clientX, event.clientY);
-
-      if (orbit.dragging) {
-        const dx = event.clientX - orbit.x;
-        const dy = event.clientY - orbit.y;
-        orbit.x = event.clientX;
-        orbit.y = event.clientY;
-        orbit.yaw -= dx * 0.006;
-        orbit.pitch = Math.max(-1.18, Math.min(1.18, orbit.pitch - dy * 0.006));
-        syncCamera();
-      }
-    });
-    window.addEventListener("pointerdown", (event) => {
-      updatePointerWorld(event.clientX, event.clientY);
-      pointer.down = event.button === 0;
-
-      if (event.button === 2) {
-        orbit.dragging = true;
-        orbit.x = event.clientX;
-        orbit.y = event.clientY;
+    window.addEventListener(
+      "wheel",
+      (event) => {
         event.preventDefault();
-      }
+        targetProgress = clamp(targetProgress + event.deltaY * 0.0022, 0, maxProgress);
+      },
+      { passive: false },
+    );
+    window.addEventListener("click", () => {
+      clickImpulse = 1;
+      targetProgress = clamp(targetProgress + 0.38, 0, maxProgress);
     });
-    window.addEventListener("pointerup", () => {
-      pointer.down = false;
-      orbit.dragging = false;
+    window.addEventListener("touchstart", (event) => {
+      touchStartY = event.touches[0]?.clientY ?? 0;
     });
-    window.addEventListener("blur", () => {
-      pointer.down = false;
-      orbit.dragging = false;
-    });
+    window.addEventListener(
+      "touchmove",
+      (event) => {
+        const y = event.touches[0]?.clientY ?? touchStartY;
+        targetProgress = clamp(targetProgress + (touchStartY - y) * 0.008, 0, maxProgress);
+        touchStartY = y;
+        event.preventDefault();
+      },
+      { passive: false },
+    );
     resize();
-
-    const clamp = (value, min = 0, max = 100) => Math.min(Math.max(value, min), max);
-    const round = (value, precision = 3) => Number(value.toFixed(precision));
-    const adjust = (value, fromMin, fromMax, toMin, toMax) => {
-      const progress = (value - fromMin) / (fromMax - fromMin);
-      return toMin + progress * (toMax - toMin);
-    };
-
-    cards.forEach((card, index) => {
-      const image = card.dataset.image || "";
-      const slot = card.closest(".card-slot");
-      const label = slot?.querySelector(".card-caption");
-      const seedX = Math.random();
-      const seedY = Math.random();
-      let pendingInteraction = null;
-      let interactionFrame = 0;
-
-      if (label) {
-        const title = label.querySelector(".card__label-title");
-        const subtitle = label.querySelector(".card__label-subtitle");
-        if (title && card.dataset.title) title.textContent = card.dataset.title;
-        if (subtitle && card.dataset.subtitle) subtitle.textContent = card.dataset.subtitle;
-      }
-
-      card.style.setProperty("--seedx", seedX.toFixed(6));
-      card.style.setProperty("--seedy", seedY.toFixed(6));
-      if (image) {
-        card.style.setProperty("--card-image", `url("${image}")`);
-      }
-      installCardHolo(card, index);
-
-      const logHolo = (eventName) => {
-        console.log("[card-holo]", eventName, {
-          index,
-          effect: card.dataset.holoEffect,
-          rarity: card.dataset.rarity,
-          subtypes: card.dataset.subtypes,
-          supertype: card.dataset.supertype,
-          trainerGallery: card.dataset.trainerGallery,
-        });
-      };
-      logHolo("init");
-
-      const applyInteraction = ({ percentX, percentY }) => {
-        const centerX = percentX - 50;
-        const centerY = percentY - 50;
-        const fromCenter = clamp(Math.sqrt(centerY * centerY + centerX * centerX) / 50, 0, 1);
-
-        card.classList.add("interacting");
-        card.style.setProperty("--pointer-x", `${percentX}%`);
-        card.style.setProperty("--pointer-y", `${percentY}%`);
-        card.style.setProperty("--pointer-from-center", fromCenter.toFixed(4));
-        card.style.setProperty("--pointer-from-left", `${percentX / 100}`);
-        card.style.setProperty("--pointer-from-top", `${percentY / 100}`);
-        card.style.setProperty("--background-x", `${adjust(percentX, 0, 100, 37, 63).toFixed(3)}%`);
-        card.style.setProperty("--background-y", `${adjust(percentY, 0, 100, 33, 67).toFixed(3)}%`);
-        card.style.setProperty("--rotate-x", `${round(-(centerX / 3.5))}deg`);
-        card.style.setProperty("--rotate-y", `${round(centerY / 3.5)}deg`);
-        card.style.setProperty("--card-opacity", "1");
-      };
-
-      const scheduleInteraction = (event) => {
-        if (event.pointerType === "touch") return;
-
-        const rect = card.getBoundingClientRect();
-        const absoluteX = event.clientX - rect.left;
-        const absoluteY = event.clientY - rect.top;
-        pendingInteraction = {
-          percentX: clamp(round((100 / rect.width) * absoluteX)),
-          percentY: clamp(round((100 / rect.height) * absoluteY)),
-        };
-
-        if (interactionFrame) return;
-        interactionFrame = requestAnimationFrame(() => {
-          if (pendingInteraction) {
-            applyInteraction(pendingInteraction);
-            pendingInteraction = null;
-          }
-          interactionFrame = 0;
-        });
-      };
-
-      card.addEventListener("pointerenter", () => logHolo("pointerenter"));
-      card.addEventListener("mouseover", () => logHolo("mouseover"));
-      card.addEventListener("pointerenter", scheduleInteraction);
-      card.addEventListener("pointermove", scheduleInteraction);
-
-      card.addEventListener("pointerleave", () => {
-        if (interactionFrame) {
-          cancelAnimationFrame(interactionFrame);
-          interactionFrame = 0;
-        }
-        pendingInteraction = null;
-        card.classList.remove("interacting");
-        card.style.setProperty("--pointer-x", "50%");
-        card.style.setProperty("--pointer-y", "50%");
-        card.style.setProperty("--pointer-from-center", "0");
-        card.style.setProperty("--pointer-from-left", "0");
-        card.style.setProperty("--pointer-from-top", "0");
-        card.style.setProperty("--background-x", "50%");
-        card.style.setProperty("--background-y", "50%");
-        card.style.setProperty("--rotate-x", "0deg");
-        card.style.setProperty("--rotate-y", "0deg");
-        card.style.setProperty("--card-opacity", "0");
-      });
-    });
-
-    let lastTime = performance.now();
+    updateSlides();
 
     const animate = (now) => {
-      const deltaSeconds = Math.min(0.05, (now - lastTime) * 0.001 || 0.016);
-      const seconds = now * 0.001;
-      lastTime = now;
-
-      if (!pointer.active) {
-        pointer.x = Math.sin(seconds * 0.45) * 10;
-        pointer.y = Math.cos(seconds * 0.31) * 5;
-        pointer.z = 0;
-      }
-
-      emitBurst(pointer.active ? Math.round(emitRate * deltaSeconds) : 24, seconds);
-      updateParticles(deltaSeconds);
+      progress += (targetProgress - progress) * 0.075;
+      clickImpulse *= 0.9;
+      uniforms.iTime.value = now * 0.001;
+      uniforms.uProgress.value = progress;
+      uniforms.uClick.value = clickImpulse;
+      updateSlides();
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
