@@ -139,7 +139,7 @@ if (root) {
         }
 
         vec3 cubeLocal(vec3 p, vec3 origin) {
-          vec3 cubeCenter = vec3(origin.x + 0.35, 0.42, 4.35);
+          vec3 cubeCenter = vec3(origin.x + 10.0, 0.42, origin.z + 10.0);
           vec3 q = p - cubeCenter;
           q = createRotationMatrixAxisAngle(normalize(vec3(0.0, 1.0, 0.25)), iTime * 0.28) * q;
           q = createRotationMatrixAxisAngle(normalize(vec3(1.0, 0.0, 0.2)), iTime * 0.18) * q;
