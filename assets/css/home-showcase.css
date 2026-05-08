@@ -130,6 +130,29 @@ body:has(.home-field) {
   line-height: 1.65;
 }
 
+.home-slide p a {
+  display: inline;
+  min-height: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  color: #d9fbff;
+  background: transparent;
+  box-shadow: none;
+  font-size: inherit;
+  font-weight: 800;
+  line-height: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+  backdrop-filter: none;
+}
+
+.home-slide p a:hover {
+  color: #fff;
+  background: transparent;
+}
+
 .home-slide img {
   display: block;
   width: 100%;
