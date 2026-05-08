@@ -78,20 +78,17 @@ if (root) {
         }
 
         float sceneMap(vec3 p, out float fogDensity) {
-          float morph = smoothstep(0.0, 3.0, uProgress);
-          float cell = mix(4.4, 2.25, morph) + 0.32 * sin(iTime + uProgress * 2.4);
-          float twist = 0.08 * p.z + uProgress * 0.32 + uClick * 0.35;
-          p.xy *= rot(twist);
-          p.xz *= rot(sin(uProgress * 1.7) * 0.18);
-
+          float cell = 4.4;
           vec3 rp = mod(p + cell * 0.5, cell) - cell * 0.5;
-          rp.xy *= rot(p.z * (0.035 + uProgress * 0.018));
+          rp.xy *= rot(iTime * 0.42);
+          rp.xz *= rot(iTime * 0.31);
+          rp.yz *= rot(iTime * 0.27);
 
-          float boxSize = mix(0.62, 1.12, 0.5 + 0.5 * sin(uProgress * 2.1 + iTime * 0.7));
+          float boxSize = 0.82;
           float cube = sdBox(rp, vec3(boxSize));
-          float shell = abs(cube) - mix(0.06, 0.16, morph);
+          float shell = abs(cube) - 0.08;
 
-          float cloud = fractal(p + vec3(0.0, 0.0, iTime * 1.2 + uProgress * 4.0));
+          float cloud = fractal(p + vec3(0.0, 0.0, iTime * 1.2));
           fogDensity = 0.045 / (0.035 + cloud * cloud);
           fogDensity += 0.022 / (0.04 + abs(shell));
           fogDensity *= 1.0 + uClick * 1.8;
@@ -112,17 +109,8 @@ if (root) {
         void mainImage(out vec4 o, vec2 fragCoord) {
           vec2 uv = (fragCoord + fragCoord - iResolution.xy) / iResolution.y;
           float t = iTime * 0.32;
-          float camTravel = uProgress * 7.5 + t * 2.2;
-          vec3 ro = vec3(
-            sin(uProgress * 0.9) * 2.2,
-            0.5 + sin(uProgress * 1.4) * 0.65,
-            -12.0 + camTravel
-          );
-          vec3 target = vec3(
-            sin(uProgress * 0.72) * 1.8,
-            cos(uProgress * 1.2) * 0.55,
-            camTravel + 4.0
-          );
+          vec3 ro = vec3(0.0, 0.45, -24.0);
+          vec3 target = vec3(0.0, 0.0, 0.0);
 
           vec3 forward = normalize(target - ro);
           vec3 right = normalize(cross(forward, vec3(0.0, 1.0, 0.0)));
