@@ -89,6 +89,11 @@ body:has(.home-field) {
   pointer-events: auto;
 }
 
+.home-slide--text {
+  grid-template-columns: minmax(0, 760px);
+  justify-content: start;
+}
+
 .home-slide__copy {
   min-width: 0;
   color: #effcff;
