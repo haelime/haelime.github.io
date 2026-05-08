@@ -57,7 +57,7 @@ if (root) {
 
         float sceneMap(vec3 p) {
           float cell = 4.4;
-          vec3 rp = mod(p + cell * 0.5, cell) - cell * 0.5;
+          vec3 rp = vec3(mod(p.xy + cell * 0.5, cell) - cell * 0.5, p.z);
           rp.xy *= rot(iTime * 0.42);
           rp.xz *= rot(iTime * 0.31);
           rp.yz *= rot(iTime * 0.27);
@@ -75,7 +75,7 @@ if (root) {
 
         void mainImage(out vec4 o, vec2 fragCoord) {
           vec2 uv = (fragCoord + fragCoord - iResolution.xy) / iResolution.y;
-          vec3 ro = vec3(0.0, 0.0, -22.0);
+          vec3 ro = vec3(0.0, 0.0, -18.0);
           vec3 target = vec3(0.0, 0.0, 0.0);
 
           vec3 forward = normalize(target - ro);
