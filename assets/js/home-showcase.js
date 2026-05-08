@@ -129,6 +129,28 @@ if (root) {
             * proj;
         }
 
+        vec3 getCubeCenter() {
+          return vec3(0.35, 0.58, 5.15);
+        }
+
+        vec3 getOrbitOrigin(vec3 cubeCenter) {
+          float angle = iTime * 0.1;
+          float radius = 7.0;
+          return vec3(
+            cubeCenter.x + sin(angle) * radius,
+            uCameraHeight,
+            cubeCenter.z + cos(angle) * radius
+          );
+        }
+
+        vec3 getOrbitRay(vec2 fragCoord, vec3 origin, vec3 target) {
+          vec2 uv = ((fragCoord.xy / iResolution.xy) * 2.0 - 1.0) * vec2(iResolution.x / iResolution.y, 1.0);
+          vec3 forward = normalize(target - origin);
+          vec3 right = normalize(cross(forward, vec3(0.0, 1.0, 0.0)));
+          vec3 up = cross(right, forward);
+          return normalize(forward * 1.5 + right * uv.x + up * uv.y);
+        }
+
         float intersectPlane(vec3 origin, vec3 direction, vec3 point, vec3 normal) {
           return clamp(dot(point - origin, normal) / dot(direction, normal), -1.0, 9991999.0);
         }
@@ -138,24 +160,23 @@ if (root) {
           return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
         }
 
-        vec3 cubeLocal(vec3 p, vec3 origin) {
-          vec3 cubeCenter = vec3(origin.x + 0.35, 0.58, 5.15);
+        vec3 cubeLocal(vec3 p, vec3 cubeCenter) {
           vec3 q = p - cubeCenter;
           q = createRotationMatrixAxisAngle(normalize(vec3(0.0, 1.0, 0.25)), iTime * 0.28) * q;
           q = createRotationMatrixAxisAngle(normalize(vec3(1.0, 0.0, 0.2)), iTime * 0.18) * q;
           return q;
         }
 
-        float cubeMap(vec3 p, vec3 origin) {
-          return sdBox(cubeLocal(p, origin), vec3(0.46));
+        float cubeMap(vec3 p, vec3 cubeCenter) {
+          return sdBox(cubeLocal(p, cubeCenter), vec3(0.46));
         }
 
-        float raymarchCube(vec3 origin, vec3 ray, bool mobile) {
+        float raymarchCube(vec3 origin, vec3 ray, vec3 cubeCenter, bool mobile) {
           float total = 0.0;
           for (int i = 0; i < 48; i++) {
             if (mobile && i >= 28) break;
             vec3 p = origin + ray * total;
-            float d = cubeMap(p, origin);
+            float d = cubeMap(p, cubeCenter);
             if (d < 0.003) return total;
             total += max(d * 0.82, 0.012);
             if (total > 12.0) break;
@@ -163,18 +184,18 @@ if (root) {
           return -1.0;
         }
 
-        vec3 cubeNormal(vec3 p, vec3 origin) {
+        vec3 cubeNormal(vec3 p, vec3 cubeCenter) {
           vec2 e = vec2(0.004, 0.0);
           return normalize(vec3(
-            cubeMap(p + e.xyy, origin) - cubeMap(p - e.xyy, origin),
-            cubeMap(p + e.yxy, origin) - cubeMap(p - e.yxy, origin),
-            cubeMap(p + e.yyx, origin) - cubeMap(p - e.yyx, origin)
+            cubeMap(p + e.xyy, cubeCenter) - cubeMap(p - e.xyy, cubeCenter),
+            cubeMap(p + e.yxy, cubeCenter) - cubeMap(p - e.yxy, cubeCenter),
+            cubeMap(p + e.yyx, cubeCenter) - cubeMap(p - e.yyx, cubeCenter)
           ));
         }
 
-        vec3 renderCube(vec3 origin, vec3 ray, float dist) {
+        vec3 renderCube(vec3 origin, vec3 ray, float dist, vec3 cubeCenter) {
           vec3 p = origin + ray * dist;
-          vec3 n = cubeNormal(p, origin);
+          vec3 n = cubeNormal(p, cubeCenter);
           vec3 lightDir = normalize(vec3(-0.45, 0.8, -0.35));
           float diffuse = max(dot(n, lightDir), 0.0);
           float rim = pow(1.0 - max(dot(n, -ray), 0.0), 3.0);
@@ -224,16 +245,17 @@ if (root) {
         }
 
         void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-          vec3 ray = getRay(fragCoord);
-          vec3 origin = vec3(iTime * 0.2, uCameraHeight, 1.0);
+          vec3 cubeCenter = getCubeCenter();
+          vec3 origin = getOrbitOrigin(cubeCenter);
+          vec3 ray = getOrbitRay(fragCoord, origin, cubeCenter);
           bool mobile = iResolution.x < 700.0;
           int rayIterations = mobile ? 8 : ITERATIONS_RAYMARCH;
           int normalIterations = mobile ? 20 : ITERATIONS_NORMAL;
-          float cubeDist = raymarchCube(origin, ray, mobile);
+          float cubeDist = raymarchCube(origin, ray, cubeCenter, mobile);
 
           if (ray.y >= 0.0) {
             if (cubeDist > 0.0) {
-              fragColor = vec4(aces_tonemap(renderCube(origin, ray, cubeDist) * 2.0), 1.0);
+              fragColor = vec4(aces_tonemap(renderCube(origin, ray, cubeDist, cubeCenter) * 2.0), 1.0);
               return;
             }
             vec3 C = getAtmosphere(ray) + getSun(ray);
@@ -251,7 +273,7 @@ if (root) {
 
           float dist = raymarchwater(origin, highHitPos, lowHitPos, WATER_DEPTH, rayIterations);
           if (cubeDist > 0.0 && cubeDist < dist) {
-            fragColor = vec4(aces_tonemap(renderCube(origin, ray, cubeDist) * 2.0), 1.0);
+            fragColor = vec4(aces_tonemap(renderCube(origin, ray, cubeDist, cubeCenter) * 2.0), 1.0);
             return;
           }
           vec3 waterHitPos = origin + ray * dist;
