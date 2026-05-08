@@ -126,6 +126,29 @@ body:has(.home-field) {
   font-size: clamp(2.1rem, 5.8vw, 5.1rem);
 }
 
+.home-slide h2 a {
+  display: inline;
+  min-height: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  backdrop-filter: none;
+}
+
+.home-slide h2 a:hover {
+  color: #fff;
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
 .home-slide p:not(.home-slide__kicker) {
   max-width: 620px;
   margin: 1rem 0 0;
