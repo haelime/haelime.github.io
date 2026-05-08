@@ -27,6 +27,7 @@ if (root) {
     const uniforms = {
       iTime: { value: 0 },
       iResolution: { value: new THREE.Vector3(1, 1, 1) },
+      uScroll: { value: 0 },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -43,64 +44,77 @@ if (root) {
 
         uniform vec3 iResolution;
         uniform float iTime;
+        uniform float uScroll;
 
-        mat2 rot(float a) {
-          float s = sin(a);
-          float c = cos(a);
-          return mat2(c, -s, s, c);
+        float hash(vec2 p) {
+          return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
         }
 
-        float sdBox(vec3 p, vec3 b) {
-          vec3 q = abs(p) - b;
-          return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
+        float noise(vec2 p) {
+          vec2 i = floor(p);
+          vec2 f = fract(p);
+          f = f * f * (3.0 - 2.0 * f);
+          float a = hash(i);
+          float b = hash(i + vec2(1.0, 0.0));
+          float c = hash(i + vec2(0.0, 1.0));
+          float d = hash(i + vec2(1.0, 1.0));
+          return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
         }
 
-        float sceneMap(vec3 p) {
-          float cell = 4.4;
-          vec3 rp = vec3(mod(p.xy + cell * 0.5, cell) - cell * 0.5, p.z);
-          rp.xy *= rot(iTime * 0.42);
-          rp.xz *= rot(iTime * 0.31);
-          rp.yz *= rot(iTime * 0.27);
-          return sdBox(rp, vec3(0.86));
+        float fbm(vec2 p) {
+          float value = 0.0;
+          float amp = 0.5;
+          for (int i = 0; i < 5; i++) {
+            value += noise(p) * amp;
+            p = p * 2.03 + 11.7;
+            amp *= 0.5;
+          }
+          return value;
         }
 
-        vec3 getNormal(vec3 p) {
-          vec2 e = vec2(0.004, 0.0);
-          return normalize(vec3(
-            sceneMap(p + e.xyy) - sceneMap(p - e.xyy),
-            sceneMap(p + e.yxy) - sceneMap(p - e.yxy),
-            sceneMap(p + e.yyx) - sceneMap(p - e.yyx)
-          ));
+        float caustic(vec2 p, float t) {
+          float a = sin(p.x * 8.0 + t) + sin(p.y * 7.0 - t * 1.2);
+          float b = sin((p.x + p.y) * 6.0 + t * 0.7);
+          return pow(max(0.0, 1.0 - abs(a + b) * 0.42), 5.0);
         }
 
         void mainImage(out vec4 o, vec2 fragCoord) {
           vec2 uv = (fragCoord + fragCoord - iResolution.xy) / iResolution.y;
-          vec3 ro = vec3(0.0, 0.0, -18.0);
-          vec3 target = vec3(0.0, 0.0, 0.0);
+          float t = iTime;
+          float cameraY = -uScroll * 1.35;
+          vec3 ro = vec3(0.0, cameraY, -2.8);
+          vec3 rd = normalize(vec3(uv * 0.92, 1.55));
 
-          vec3 forward = normalize(target - ro);
-          vec3 right = normalize(cross(forward, vec3(0.0, 1.0, 0.0)));
-          vec3 up = cross(right, forward);
-          vec3 rd = normalize(forward + uv.x * right + uv.y * up);
+          vec3 waterTop = vec3(0.56, 0.9, 1.0);
+          vec3 waterDeep = vec3(0.0, 0.09, 0.18);
+          vec3 color = mix(waterTop, waterDeep, clamp(-cameraY / 4.0, 0.0, 1.0));
+          float volume = 0.0;
+          float shafts = 0.0;
+          float sparkle = 0.0;
 
-          vec3 color = vec3(1.0);
-          float total = 0.0;
+          for (int i = 0; i < 64; i++) {
+            float d = float(i) * 0.13;
+            vec3 p = ro + rd * d;
 
-          for (int i = 0; i < 96; i++) {
-            vec3 p = ro + rd * total;
-            float d = sceneMap(p);
+            float surfaceWarp = fbm(p.xz * 0.18 + vec2(t * 0.035, -t * 0.025));
+            float density = fbm(p.xz * 0.55 + vec2(t * 0.05, p.y * 0.03));
+            density = smoothstep(0.18, 0.92, density) * exp(-max(0.0, -p.y) * 0.08);
 
-            if (d < 0.002) {
-              vec3 n = getNormal(p);
-              float light = 0.18 + 0.82 * max(dot(n, normalize(vec3(-0.4, 0.7, -0.6))), 0.0);
-              color = vec3(0.0) + vec3(0.16) * light;
-              break;
-            }
+            float rayBand = sin((p.x + surfaceWarp * 3.0) * 2.7 + p.y * 0.34 + t * 0.45);
+            rayBand += sin((p.z - surfaceWarp * 2.0) * 2.1 - p.y * 0.25 - t * 0.32);
+            float lightRay = pow(max(0.0, rayBand * 0.5 + 0.5), 8.0);
+            lightRay *= 1.0 - smoothstep(-2.5, 1.2, p.y);
 
-            total += max(d * 0.72, 0.015);
-            if (total > 54.0) break;
+            float c = caustic(p.xz * 0.34 + surfaceWarp, t);
+            volume += density * 0.018;
+            shafts += lightRay * (0.02 + density * 0.035);
+            sparkle += c * 0.008 * (1.0 - smoothstep(-3.6, 1.4, p.y));
           }
 
+          color += vec3(0.18, 0.62, 0.95) * volume;
+          color += vec3(0.72, 0.96, 1.0) * shafts;
+          color += vec3(0.85, 1.0, 0.92) * sparkle;
+          color *= 1.0 - smoothstep(0.7, 2.2, length(uv)) * 0.28;
           o.rgb = color;
           o.a = 1.0;
         }
@@ -176,6 +190,7 @@ if (root) {
     const animate = (now) => {
       progress += (targetProgress - progress) * 0.075;
       uniforms.iTime.value = now * 0.001;
+      uniforms.uScroll.value = progress;
       updateSlides();
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
