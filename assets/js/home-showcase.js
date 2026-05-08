@@ -20,86 +20,214 @@ if (root) {
     });
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setClearColor(0x02030a, 1);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    const uniforms = {
-      iTime: { value: 0 },
-      iResolution: { value: new THREE.Vector3(1, 1, 1) },
+    const camera = new THREE.PerspectiveCamera(48, 1, 0.1, 240);
+    const raycaster = new THREE.Raycaster();
+    const pointerNdc = new THREE.Vector2(0, 0);
+    const pointerWorld = new THREE.Vector3(0, 0, 0);
+    const particlePlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const orbitTarget = new THREE.Vector3(0, 0, 0);
+    const orbit = {
+      yaw: 0,
+      pitch: 0.22,
+      radius: 42,
+      dragging: false,
+      x: 0,
+      y: 0,
+    };
+    const particleLimit = 70000;
+    const emitRate = 620;
+    const positions = new Float32Array(particleLimit * 3);
+    const colors = new Float32Array(particleLimit * 3);
+    const velocities = new Float32Array(particleLimit * 3);
+    const ages = new Float32Array(particleLimit);
+    const lifetimes = new Float32Array(particleLimit);
+    const geometry = new THREE.BufferGeometry();
+    const color = new THREE.Color();
+    const pointer = {
+      x: 0,
+      y: 0,
+      z: 0,
+      active: false,
+      down: false,
+    };
+    let width = 1;
+    let height = 1;
+    let particleCursor = 0;
+    let activeParticles = 0;
+
+    geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    geometry.setDrawRange(0, 0);
+
+    const particles = new THREE.Points(
+      geometry,
+      new THREE.PointsMaterial({
+        size: 0.18,
+        sizeAttenuation: true,
+        transparent: true,
+        opacity: 0.68,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        depthTest: false,
+      }),
+    );
+    scene.add(particles);
+
+    const colorForTime = (seconds) => {
+      color.setRGB(
+        (Math.sin(seconds) + 1) * 0.5,
+        (Math.sin(seconds + (4 * Math.PI) / 3) + 1) * 0.5,
+        1,
+      );
+      return color;
     };
 
-    const material = new THREE.ShaderMaterial({
-      depthWrite: false,
-      depthTest: false,
-      uniforms,
-      vertexShader: `
-        void main() {
-          gl_Position = vec4(position.xy, 0.0, 1.0);
+    const syncCamera = () => {
+      const radiusXZ = Math.cos(orbit.pitch) * orbit.radius;
+      camera.position.set(
+        Math.sin(orbit.yaw) * radiusXZ,
+        Math.sin(orbit.pitch) * orbit.radius,
+        Math.cos(orbit.yaw) * radiusXZ,
+      );
+      camera.lookAt(orbitTarget);
+    };
+
+    const updatePointerWorld = (clientX, clientY) => {
+      const rect = root.getBoundingClientRect();
+      pointerNdc.x = ((clientX - rect.left) / Math.max(1, rect.width)) * 2 - 1;
+      pointerNdc.y = -(((clientY - rect.top) / Math.max(1, rect.height)) * 2 - 1);
+      raycaster.setFromCamera(pointerNdc, camera);
+      raycaster.ray.intersectPlane(particlePlane, pointerWorld);
+      pointer.x = pointerWorld.x;
+      pointer.y = pointerWorld.y;
+      pointer.z = pointerWorld.z;
+      pointer.active = true;
+    };
+
+    const emitParticle = (x, y, z, seconds) => {
+      const index = particleCursor;
+      const angle = Math.random() * Math.PI * 2;
+      const radial = Math.sqrt(Math.random()) * 3.8;
+      const zSpread = (Math.random() - 0.5) * 3.8;
+      const speed = 4 + Math.random() * 7.5;
+      const particleColor = colorForTime(seconds);
+
+      positions[index * 3] = x + Math.cos(angle) * radial;
+      positions[index * 3 + 1] = y + Math.sin(angle) * radial;
+      positions[index * 3 + 2] = z + zSpread;
+      colors[index * 3] = particleColor.r;
+      colors[index * 3 + 1] = particleColor.g;
+      colors[index * 3 + 2] = particleColor.b;
+      velocities[index * 3] = Math.cos(angle) * speed;
+      velocities[index * 3 + 1] = Math.sin(angle) * speed;
+      velocities[index * 3 + 2] = (Math.random() - 0.5) * speed;
+      ages[index] = 0;
+      lifetimes[index] = 2.2 + Math.random() * 2.8;
+
+      particleCursor = (particleCursor + 1) % particleLimit;
+      activeParticles = Math.min(activeParticles + 1, particleLimit);
+    };
+
+    const emitBurst = (count, seconds) => {
+      for (let i = 0; i < count; i += 1) {
+        emitParticle(pointer.x, pointer.y, pointer.z, seconds);
+      }
+      geometry.setDrawRange(0, activeParticles);
+    };
+
+    const updateParticles = (deltaSeconds) => {
+      const strength = pointer.down ? 270 : 74;
+      const drag = Math.max(0, 1 - deltaSeconds * 1.8);
+
+      for (let i = 0; i < activeParticles; i += 1) {
+        ages[i] += deltaSeconds;
+
+        if (ages[i] > lifetimes[i]) {
+          colors[i * 3] = 0;
+          colors[i * 3 + 1] = 0;
+          colors[i * 3 + 2] = 0;
+          continue;
         }
-      `,
-      fragmentShader: `
-        precision highp float;
 
-        uniform vec3 iResolution;
-        uniform float iTime;
+        const px = positions[i * 3];
+        const py = positions[i * 3 + 1];
+        const pz = positions[i * 3 + 2];
+        const dx = pointer.x - px;
+        const dy = pointer.y - py;
+        const dz = pointer.z - pz;
+        const distanceSq = Math.max(dx * dx + dy * dy + dz * dz, 1.6);
+        const distance = Math.sqrt(distanceSq);
+        const acceleration = (strength / distanceSq) * deltaSeconds;
+        const life = Math.max(0, 1 - ages[i] / lifetimes[i]);
 
-        // CC0: Trailing the Twinkling Tunnelwisp
-        float gyroid(vec4 p, float scale) {
-          p *= scale;
-          return abs(dot(sin(p), cos(p.zxwy)) - 1.0) / scale;
-        }
+        velocities[i * 3] = (velocities[i * 3] + (dx / distance) * acceleration) * drag;
+        velocities[i * 3 + 1] = (velocities[i * 3 + 1] + (dy / distance) * acceleration) * drag;
+        velocities[i * 3 + 2] = (velocities[i * 3 + 2] + (dz / distance) * acceleration) * drag;
+        positions[i * 3] += velocities[i * 3] * deltaSeconds;
+        positions[i * 3 + 1] += velocities[i * 3 + 1] * deltaSeconds;
+        positions[i * 3 + 2] += velocities[i * 3 + 2] * deltaSeconds;
 
-        void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-          float i = 0.0;
-          float d = 0.0;
-          float z = 0.0;
-          float s = 0.0;
-          float t = iTime;
-          vec4 color = vec4(0.0);
-          vec4 q = vec4(0.0);
-          vec4 p = vec4(0.0);
-          vec4 U = vec4(2.0, 1.0, 0.0, 3.0);
-          vec2 resolution = iResolution.xy;
+        colors[i * 3] *= 0.985 + life * 0.015;
+        colors[i * 3 + 1] *= 0.985 + life * 0.015;
+        colors[i * 3 + 2] *= 0.985 + life * 0.015;
+      }
 
-          for (; ++i < 79.0; z += d + 5e-4) {
-            q = vec4(normalize(vec3(fragCoord - 0.5 * resolution, resolution.y)) * z, 0.2);
-            q.z += t / 30.0;
-
-            s = q.y + 0.1;
-            q.y = abs(s);
-            p = q;
-            p.y -= 0.11;
-            p.xy *= mat2(cos(11.0 * U.zywz - 2.0 * p.z));
-            p.y -= 0.2;
-
-            d = abs(gyroid(p, 8.0) - gyroid(p, 24.0)) / 4.0;
-            p = 1.0 + cos(0.7 * U + 5.0 * q.z);
-            color += (s > 0.0 ? 1.0 : 0.1) * p.w * p / max(s > 0.0 ? d : d * d * d, 5e-4);
-          }
-
-          color += (1.4 + sin(t) * sin(1.7 * t) * sin(2.3 * t)) * 1e3 * U / length(q.xy);
-          fragColor = tanh(color / 1e5);
-        }
-
-        void main() {
-          mainImage(gl_FragColor, gl_FragCoord.xy);
-        }
-      `,
-    });
-
-    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material));
+      geometry.attributes.position.needsUpdate = true;
+      geometry.attributes.color.needsUpdate = true;
+    };
 
     const resize = () => {
       const rect = root.getBoundingClientRect();
-      const width = Math.max(1, Math.round(rect.width || window.innerWidth));
-      const height = Math.max(1, Math.round(rect.height || window.innerHeight));
+      width = Math.max(1, Math.round(rect.width || window.innerWidth));
+      height = Math.max(1, Math.round(rect.height || window.innerHeight));
       renderer.setSize(width, height, false);
-      uniforms.iResolution.value.set(width, height, 1);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      syncCamera();
     };
 
     window.addEventListener("resize", resize);
     window.visualViewport?.addEventListener("resize", resize);
     window.visualViewport?.addEventListener("scroll", resize);
+    window.addEventListener("contextmenu", (event) => {
+      if (root.contains(event.target)) event.preventDefault();
+    });
+    window.addEventListener("pointermove", (event) => {
+      updatePointerWorld(event.clientX, event.clientY);
+
+      if (orbit.dragging) {
+        const dx = event.clientX - orbit.x;
+        const dy = event.clientY - orbit.y;
+        orbit.x = event.clientX;
+        orbit.y = event.clientY;
+        orbit.yaw -= dx * 0.006;
+        orbit.pitch = Math.max(-1.18, Math.min(1.18, orbit.pitch - dy * 0.006));
+        syncCamera();
+      }
+    });
+    window.addEventListener("pointerdown", (event) => {
+      updatePointerWorld(event.clientX, event.clientY);
+      pointer.down = event.button === 0;
+
+      if (event.button === 2) {
+        orbit.dragging = true;
+        orbit.x = event.clientX;
+        orbit.y = event.clientY;
+        event.preventDefault();
+      }
+    });
+    window.addEventListener("pointerup", () => {
+      pointer.down = false;
+      orbit.dragging = false;
+    });
+    window.addEventListener("blur", () => {
+      pointer.down = false;
+      orbit.dragging = false;
+    });
     resize();
 
     const clamp = (value, min = 0, max = 100) => Math.min(Math.max(value, min), max);
@@ -131,6 +259,7 @@ if (root) {
         card.style.setProperty("--card-image", `url("${image}")`);
       }
       installCardHolo(card, index);
+
       const logHolo = (eventName) => {
         console.log("[card-holo]", eventName, {
           index,
@@ -207,8 +336,21 @@ if (root) {
       });
     });
 
+    let lastTime = performance.now();
+
     const animate = (now) => {
-      uniforms.iTime.value = now * 0.001;
+      const deltaSeconds = Math.min(0.05, (now - lastTime) * 0.001 || 0.016);
+      const seconds = now * 0.001;
+      lastTime = now;
+
+      if (!pointer.active) {
+        pointer.x = Math.sin(seconds * 0.45) * 10;
+        pointer.y = Math.cos(seconds * 0.31) * 5;
+        pointer.z = 0;
+      }
+
+      emitBurst(pointer.active ? Math.round(emitRate * deltaSeconds) : 24, seconds);
+      updateParticles(deltaSeconds);
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     };
