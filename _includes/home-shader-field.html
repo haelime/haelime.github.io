@@ -28,9 +28,7 @@
     <div class="card-slot">
       <a
         class="card interactive fire"
-        href="https://github.com/haelime"
-        target="_blank"
-        rel="noopener"
+        href="{{ '/projects/' | relative_url }}"
         aria-label="projects"
         data-card
         data-image="{{ '/assets/img/card-shader.svg' | relative_url }}"
@@ -50,7 +48,7 @@
     <div class="card-slot">
       <a
         class="card interactive grass"
-        href="{{ '/about/#stack' | relative_url }}"
+        href="{{ '/resume/' | relative_url }}"
         aria-label="resume"
         data-card
         data-image="{{ '/assets/img/card-engine.svg' | relative_url }}"
@@ -90,8 +88,8 @@
 
   <nav class="home-field__links" aria-label="Portfolio links">
     <a href="{{ '/about/' | relative_url }}">about</a>
-    <a href="https://github.com/haelime" target="_blank" rel="noopener">projects</a>
-    <a href="{{ '/about/#stack' | relative_url }}">resume</a>
+    <a href="{{ '/projects/' | relative_url }}">projects</a>
+    <a href="{{ '/resume/' | relative_url }}">resume</a>
     <a href="{{ '/archives/' | relative_url }}">more+</a>
   </nav>
 </section>
