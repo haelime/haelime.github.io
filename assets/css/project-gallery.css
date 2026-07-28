@@ -29,7 +29,7 @@
   background: var(--main-bg);
 }
 
-.project-card__thumbnail .img-link {
+.project-card__thumbnail a.img-link {
   display: block;
   width: 100%;
   height: 100%;

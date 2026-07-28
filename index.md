@@ -1,5 +1,6 @@
 ---
 layout: page
+permalink: /
 title: Home
 description: "게임플레이, 멀티플레이, 그래픽스 시스템을 구현하는 C++/C# 게임 프로그래머 Hae Eem의 포트폴리오"
 ---
