@@ -1,5 +1,4 @@
 ---
-# the default layout is 'page'
 title: About
 icon: fas fa-info-circle
 order: 1
@@ -7,35 +6,32 @@ order: 1
 
 ## Hae Eem
 
-성능의 한계를 넓히는 C++ 엔지니어입니다.
+플레이어가 직접 경험하는 게임플레이와 그 아래의 실시간 시스템을 구현하는 **C++ 게임 프로그래머**입니다.
 
-자율주행 셔틀의 FSM 제어 로직, watchdog 기반 진단/복구 모듈, Python 검증 툴을 설계 및 개발하며, 실무 환경에서 요구되는 고신뢰성 소프트웨어 개발 역량을 체득했습니다.
+게임 규칙을 명확한 상태와 데이터 흐름으로 표현하고, 클라이언트와 서버가 일관된 결과를 만들며, 제한된 프레임 안에서 많은 객체를 처리하는 문제에 관심이 있습니다.
 
-최적화에 주력하며, 하드웨어 성능을 극한까지 활용하는 구조를 지향합니다.
+Unity 클라이언트와 authoritative 서버로 구성한 실시간 전략 게임을 개발하며 인증, 매칭, 게임 입장, 전투 판정 흐름을 구현했습니다. Vulkan 렌더링 엔진과 GPU 군집 시뮬레이션을 통해 렌더링 파이프라인과 병렬 연산도 직접 다루고 있습니다.
 
-42 커리큘럼에서 C/C++ 기반 시스템 프로젝트, shell과 표준 라이브러리 재구현, 3D 그래픽스 엔진 제작을 경험했습니다. 현재는 대규모 시뮬레이션, GPU 기반 연산, 렌더링 파이프라인에 관심을 두고 있습니다.
-
-예측 가능한 코드가 가장 빠른 코드라는 믿음으로, 명확한 의도가 담긴 코드를 작성하여 유지보수성과 안정성을 동시에 확보합니다.
+자율주행 셔틀 개발 실무에서는 C++/ROS2 기반 FSM, watchdog 진단/복구 모듈, Python 검증 도구를 개발했습니다. 실패가 허용되지 않는 환경에서 얻은 상태 관리와 디버깅 경험을 게임 시스템 설계에 적용합니다.
 
 ## Focus
 
-- C++ 기반 시스템 소프트웨어와 로우레벨 데이터 제어
-- FSM, watchdog, fail-safe 중심의 안정적인 제어 구조
-- 메모리 관리, 프로세스/스레드 동기화, 알고리즘 최적화
-- DOTS와 Compute Shader를 활용한 대규모 시뮬레이션
-- 커스텀 바이너리 패킷 통신과 권한형 서버 시뮬레이션
-- 메모리 최적화, 그래픽스 최적화, 실시간 디버깅 워크플로우
+- 입력, 상태 전이, 게임 규칙을 연결하는 gameplay programming
+- 서버 권한 판정과 binary packet 기반 multiplayer programming
+- C++ 기반 engine system과 memory/resource management
+- Vulkan, GLSL, Compute Shader 기반 graphics programming
+- profiling과 재현 가능한 realtime debugging workflow
 
 ## Stack
 
-`C++` `ROS2` `Python` `PyQt` `Unity DOTS` `Compute Shader` `Vulkan` `GLSL` `CMake` `RenderDoc`
+`C++` `C#` `Unity` `Vulkan` `GLSL` `Compute Shader` `TCP` `CMake` `RenderDoc` `Python`
 
 ## Direction
 
-신입 C++ 개발자로서 로우레벨 시스템과 그래픽스 개발 역량을 계속 확장하고 있습니다. 자율주행 시스템에서 얻은 제어 로직과 진단 시스템 경험을 바탕으로, 게임 엔진과 그래픽스 분야에서도 성능과 안정성을 모두 갖춘 구조를 구현하는 것을 목표로 합니다.
+플레이어 입력이 게임 규칙을 거쳐 시뮬레이션, 네트워크 동기화, 렌더링으로 이어지는 전체 흐름을 이해하고 구현하는 게임 프로그래머를 목표로 합니다.
 
 ## Links
 
-- [Resume]({{ '/resume/' | relative_url }})
 - [Projects]({{ '/projects/' | relative_url }})
+- [Resume]({{ '/resume/' | relative_url }})
 - [GitHub](https://github.com/haelime)

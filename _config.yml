@@ -14,11 +14,11 @@ timezone: Asia/Seoul
 # jekyll-seo-tag settings › https://github.com/jekyll/jekyll-seo-tag/blob/master/docs/usage.md
 # ↓ --------------------------
 
-title: "hae"
+title: "Hae Eem"
 
-tagline: "Programmer"
+tagline: "Game Programmer"
 
-description: "blog"
+description: "게임플레이, 멀티플레이 서버, 그래픽스 시스템을 구현하는 C++ 게임 프로그래머 포트폴리오"
 
 # Fill in the protocol & hostname for your site.
 # E.g. 'https://username.github.io', note that it does not end with a '/'.

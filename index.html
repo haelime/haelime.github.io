@@ -1,16 +1,16 @@
 ---
 layout: page
 title: Home
-description: "C++ 그래픽스, 게임 엔진, 실시간 시스템 개발자 Hae Eem의 포트폴리오"
+description: "게임플레이, 멀티플레이 서버, 그래픽스 시스템을 구현하는 C++ 게임 프로그래머 Hae Eem의 포트폴리오"
 ---
 
 ## Hae Eem
 
-성능과 안정성을 함께 설계하는 C++ 개발자입니다.
+플레이어가 직접 경험하는 게임플레이와 그 아래의 실시간 시스템을 구현하는 **C++ 게임 프로그래머**입니다.
 
-Vulkan 렌더링 엔진, GPU 기반 대규모 시뮬레이션, authoritative 멀티플레이 서버를 직접 구현하고 있습니다.
+게임 규칙과 상태를 코드로 옮기고, 클라이언트와 서버가 같은 결과를 공유하며, 많은 객체가 한 프레임 안에서 안정적으로 동작하게 만드는 과정에 관심이 있습니다.
 
-자율주행 셔틀의 FSM 제어 로직과 watchdog 진단/복구 모듈을 개발한 실무 경험을 바탕으로, 게임 엔진과 그래픽스 분야에서 예측 가능하고 관찰 가능한 시스템을 만드는 것을 목표로 합니다.
+현재 Unity 기반 멀티플레이 게임, Vulkan 렌더링 엔진, Compute Shader 기반 군집 시뮬레이션을 개발하고 있습니다.
 
 - [Projects]({{ '/projects/' | relative_url }})
 - [Resume]({{ '/resume/' | relative_url }})
@@ -18,43 +18,49 @@ Vulkan 렌더링 엔진, GPU 기반 대규모 시뮬레이션, authoritative 멀
 
 ## Selected Projects
 
+### Clasher
+
+`Unity` `C#` `Authoritative Server` `TCP`
+
+실시간 1대1 전략 게임 프로토타입입니다. Unity 클라이언트, C# 게임 서버, Node.js 로그인/매칭 서버를 연결하고 게임 입장부터 전투 결과 저장까지의 흐름을 구현했습니다.
+
+- 100ms 서버 틱 기반 전투 시뮬레이션
+- 소환 위치, 비용, 중복 액션과 승패를 서버에서 판정
+- JWT 인증과 match ticket 기반 게임 입장
+
 ### VestaEngine
 
 `C++` `Vulkan` `GLSL`
 
-Deferred rendering, path tracing, hardware ray tracing, Gaussian splatting을 지원하는 Vulkan 렌더링 엔진입니다. Render graph와 GPU profiler를 통해 매 프레임의 pass, resource, barrier 상태를 런타임에서 확인할 수 있도록 구현했습니다.
+게임 엔진의 렌더링 파이프라인을 직접 이해하고 제어하기 위해 개발한 Vulkan 렌더링 엔진입니다.
 
-### Clasher
-
-`Unity` `C#` `TCP`
-
-Unity 클라이언트와 C# authoritative 게임 서버, 로그인/매칭 서버로 구성한 실시간 1대1 전략 게임 프로토타입입니다. 서버에서 소환 위치, 비용, 중복 액션과 승패를 판정합니다.
+- Deferred rendering, path tracing, hardware ray tracing
+- Render graph 기반 pass와 resource transition 관리
+- GPU profiler, resource inspector, shader hot reload
 
 ### GPU Boids Simulation
 
 `Unity` `Compute Shader` `GPU Instancing`
 
-Boids 상태와 연산을 GPU에 유지하고 indirect instancing으로 렌더링하는 실시간 군집 시뮬레이션입니다.
+다수의 에이전트가 동시에 움직이는 게임 시뮬레이션을 GPU에서 처리하는 프로젝트입니다. Boids 상태를 GPU 메모리에 유지하고 indirect instancing으로 렌더링합니다.
 
 - [Demo Video](https://www.youtube.com/watch?v=zoZexSNFHc8)
 - [More Projects]({{ '/projects/' | relative_url }})
 
-## Experience
+## What I Build
 
-### 인천국제공항 자율주행 셔틀 시스템
+- 입력, 상태 전이, 게임 규칙을 연결하는 gameplay system
+- 서버 권한 판정과 데이터 정합성을 보장하는 multiplayer system
+- 많은 객체를 제한된 프레임 안에서 처리하는 realtime simulation
+- 문제를 재현하고 병목을 찾을 수 있는 debug and profiling tool
 
-`C++` `ROS2` `Python` `PyQt`
+## Production Experience
 
-주행 제어 FSM, watchdog 기반 진단/복구 모듈, LiDAR 데이터 시각화 도구를 개발했습니다. 실패가 허용되지 않는 환경에서 예외 상황을 감지하고 안전하게 복구하는 구조를 경험했습니다.
+인천국제공항 자율주행 셔틀 프로젝트에서 C++/ROS2 기반 FSM 제어 로직과 watchdog 진단/복구 모듈을 개발했습니다.
+
+게임과 도메인은 다르지만, 실시간 상태 처리, 예외 상황 대응, 재현 가능한 디버깅이라는 동일한 문제를 실제 운영 환경에서 경험했습니다.
 
 [Read Resume]({{ '/resume/' | relative_url }})
-
-## Focus
-
-- C++ 기반 게임 엔진과 렌더링 파이프라인
-- Vulkan, GLSL, Compute Shader 기반 GPU 프로그래밍
-- 실시간 시뮬레이션과 성능 최적화
-- 관찰 가능하고 복구 가능한 시스템 설계
 
 ## Contact
 
