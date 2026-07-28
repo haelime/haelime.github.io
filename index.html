@@ -1,6 +1,138 @@
 ---
 layout: page
 title: ""
+description: "C++ 그래픽스, 게임 엔진, 실시간 시스템 개발자 Hae Eem의 포트폴리오"
 ---
 
-{% include home-shader-field.html %}
+<link rel="stylesheet" href="{{ '/assets/css/portfolio-home.css' | relative_url }}">
+
+<div class="portfolio-home">
+  <header class="portfolio-hero">
+    <p class="portfolio-eyebrow">C++ · Graphics · Systems</p>
+    <h1>성능을 설계하고,<br><span>실시간 화면으로 증명합니다.</span></h1>
+    <p class="portfolio-hero__intro">
+      Vulkan 렌더링 엔진, GPU 시뮬레이션, authoritative 멀티플레이 시스템을 만드는
+      C++ 개발자 Hae Eem입니다.
+    </p>
+    <div class="portfolio-actions">
+      <a class="portfolio-button portfolio-button--primary" href="{{ '/projects/' | relative_url }}">대표 프로젝트 보기</a>
+      <a class="portfolio-button" href="{{ '/resume/' | relative_url }}">이력서</a>
+      <a class="portfolio-text-link" href="https://github.com/haelime" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+
+    <ul class="portfolio-proof" aria-label="주요 경험">
+      <li><strong>6개월</strong><span>자율주행 시스템 실무</span></li>
+      <li><strong>Vulkan</strong><span>커스텀 렌더링 엔진</span></li>
+      <li><strong>GPU</strong><span>Compute 기반 시뮬레이션</span></li>
+    </ul>
+  </header>
+
+  <div class="portfolio-main">
+    <section class="portfolio-section" aria-labelledby="selected-work">
+      <div class="portfolio-section__heading">
+        <div>
+          <p class="portfolio-eyebrow">Selected work</p>
+          <h2 id="selected-work">직접 설계하고 구현한 프로젝트</h2>
+        </div>
+        <p>결과보다 구현 범위와 기술적 판단이 궁금하다면 카드를 펼쳐보세요.</p>
+      </div>
+
+      <div class="portfolio-projects">
+        <article class="portfolio-project">
+          <div class="portfolio-project__top">
+            <span>01 · Graphics Engine</span>
+            <span>C++ / Vulkan / GLSL</span>
+          </div>
+          <h3>VestaEngine</h3>
+          <p>
+            실시간 렌더링부터 path tracing, Gaussian splatting, GPU 프로파일링까지
+            하나의 런타임에서 관찰할 수 있는 Vulkan 렌더링 엔진입니다.
+          </p>
+          <details>
+            <summary>핵심 구현</summary>
+            <ul>
+              <li>명시적 render pass와 resource transition을 기록하는 render graph</li>
+              <li>Deferred rasterization, path tracing, hardware ray tracing 경로</li>
+              <li>GPU timestamp, resource, barrier 상태를 확인하는 ImGui 디버그 UI</li>
+            </ul>
+          </details>
+        </article>
+
+        <article class="portfolio-project">
+          <div class="portfolio-project__top">
+            <span>02 · Multiplayer</span>
+            <span>Unity / C# / TCP</span>
+          </div>
+          <h3>Clasher</h3>
+          <p>
+            Unity 클라이언트와 C# authoritative 게임 서버, 로그인·매칭 서버로 구성한
+            실시간 1대1 전략 게임 프로토타입입니다.
+          </p>
+          <details>
+            <summary>핵심 구현</summary>
+            <ul>
+              <li>100ms 서버 틱 기반 인게임 판정과 승패 처리</li>
+              <li>소환 위치, 비용, 중복 액션을 서버에서 검증</li>
+              <li>매칭 티켓으로만 게임 입장을 허용하는 인증 흐름</li>
+            </ul>
+          </details>
+        </article>
+
+        <article class="portfolio-project">
+          <div class="portfolio-project__top">
+            <span>03 · GPU Simulation</span>
+            <span>Unity / Compute Shader</span>
+          </div>
+          <h3>GPU Boids</h3>
+          <p>
+            Boids 계산을 GPU로 옮기고 indirect instancing을 적용해 많은 에이전트를
+            실시간으로 제어하는 군집 시뮬레이션입니다.
+          </p>
+          <details>
+            <summary>핵심 구현</summary>
+            <ul>
+              <li>시뮬레이션 상태를 GPU 메모리에 유지해 CPU 왕복 최소화</li>
+              <li>Compute Shader 기반 힘 계산과 위치 적분</li>
+              <li><a href="https://www.youtube.com/watch?v=zoZexSNFHc8" target="_blank" rel="noopener">실행 영상 보기 ↗</a></li>
+            </ul>
+          </details>
+        </article>
+      </div>
+
+      <a class="portfolio-more" href="{{ '/projects/' | relative_url }}">모든 프로젝트와 구현 기록 보기 <span>→</span></a>
+    </section>
+
+    <section class="portfolio-experience" aria-labelledby="production-experience">
+      <div>
+        <p class="portfolio-eyebrow">Production experience</p>
+        <h2 id="production-experience">멈추면 안 되는 시스템에서 배운 안정성</h2>
+      </div>
+      <div class="portfolio-experience__copy">
+        <p>
+          인천국제공항 자율주행 셔틀 프로젝트에서 C++/ROS2 기반 FSM,
+          watchdog 진단·복구 모듈, LiDAR 검증 도구를 개발했습니다.
+        </p>
+        <p>성능뿐 아니라 실패를 예측하고 복구 가능한 구조를 설계합니다.</p>
+        <a class="portfolio-text-link" href="{{ '/resume/' | relative_url }}">실무 경험 자세히 보기 →</a>
+      </div>
+    </section>
+
+    <section class="portfolio-section portfolio-focus" aria-labelledby="current-focus">
+      <div>
+        <p class="portfolio-eyebrow">Current focus</p>
+        <h2 id="current-focus">그래픽스와 엔진 레벨의 문제에 집중합니다.</h2>
+      </div>
+      <div class="portfolio-tags" aria-label="기술 스택">
+        <span>C++</span><span>Vulkan</span><span>GLSL</span><span>Compute Shader</span>
+        <span>Unity</span><span>C#</span><span>CMake</span><span>RenderDoc</span>
+      </div>
+    </section>
+  </div>
+
+  <footer class="portfolio-contact">
+    <p class="portfolio-eyebrow">Contact</p>
+    <h2>함께 해결할 실시간 문제가 있나요?</h2>
+    <p>게임 엔진, 그래픽스, 시스템 프로그래밍 포지션을 찾고 있습니다.</p>
+    <a href="mailto:loreminder@gmail.com">loreminder@gmail.com →</a>
+  </footer>
+</div>
