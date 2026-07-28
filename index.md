@@ -26,14 +26,20 @@ description: "게임플레이, 멀티플레이, 그래픽스 시스템을 구현
 
 인천국제공항 자율주행 셔틀 프로젝트에서 UDP 기반 LiDAR 데이터 처리, C++/ROS2 기반 FSM 제어 로직, heartbeat 기반 진단 및 Fail-Safe 시스템을 개발했습니다.
 
+{% include project-gallery.html group="general" %}
+
 ## Education
 {: .home-section-title}
 
-### 42
+### École 42
 
-2022.11–2024.11
+**과정 수료** · 2022.11–2024.11
 
-C/C++ 프로젝트를 중심으로 메모리 관리, 프로세스와 동기화, 알고리즘, 3D 그래픽스 등 시스템 프로그래밍의 기반을 학습했습니다.
+2년간 2,633시간 이상 오프라인으로 참여해 시스템 레벨 프로그래밍 중심의 자기주도적 동료 학습 프로젝트를 수행했습니다.
+
+- C/C++ 기반 로우 레벨 프로그래밍, 운영체제, 시스템 아키텍처 역량 확보
+- 성능 최적화, UNIX 시스템 관리, 네트워크 인프라 구축 기술 습득
+- 110회 이상의 Peer Review를 주도하며 코드 분석, 기술 피드백, 코드 리뷰 역량 입증
 
 ## Skills
 
@@ -51,7 +57,3 @@ C/C++ 프로젝트를 중심으로 메모리 관리, 프로세스와 동기화, 
 ### Graphics
 
 {% include project-gallery.html group="graphics" %}
-
-### General
-
-{% include project-gallery.html group="general" %}

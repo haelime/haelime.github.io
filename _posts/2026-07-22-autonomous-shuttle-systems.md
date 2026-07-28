@@ -43,5 +43,3 @@ Heartbeat 메시지의 발행 및 수신 패턴을 구현해 SLAM, Perception �
 - 센서 장애물 근접 경고나 모듈 오류 발생 시 하드웨어 제어 권한 회수
 - 위험 상황에서 셔틀을 즉시 정지시키는 Fail-Safe 로직 구현
 - 분산 모듈의 이상 상태가 차량 제어 계층까지 전달되는 진단 흐름 구축
-
-[Original Notion Page](https://app.notion.com/p/Portfolio-2e0b4a6f7577805fbfdece7398185fa4)
