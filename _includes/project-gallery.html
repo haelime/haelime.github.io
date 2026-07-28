@@ -1,15 +1,19 @@
-{% assign project_posts = site.posts | where: 'portfolio', true | sort: 'project_order' %}
+{% assign project_posts = site.posts | where: 'portfolio', true %}
+{% if include.group %}
+  {% assign project_posts = project_posts | where: 'project_group', include.group %}
+{% endif %}
+{% assign project_posts = project_posts | sort: 'project_order' %}
 <div class="project-gallery">
   {% for post in project_posts %}
-    <a class="project-card" href="{{ post.url | relative_url }}">
-      <span class="project-card__thumbnail">
+    <article class="project-card">
+      <div class="project-card__thumbnail">
         <img src="{{ post.thumbnail | relative_url }}" alt="{{ post.title }} thumbnail" loading="lazy">
-      </span>
-      <span class="project-card__body">
+      </div>
+      <a class="project-card__body" href="{{ post.url | relative_url }}">
         <small>{{ post.stack }}</small>
         <strong>{{ post.title }}</strong>
         <span>{{ post.description }}</span>
-      </span>
-    </a>
+      </a>
+    </article>
   {% endfor %}
 </div>

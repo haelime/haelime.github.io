@@ -10,6 +10,7 @@ image:
 thumbnail: /assets/img/projects/gpu-boids/thumb.webp
 stack: "C# · Unity · HLSL · Compute Shader"
 project_order: 2
+project_group: graphics
 portfolio: true
 toc: true
 ---

@@ -10,6 +10,7 @@ image:
 thumbnail: /assets/img/projects/godot-idler/thumb.webp
 stack: "C# · Godot 4 · Steamworks · Win32 API"
 project_order: 1
+project_group: games
 portfolio: true
 toc: true
 ---

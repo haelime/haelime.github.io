@@ -10,6 +10,7 @@ image:
 thumbnail: /assets/img/projects/raymarch-shaders/thumb.webp
 stack: "GLSL · HLSL · Raymarching · SDF"
 project_order: 6
+project_group: graphics
 portfolio: true
 toc: true
 ---

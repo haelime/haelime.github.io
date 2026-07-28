@@ -10,6 +10,7 @@ image:
 thumbnail: /assets/img/projects/game-jam/thumb.webp
 stack: "C# · Unity · HTML5"
 project_order: 3
+project_group: games
 portfolio: true
 toc: true
 ---

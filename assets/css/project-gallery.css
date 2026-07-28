@@ -12,16 +12,13 @@
   flex-direction: column;
   border: 1px solid var(--main-border-color);
   border-radius: 0.6rem;
-  color: var(--text-color);
   background: var(--card-bg);
-  text-decoration: none !important;
   transition: border-color 160ms ease, transform 160ms ease;
 }
 
 .project-card:hover,
-.project-card:focus-visible {
+.project-card:focus-within {
   border-color: var(--link-color);
-  color: var(--text-color);
   transform: translateY(-2px);
 }
 
@@ -30,6 +27,12 @@
   overflow: hidden;
   aspect-ratio: 16 / 9;
   background: var(--main-bg);
+}
+
+.project-card__thumbnail .img-link {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .project-card__thumbnail img {
@@ -49,6 +52,8 @@
   flex: 1;
   flex-direction: column;
   padding: 1rem;
+  color: var(--text-color);
+  text-decoration: none !important;
 }
 
 .project-card__body small {

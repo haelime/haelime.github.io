@@ -10,6 +10,7 @@ image:
 thumbnail: /assets/img/projects/autonomous-shuttle/thumb.webp
 stack: "C++ · ROS2 · Python · PyQt"
 project_order: 7
+project_group: general
 portfolio: true
 toc: true
 ---

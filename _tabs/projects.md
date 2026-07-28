@@ -8,6 +8,16 @@ order: 6
 
 ## Projects
 
-C++/C#을 중심으로 게임플레이, 멀티플레이, 시뮬레이션, 그래픽스 시스템을 구현한 기록입니다.
+C++/C#을 중심으로 게임플레이, 시뮬레이션, 그래픽스 시스템을 구현한 기록입니다.
 
-{% include project-gallery.html %}
+### Games
+
+{% include project-gallery.html group="games" %}
+
+### Graphics
+
+{% include project-gallery.html group="graphics" %}
+
+### General
+
+{% include project-gallery.html group="general" %}

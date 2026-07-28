@@ -10,6 +10,7 @@ image:
 thumbnail: /assets/img/projects/rimworld/thumb.webp
 stack: "C# · RimWorld Modding · UI"
 project_order: 4
+project_group: games
 portfolio: true
 toc: false
 ---
