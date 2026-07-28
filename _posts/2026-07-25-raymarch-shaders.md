@@ -60,5 +60,3 @@ GLSL raymarching으로 무한히 반복되는 큐브 터널을 렌더링합니�
 최대 거리 이후에는 loop를 조기 종료하고, 가능한 계산은 `min`, `max`, `step`으로 표현해 불필요한 branch를 줄였습니다.
 
 [View Cubestorm on Shadertoy](https://www.shadertoy.com/view/lffGRj)
-
-[Original Notion Page](https://app.notion.com/p/Raymarch-shaders-2e8b4a6f757780d4abb6c41826b593af?source=copy_link)

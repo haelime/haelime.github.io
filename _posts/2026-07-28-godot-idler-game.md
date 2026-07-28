@@ -82,5 +82,3 @@ GodotIdlerGame/
 - Steam lobby와 P2P session 안정성
 - host migration과 authority boundary
 - job allocation과 Pawn FSM의 확장성
-
-[Original Notion Page](https://app.notion.com/p/Godot-idler-game-project-2e8b4a6f757780178a4ae4497a4854c3?source=copy_link)

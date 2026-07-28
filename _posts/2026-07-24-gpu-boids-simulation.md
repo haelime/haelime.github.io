@@ -82,5 +82,3 @@ CPU에서 위치 데이터를 가져오지 않으며, simulation 영역 전체�
 - shared memory를 활용한 memory access 최적화
 - double buffering을 이용한 data race 방지
 - simulation과 rendering을 연결하는 GPU-only pipeline
-
-[Original Notion Page](https://app.notion.com/p/GPU-Boids-simulation-2e8b4a6f757780ac92d7fa8203cf90cc?source=copy_link)
