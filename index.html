@@ -1,118 +1,61 @@
 ---
 layout: page
-title: ""
+title: Home
 description: "C++ 그래픽스, 게임 엔진, 실시간 시스템 개발자 Hae Eem의 포트폴리오"
 ---
 
-<link rel="stylesheet" href="{{ '/assets/css/portfolio-home.css' | relative_url }}">
+## Hae Eem
 
-<div class="portfolio-home">
-  <nav class="home-nav" aria-label="Portfolio navigation">
-    <a class="home-brand" href="{{ '/' | relative_url }}">HAE EEM <span>PORTFOLIO 2026</span></a>
-    <div class="home-nav__links">
-      <a href="#work">Work</a>
-      <a href="{{ '/resume/' | relative_url }}">Resume</a>
-      <a href="https://github.com/haelime" target="_blank" rel="noopener">GitHub ↗</a>
-    </div>
-  </nav>
+성능과 안정성을 함께 설계하는 C++ 개발자입니다.
 
-  <header class="home-hero">
-    <div class="home-shell">
-      <p class="home-kicker">C++ GRAPHICS / GAME ENGINE PROGRAMMER</p>
-      <h1>REALTIME<br><span>SYSTEMS.</span></h1>
-      <div class="home-hero__footer">
-        <p>
-          Vulkan 렌더링 엔진, GPU 시뮬레이션, 멀티플레이 서버를 만듭니다.<br>
-          빠른 코드만큼 실패를 관찰하고 복구할 수 있는 구조를 중요하게 생각합니다.
-        </p>
-        <a href="#work">SELECTED WORK <span>↓</span></a>
-      </div>
-    </div>
-  </header>
+Vulkan 렌더링 엔진, GPU 기반 대규모 시뮬레이션, authoritative 멀티플레이 서버를 직접 구현하고 있습니다.
 
-  <section id="work" class="home-work">
-    <div class="home-shell">
-      <header class="home-section-head">
-        <p>01 / SELECTED WORK</p>
-        <h2>직접 설계하고<br>끝까지 구현한 것들.</h2>
-      </header>
+자율주행 셔틀의 FSM 제어 로직과 watchdog 진단/복구 모듈을 개발한 실무 경험을 바탕으로, 게임 엔진과 그래픽스 분야에서 예측 가능하고 관찰 가능한 시스템을 만드는 것을 목표로 합니다.
 
-      <div class="work-list">
-        <details class="work-item">
-          <summary>
-            <span class="work-item__number">01</span>
-            <span class="work-item__title"><strong>VestaEngine</strong><small>Vulkan Rendering Engine</small></span>
-            <span class="work-item__stack">C++ · Vulkan · GLSL</span>
-            <span class="work-item__toggle" aria-hidden="true">↘</span>
-          </summary>
-          <div class="work-item__body">
-            <p>렌더링 결과뿐 아니라 매 프레임의 pass, resource, barrier와 GPU timing을 런타임에서 관찰할 수 있도록 만든 그래픽스 엔진입니다.</p>
-            <dl>
-              <div><dt>Rendering</dt><dd>Deferred PBR · Path Tracing · Hardware Ray Tracing</dd></div>
-              <div><dt>Architecture</dt><dd>Render Graph · Explicit Resource Transition</dd></div>
-              <div><dt>Tooling</dt><dd>GPU Profiler · Resource Inspector · Shader Reload</dd></div>
-            </dl>
-          </div>
-        </details>
+- [Projects]({{ '/projects/' | relative_url }})
+- [Resume]({{ '/resume/' | relative_url }})
+- [GitHub](https://github.com/haelime)
 
-        <details class="work-item">
-          <summary>
-            <span class="work-item__number">02</span>
-            <span class="work-item__title"><strong>Clasher</strong><small>Authoritative Multiplayer Prototype</small></span>
-            <span class="work-item__stack">Unity · C# · TCP</span>
-            <span class="work-item__toggle" aria-hidden="true">↘</span>
-          </summary>
-          <div class="work-item__body">
-            <p>Unity 클라이언트, C# 게임 서버, 로그인·매칭 서버를 연결한 실시간 1대1 전략 게임 프로토타입입니다.</p>
-            <dl>
-              <div><dt>Simulation</dt><dd>100ms Server Tick · Server-side Win/Loss</dd></div>
-              <div><dt>Validation</dt><dd>Spawn Position · Cost · Duplicate Action</dd></div>
-              <div><dt>Access</dt><dd>JWT Authentication · Match Ticket Entry</dd></div>
-            </dl>
-          </div>
-        </details>
+## Selected Projects
 
-        <details class="work-item">
-          <summary>
-            <span class="work-item__number">03</span>
-            <span class="work-item__title"><strong>GPU Boids</strong><small>Large-scale Flocking Simulation</small></span>
-            <span class="work-item__stack">Unity · Compute Shader</span>
-            <span class="work-item__toggle" aria-hidden="true">↘</span>
-          </summary>
-          <div class="work-item__body">
-            <p>Boids 상태와 연산을 GPU에 유지하고 indirect instancing으로 렌더링하는 실시간 군집 시뮬레이션입니다.</p>
-            <dl>
-              <div><dt>Compute</dt><dd>Force Pass · Integration Pass</dd></div>
-              <div><dt>Rendering</dt><dd>DrawMeshInstancedIndirect</dd></div>
-              <div><dt>Demo</dt><dd><a href="https://www.youtube.com/watch?v=zoZexSNFHc8" target="_blank" rel="noopener">Watch on YouTube ↗</a></dd></div>
-            </dl>
-          </div>
-        </details>
-      </div>
+### VestaEngine
 
-      <a class="home-inline-link" href="{{ '/projects/' | relative_url }}">PROJECT NOTES <span>↗</span></a>
-    </div>
-  </section>
+`C++` `Vulkan` `GLSL`
 
-  <section class="home-experience">
-    <div class="home-shell home-experience__grid">
-      <p>02 / PRODUCTION</p>
-      <div>
-        <h2>실패가 허용되지 않는<br>환경에서 일했습니다.</h2>
-        <p>인천국제공항 자율주행 셔틀의 FSM 제어 로직, watchdog 진단·복구 모듈, LiDAR 검증 도구를 개발했습니다.</p>
-        <a href="{{ '/resume/' | relative_url }}">READ RESUME <span>↗</span></a>
-      </div>
-    </div>
-  </section>
+Deferred rendering, path tracing, hardware ray tracing, Gaussian splatting을 지원하는 Vulkan 렌더링 엔진입니다. Render graph와 GPU profiler를 통해 매 프레임의 pass, resource, barrier 상태를 런타임에서 확인할 수 있도록 구현했습니다.
 
-  <footer class="home-contact">
-    <div class="home-shell">
-      <p>03 / CONTACT</p>
-      <h2>LET'S BUILD<br><span>SOMETHING FAST.</span></h2>
-      <div class="home-contact__footer">
-        <a href="mailto:loreminder@gmail.com">LOREMINDER@GMAIL.COM ↗</a>
-        <span>SEOUL, KR · 2026</span>
-      </div>
-    </div>
-  </footer>
-</div>
+### Clasher
+
+`Unity` `C#` `TCP`
+
+Unity 클라이언트와 C# authoritative 게임 서버, 로그인/매칭 서버로 구성한 실시간 1대1 전략 게임 프로토타입입니다. 서버에서 소환 위치, 비용, 중복 액션과 승패를 판정합니다.
+
+### GPU Boids Simulation
+
+`Unity` `Compute Shader` `GPU Instancing`
+
+Boids 상태와 연산을 GPU에 유지하고 indirect instancing으로 렌더링하는 실시간 군집 시뮬레이션입니다.
+
+- [Demo Video](https://www.youtube.com/watch?v=zoZexSNFHc8)
+- [More Projects]({{ '/projects/' | relative_url }})
+
+## Experience
+
+### 인천국제공항 자율주행 셔틀 시스템
+
+`C++` `ROS2` `Python` `PyQt`
+
+주행 제어 FSM, watchdog 기반 진단/복구 모듈, LiDAR 데이터 시각화 도구를 개발했습니다. 실패가 허용되지 않는 환경에서 예외 상황을 감지하고 안전하게 복구하는 구조를 경험했습니다.
+
+[Read Resume]({{ '/resume/' | relative_url }})
+
+## Focus
+
+- C++ 기반 게임 엔진과 렌더링 파이프라인
+- Vulkan, GLSL, Compute Shader 기반 GPU 프로그래밍
+- 실시간 시뮬레이션과 성능 최적화
+- 관찰 가능하고 복구 가능한 시스템 설계
+
+## Contact
+
+[loreminder@gmail.com](mailto:loreminder@gmail.com)
