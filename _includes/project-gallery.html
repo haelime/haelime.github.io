@@ -1,0 +1,15 @@
+{% assign project_posts = site.posts | where: 'portfolio', true | sort: 'project_order' %}
+<div class="project-gallery">
+  {% for post in project_posts %}
+    <a class="project-card" href="{{ post.url | relative_url }}">
+      <span class="project-card__thumbnail">
+        <img src="{{ post.thumbnail | relative_url }}" alt="{{ post.title }} thumbnail" loading="lazy">
+      </span>
+      <span class="project-card__body">
+        <small>{{ post.stack }}</small>
+        <strong>{{ post.title }}</strong>
+        <span>{{ post.description }}</span>
+      </span>
+    </a>
+  {% endfor %}
+</div>
