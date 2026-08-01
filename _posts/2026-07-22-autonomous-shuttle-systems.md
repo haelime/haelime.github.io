@@ -7,7 +7,7 @@ description: "인천국제공항 자율주행 셔틀의 LiDAR 통신, FSM 제어
 image:
   path: /assets/img/projects/autonomous-shuttle/cover-clean.png
   alt: Autonomous shuttle systems project
-thumbnail: /assets/img/projects/autonomous-shuttle/thumb.webp
+thumbnail: /assets/img/projects/autonomous-shuttle/cover-clean.png
 stack: "C++ · ROS2 · UDP · LiDAR"
 project_order: 7
 project_group: general
