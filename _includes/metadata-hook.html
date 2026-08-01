@@ -1,5 +1,6 @@
 <style>
-  #sidebar .nav-item:not(:first-child),
+  #sidebar,
+  #sidebar-trigger,
   #search-trigger,
   #search,
   #search-result-wrapper,
@@ -7,8 +8,62 @@
     display: none !important;
   }
 
+  #main-wrapper {
+    margin-left: 0 !important;
+  }
+
   main[aria-label='Main Content'] {
     flex: 0 0 100%;
     max-width: 100%;
+  }
+
+  .profile-intro {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 2rem;
+    align-items: center;
+    margin: 1.5rem 0 3rem;
+    padding: 1.5rem;
+    border: 1px solid var(--main-border-color);
+    border-radius: 0.75rem;
+    background: var(--card-bg);
+  }
+
+  .profile-intro__photo {
+    width: 9rem;
+    height: 9rem;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .profile-intro__body h3 {
+    margin: 0 0 0.6rem;
+  }
+
+  .profile-intro__body p {
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .profile-intro__links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .profile-intro {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      text-align: center;
+    }
+
+    .profile-intro__photo {
+      margin: 0 auto;
+    }
+
+    .profile-intro__links {
+      justify-content: center;
+    }
   }
 </style>
