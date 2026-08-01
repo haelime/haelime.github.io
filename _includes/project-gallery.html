@@ -6,9 +6,12 @@
 <div class="project-gallery">
   {% for post in project_posts %}
     <article class="project-card">
-      <div class="project-card__thumbnail">
-        <img src="{{ post.thumbnail | relative_url }}" alt="{{ post.title }} thumbnail" loading="lazy">
-      </div>
+      <a
+        class="project-card__thumbnail"
+        href="{{ post.url | relative_url }}"
+        aria-label="{{ post.title | escape }} 프로젝트 보기"
+        style="background-image: url('{{ post.thumbnail | relative_url }}');"
+      ></a>
       <a class="project-card__body" href="{{ post.url | relative_url }}">
         <small>{{ post.stack }}</small>
         <strong>{{ post.title }}</strong>
