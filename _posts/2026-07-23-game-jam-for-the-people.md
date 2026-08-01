@@ -21,8 +21,6 @@ toc: true
 
 폭발이 도시를 바꾸기 전에 사람들을 구조하는 짧은 플레이 경험을 목표로 제작했습니다. 브라우저에서 바로 실행할 수 있는 HTML5 빌드로 공개했습니다.
 
-![For the people gameplay](/assets/img/projects/game-jam/screen-1.png)
-
 ## Controls
 
 - 이동: 마우스 클릭 또는 `WASD`
