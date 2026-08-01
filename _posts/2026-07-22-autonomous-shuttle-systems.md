@@ -5,7 +5,7 @@ categories: [Portfolio]
 tags: [C++, ROS2, FSM, UDP, LiDAR, Fail-Safe]
 description: "인천국제공항 자율주행 셔틀의 LiDAR 통신, FSM 제어, heartbeat 기반 Fail-Safe 시스템을 개발한 실무 경험"
 image:
-  path: /assets/img/projects/autonomous-shuttle/cover.png
+  path: /assets/img/projects/autonomous-shuttle/cover-clean.png
   alt: Autonomous shuttle systems project
 thumbnail: /assets/img/projects/autonomous-shuttle/thumb.webp
 stack: "C++ · ROS2 · UDP · LiDAR"
