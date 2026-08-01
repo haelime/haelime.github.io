@@ -103,7 +103,7 @@ cdn:
 
 # the avatar on sidebar, support local or CORS resources
 # e.g. /assets/img/profile.jpg
-avatar: https://github.com/haelime.png
+avatar: /assets/img/IMG_8923.jpg
 
 # The URL of the site-wide social preview image used in SEO `og:image` meta tag.
 # It can be overridden by a customized `page.image` in front matter.
