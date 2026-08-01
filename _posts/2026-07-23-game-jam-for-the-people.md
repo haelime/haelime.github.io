@@ -7,7 +7,7 @@ description: "GMTK Game Jam 2026에서 제작한 Unity 기반 top-down action ga
 image:
   path: /assets/img/projects/game-jam/cover.png
   alt: For the people game jam project
-thumbnail: /assets/img/projects/game-jam/thumb.webp
+thumbnail: /assets/img/projects/game-jam/screen-1.png
 stack: "C# · Unity · HTML5"
 project_order: 3
 project_group: games
@@ -29,6 +29,6 @@ toc: true
 
 ## 결과물
 
-제한된 Game Jam 일정 안에서 조작, 게임 규칙, 실패와 재시도 흐름을 하나의 플레이 가능한 빌드로 마무리했습니다.
+총 10,394개 작품이 출품된 GMTK Game Jam 2026에서 조작, 게임 규칙, 실패와 재시도 흐름을 하나의 플레이 가능한 빌드로 마무리했습니다.
 
 [Play on itch.io](https://haelime.itch.io/for-the-people)
