@@ -31,4 +31,14 @@ toc: true
 
 총 10,394개 작품이 출품된 GMTK Game Jam 2026에서 조작, 게임 규칙, 실패와 재시도 흐름을 하나의 플레이 가능한 빌드로 마무리했습니다.
 
-[Play on itch.io](https://haelime.itch.io/for-the-people)
+Creativity 부문 326위, Enjoyment 부문 382위를 기록했습니다.
+
+| 부문 | 순위 | 점수 |
+| --- | ---: | ---: |
+| Creativity | 326위 | 4.292 |
+| Enjoyment | 382위 | 4.042 |
+| Audio | 1,220위 | 3.500 |
+| Narrative | 2,813위 | 2.833 |
+| Artwork | 2,890위 | 3.458 |
+
+[View the GMTK Jam entry](https://itch.io/jam/gmtk-jam-2026/rate/4820527)
