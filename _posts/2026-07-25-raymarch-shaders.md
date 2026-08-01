@@ -15,7 +15,7 @@ portfolio: true
 toc: true
 ---
 
-수학적 거리 함수와 raymarching으로 메시 없이 공간과 볼륨을 표현한 셰이더 프로젝트입니다. 표면과 내부 볼륨을 함께 렌더링하는 **Cloudy Crystal**, 반복되는 SDF 공간을 구성한 **Cubestorm** 두 작업을 담았습니다.
+셰이더 프로젝트 입니다.
 
 ## Cloudy Crystal
 
@@ -23,7 +23,7 @@ toc: true
   <iframe src="https://www.youtube.com/embed/sKYhIVCjzfU" title="Cloudy Crystal shader preview" allowfullscreen></iframe>
 </div>
 
-반투명 보석 내부에 움직이는 구름이 들어 있는 판타지 아이템 셰이더입니다. 하나의 pass 안에서 표면 렌더링과 volumetric raymarching을 결합했습니다.
+반투명 보석 내부에 움직이는 구름이 들어 있는 판타지 아이템 셰이더입니다. 하나의 패스 안에서 표면 렌더링과 volumetric raymarching을 결합했습니다.
 
 ### Surface Rendering
 

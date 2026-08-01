@@ -57,7 +57,7 @@ order: 5
 
 ## Skills
 
-- Languages: `C++` `Python` `GLSL`
-- Systems: `ROS2` `FSM` `Watchdog` `Fail-Safe` `Binary Protocol`
-- Graphics: `Compute Shader` `Vulkan` `3D Graphics` `RenderDoc`
-- Tools: `PyQt` `CMake` `Git`
+- Languages: `C++` `C#` `Python` `GLSL` `Shell`
+- Systems: `ROS2` `Linux`
+- Graphics: `Compute Shader` `Vulkan` `3D Graphics`
+- Tools: `PyQt` `CMake` `Git` `Valgrind` `GDB` `Unity`
