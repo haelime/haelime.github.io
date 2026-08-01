@@ -29,8 +29,6 @@ toc: true
 - Bullet time 증폭: `Space`
 - 재시도: `R`
 
-![For the people controls](/assets/img/projects/game-jam/screen-2.png)
-
 ## 결과물
 
 제한된 Game Jam 일정 안에서 조작, 게임 규칙, 실패와 재시도 흐름을 하나의 플레이 가능한 빌드로 마무리했습니다.
