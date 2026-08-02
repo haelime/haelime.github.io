@@ -11,9 +11,8 @@ order: 1
 ## Focus
 
 - 입력, 상태 전이, 게임 규칙을 연결하는 gameplay programming
-- 서버 권한 판정과 binary packet 기반 multiplayer programming
 - C++ 기반 engine system과 memory/resource management
-- Vulkan, GLSL, Compute Shader 기반 graphics programming
+- GLSL, Compute Shader 기반 graphics programming
 - profiling과 재현 가능한 realtime debugging workflow
 
 ## Stack

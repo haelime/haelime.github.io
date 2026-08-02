@@ -49,8 +49,8 @@ description: ""
 ## Skills
 
 - Languages: `C++` `C#` `Python` `GLSL` `Shell`
-- Game: `Unity` `Godot` `Steamworks` `Multiplayer`
-- Graphics: `Vulkan` `Compute Shader` `Ray Tracing` `3D Graphics`
+- Game: `Unity`
+- Graphics: `Compute Shader` `Ray Tracing` `3D Graphics`
 - Systems & Tools: `ROS2` `Linux` `CMake` `Git` `GDB` `Valgrind`
 
 ## Projects

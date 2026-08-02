@@ -34,4 +34,6 @@ RimWorld의 선택 상태와 UI 표시 흐름을 분석해, 현재 선택한 Paw
 
 기존 코드와 동작을 파악하고, 기능을 구현해 배포한 뒤 실제 사용자 지표로 완성도를 확인했습니다. 코드 분석부터 출시와 검증까지 이어지는 실무형 개발 과정을 경험한 프로젝트입니다.
 
+[View source on GitHub](https://github.com/haelime/SelectedPawnPortraitOverlay)
+
 [View on Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3685326018)
