@@ -14,7 +14,7 @@ description: ""
   <img class="profile-intro__photo" src="/assets/img/IMG_8923.jpg" alt="Hae Eem profile">
   <div class="profile-intro__body">
     <h3>Hae Eem</h3>
-    <p>게임플레이와 그 아래의 실시간 시스템을 구현하는 <strong>C++ / C# 게임 프로그래머</strong>입니다.</p>
+    <p>C++ / C# 프로그래머입니다.</p>
     <div class="profile-intro__links">
       <a href="https://github.com/haelime">GitHub</a>
       <a href="mailto:loreminder@gmail.com">Email</a>

@@ -6,7 +6,7 @@ order: 5
 
 ## Summary
 
-게임플레이와 그래픽스 시스템을 다루는 신입 C++/C# 게임 프로그래머입니다. Unity 기반 게임, C#·HLSL 기반 GPU 시뮬레이션, C 기반 ray tracer를 개발했으며, 자율주행 실무 6개월 동안 FSM 제어 로직과 watchdog 진단/복구 모듈을 구현해 실시간 시스템 개발 경험을 쌓았습니다.
+신입 C++/C# 프로그래머입니다. Unity 기반 게임, C#·HLSL 기반 GPU 시뮬레이션, C 기반 ray tracer를 개발했으며, 자율주행 실무 6개월 동안 FSM 제어 로직과 watchdog 진단/복구 모듈을 구현해 실시간 시스템 개발 경험을 쌓았습니다.
 
 ## Experience
 
