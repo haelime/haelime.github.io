@@ -40,6 +40,10 @@ description: ""
 
 **과정 수료** (2022.11–2024.11)
 
+42는 프랑스에서 시작된 소프트웨어 교육 기관으로, 강의식 수업 대신 프로젝트 수행과 동료 평가를 중심으로 학습합니다. 공통 과정에서는 C, UNIX 파일 시스템과 프로세스, 네트워크, 객체 지향 프로그래밍 등을 단계적으로 다룹니다. [42 파리 공식 과정 안내](https://42.fr/le-campus-de-paris/diplome-informatique/)
+
+42 파리 캠퍼스에는 별도 요건을 충족하면 프랑스 국가 직업 자격 체계에 등록된 [RNCP 6단계 자격](https://42.fr/le-campus-de-paris/diplome-informatique/concepteur-developpeur-solutions-informatiques/)과 [RNCP 7단계 자격](https://42.fr/le-campus-de-paris/diplome-informatique/expert-en-architecture-informatique/)을 취득하는 경로가 있습니다. [프랑스 공공 자격 체계](https://www.formulaires.service-public.fr/gf/getNotice.do?cerfaFormulaire=10443&cerfaNotice=50199)에서 학사 학위는 6단계, 석사 학위는 7단계로 분류되지만, 같은 단계의 RNCP 직업 자격이 대학 학위와 같은 뜻은 아닙니다. 아래 이력은 42 서울 과정에서 수행한 학습 내용입니다.
+
 2년간 2,633시간 이상 오프라인으로 참여해 시스템 레벨 프로그래밍 중심의 자기주도적 동료 학습 프로젝트를 수행했습니다.
 
 - C/C++ 기반 저수준 프로그래밍, 운영체제, 시스템 구조 역량 확보

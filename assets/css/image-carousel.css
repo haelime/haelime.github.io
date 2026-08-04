@@ -1,0 +1,81 @@
+.image-carousel {
+  margin: 1.5rem 0 2rem;
+}
+
+.image-carousel__viewport {
+  display: flex;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+  border: 1px solid var(--main-border-color);
+  border-radius: 0.75rem;
+  background: var(--card-bg, #fff);
+}
+
+.image-carousel__slide {
+  position: relative;
+  flex: 0 0 100%;
+  margin: 0;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.image-carousel__slide img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #111;
+}
+
+.image-carousel__slide figcaption {
+  min-height: 3rem;
+  padding: 0.75rem 3.5rem;
+  text-align: center;
+  color: var(--text-muted-color);
+}
+
+.image-carousel__nav {
+  position: absolute;
+  top: calc(50% - 1.5rem);
+  display: grid;
+  width: 2.5rem;
+  height: 2.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 65%);
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.image-carousel__nav:hover,
+.image-carousel__nav:focus-visible {
+  background: rgb(0 0 0 / 85%);
+  color: #fff;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.image-carousel__nav--prev {
+  left: 0.75rem;
+}
+
+.image-carousel__nav--next {
+  right: 0.75rem;
+}
+
+.image-carousel__hint {
+  margin: 0.5rem 0 0;
+  text-align: center;
+  color: var(--text-muted-color);
+  font-size: 0.85rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-carousel__viewport {
+    scroll-behavior: auto;
+  }
+}
