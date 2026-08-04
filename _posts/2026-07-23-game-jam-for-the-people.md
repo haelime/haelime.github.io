@@ -5,9 +5,9 @@ categories: [Portfolio]
 tags: [C#, Unity, GameJam, Gameplay]
 description: "GMTK Game Jam 2026에서 제작한 Unity 기반 top-down action game"
 image:
-  path: /assets/img/projects/game-jam/cover.png
-  alt: For the people game jam project
-thumbnail: /assets/img/projects/game-jam/screen-1.png
+  path: /assets/img/projects/game-jam/screen-2.png
+  alt: For the people game logo
+thumbnail: /assets/img/projects/game-jam/screen-2.png
 stack: "C# · Unity · HTML5"
 project_order: 3
 project_group: games
@@ -15,11 +15,19 @@ portfolio: true
 toc: true
 ---
 
+![GMTK Game Jam 2026 logo](/assets/img/projects/game-jam/cover.png)
+
+<div class="mb-4" style="aspect-ratio: 1280 / 740;">
+  <iframe src="https://itch.io/embed-upload/18525983?color=1b1b1e" title="For the people playable HTML5 build" width="1280" height="740"
+    frameborder="0" allow="autoplay; fullscreen; gamepad" allowfullscreen
+    style="width: 100%; height: 100%;"></iframe>
+</div>
+
 **For the people**은 GMTK Game Jam 2026에 제출한 Unity 기반 top-down action game입니다.
 
 > SAVE THEM BEFORE THE BLASTS REDRAW THE CITY
 
-폭발이 도시를 바꾸기 전에 사람들을 구조하는 짧은 플레이 경험을 목표로 제작했습니다. 브라우저에서 바로 실행할 수 있는 HTML5 빌드로 공개했습니다.
+GMTK Game Jam 2026의 주제인 **COUNTDOWN**을 테마로 제작했습니다. 브라우저에서 바로 실행할 수 있는 HTML5 빌드로 공개했습니다.
 
 ## 게임 진행 구조
 
@@ -48,7 +56,9 @@ Time.fixedDeltaTime = 0.02f * scale;
 
 ## 데이터 기반 10개 레벨과 검증 도구
 
-`LevelLayout` prefab이 계획 시간, 감속 비율, 폭발 반경, 폭탄 위치·지연, 구조 지점과 시민 배치를 보유합니다. Game Director는 이 데이터로 round object를 생성하므로 새로운 레벨을 추가할 때 gameplay code를 수정할 필요가 없습니다.
+`LevelLayout` prefab이 계획 시간, 감속 비율, 폭발 반경, 폭탄 위치·지연, 구조 지점과 시민 배치를 보유합니다. 잼 프로토타입에서는 단일 `CountdownGameDirector`가 phase 전환과 round 생명주기를 조정하고, 이 데이터로 round object를 생성합니다. 새로운 레벨을 추가할 때 gameplay code를 수정하지 않도록 레벨 구성과 실행 로직을 분리했습니다.
+
+`CountdownGameDirector`에 라운드 생성, 폭발·구조 판정, UI와 오디오 갱신을 모은 것은 짧은 제작 기간에 전체 흐름을 빠르게 완성하기 위한 선택입니다. 규모가 커진다면 각 책임을 별도 시스템으로 분리할 수 있지만, 이번 잼 범위에서는 하나의 coordinator로 유지했습니다.
 
 Editor builder로 10개 level prefab을 생성하고 smoke check에서 level 순서, 폭탄·시민 수, prefab reference, 후반 레벨의 구조 가능 시간을 검사했습니다. 마우스, WASD, gamepad, touch 입력을 같은 이동 로직으로 연결했으며, 감속 증폭 중에는 현재 pose를 bake한 afterimage와 `MaterialPropertyBlock` fade로 속도감을 표현했습니다.
 

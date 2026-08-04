@@ -17,8 +17,6 @@ toc: false
 
 RimWorld의 선택 상태와 UI 표시 흐름을 분석해, 현재 선택한 Pawn의 portrait를 HUD 위에 표시하는 C# mod를 구현했습니다.
 
-![Selected Pawn Portrait Overlay](/assets/img/projects/rimworld/overlay.png)
-
 ## 코드 분석과 구현
 
 기존 UI의 선택 상태, portrait 표시 방식, 화면 배치를 분석한 뒤 기존 동작을 유지하면서 필요한 정보만 추가했습니다.
