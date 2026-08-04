@@ -1,5 +1,5 @@
 # haelime.github.io
 
-Jekyll Chirpy site for blog posts and diary entries.
+Jekyll Chirpy로 만든 포트폴리오 사이트입니다.
 
-See `docs/authoring-guide.md` for posting, profile image, and intro editing.
+글 작성과 프로필 수정 방법은 `docs/authoring-guide.md`에서 확인할 수 있습니다.

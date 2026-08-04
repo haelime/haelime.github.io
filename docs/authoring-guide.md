@@ -1,48 +1,48 @@
-# Authoring Guide
+# 문서 작성 안내
 
-This repo uses Jekyll Chirpy for a GitHub Pages blog.
+이 저장소는 Jekyll Chirpy와 GitHub Pages로 포트폴리오를 게시합니다.
 
-## 1. Write a post
+## 1. 글 작성
 
-Create a new file in `_posts` with this format:
+`_posts`에 다음 형식으로 파일을 만듭니다.
 
 `YYYY-MM-DD-slug.md`
 
-Examples:
+예시:
 
 - `2026-04-06-first-post.md`
 - `2026-04-06-daily-note.md`
 
-Use one of these templates:
+다음 서식 중 하나를 사용합니다.
 
 - `docs/templates/post-tech.md`
 - `docs/templates/post-diary.md`
 
-## 2. Change the intro page
+## 2. 소개 페이지 수정
 
-Edit `_tabs/about.md`.
+`_tabs/about.md`를 수정합니다.
 
-That file controls the content shown on the `/about/` page.
+이 파일의 내용이 `/about/` 페이지에 표시됩니다.
 
-## 3. Change the profile image
+## 3. 프로필 사진 변경
 
-1. Put an image file in `assets/img/`
-2. Set the `avatar` field in `_config.yml`
+1. 이미지 파일을 `assets/img/`에 넣습니다.
+2. `_config.yml`의 `avatar` 값을 설정합니다.
 
-Example:
+예시:
 
 ```yml
 avatar: /assets/img/profile.jpg
 ```
 
-Supported examples:
+사용 가능한 형식:
 
 - `/assets/img/profile.jpg`
 - `https://example.com/profile.png`
 
-## 4. Change the site intro text
+## 4. 사이트 소개 문구 변경
 
-Edit these fields in `_config.yml`:
+`_config.yml`에서 다음 값을 수정합니다.
 
 ```yml
 title: "haeli.log"
@@ -50,11 +50,11 @@ tagline: "tech blog and diary"
 description: "Notes on development and everyday life."
 ```
 
-These values appear in the sidebar, metadata, and previews.
+이 값은 사이트 정보와 미리보기에 표시됩니다.
 
-## 5. Optional social links
+## 5. 연락처 링크
 
-Edit `_config.yml`:
+`_config.yml`을 수정합니다.
 
 ```yml
 social:
@@ -64,15 +64,16 @@ social:
     - https://github.com/haelime
 ```
 
-Keep `links` empty if you do not want footer profile links.
+하단에 프로필 링크를 표시하지 않으려면 `links`를 비워 둡니다.
 
-## 6. Categories used in this repo
+## 6. 문서 표현 원칙
 
-- `tech` for technical posts
-- `diary` for diary entries
+- 가운뎃점을 사용하지 않습니다. 항목은 쉼표나 접속어로 연결합니다.
+- 한글이 더 자연스러운 문장에서는 영어 표현을 한글로 씁니다.
+- 함수명, 클래스명, API 이름과 같이 정확성이 필요한 코드 식별자는 원문을 유지합니다.
 
-## 7. Publish changes
+## 7. 게시
 
-Commit and push to GitHub.
+변경 사항을 커밋하고 GitHub에 올립니다.
 
-If Pages source is set to `GitHub Actions`, the site will build and deploy automatically.
+Pages 게시 방식이 `GitHub Actions`로 설정되어 있으면 사이트가 자동으로 빌드되고 배포됩니다.
