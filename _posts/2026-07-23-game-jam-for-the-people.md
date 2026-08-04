@@ -17,11 +17,17 @@ toc: true
 
 ![GMTK Game Jam 2026 logo](/assets/img/projects/game-jam/cover.png)
 
-<div class="mb-4" style="aspect-ratio: 1280 / 740;">
+<div class="mb-4" style="position: relative; height: 0; padding-bottom: calc(56.25% + 20px);">
   <iframe src="https://itch.io/embed-upload/18525983?color=1b1b1e" title="For the people playable HTML5 build" width="1280" height="740"
     frameborder="0" allow="autoplay; fullscreen; gamepad" allowfullscreen
-    style="width: 100%; height: 100%;"></iframe>
+    style="position: absolute; inset: 0; width: 100%; height: 100%;"></iframe>
 </div>
+
+### 조작법
+
+- 이동: 마우스 클릭이나 화면 터치 또는 옵션에서 `WASD` 모드 선택
+- Bullet Time 증폭: `Space`를 누르고 있기(모바일은 두 손가락 터치)
+- 재시도: `R` 또는 결과 화면의 `RETRY`
 
 **For the people**은 GMTK Game Jam 2026에 제출한 Unity 기반 top-down action game입니다.
 
@@ -61,12 +67,6 @@ Time.fixedDeltaTime = 0.02f * scale;
 `CountdownGameDirector`에 라운드 생성, 폭발·구조 판정, UI와 오디오 갱신을 모은 것은 짧은 제작 기간에 전체 흐름을 빠르게 완성하기 위한 선택입니다. 규모가 커진다면 각 책임을 별도 시스템으로 분리할 수 있지만, 이번 잼 범위에서는 하나의 coordinator로 유지했습니다.
 
 Editor builder로 10개 level prefab을 생성하고 smoke check에서 level 순서, 폭탄·시민 수, prefab reference, 후반 레벨의 구조 가능 시간을 검사했습니다. 마우스, WASD, gamepad, touch 입력을 같은 이동 로직으로 연결했으며, 감속 증폭 중에는 현재 pose를 bake한 afterimage와 `MaterialPropertyBlock` fade로 속도감을 표현했습니다.
-
-## Controls
-
-- 이동: 마우스 클릭 또는 `WASD`
-- Bullet time 증폭: `Space`
-- 재시도: `R`
 
 ## 결과물
 
