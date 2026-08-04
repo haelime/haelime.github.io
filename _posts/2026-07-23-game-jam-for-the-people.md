@@ -17,11 +17,9 @@ toc: true
 
 ![GMTK Game Jam 2026 logo](/assets/img/projects/game-jam/cover.png)
 
-<div class="mb-4" style="position: relative; height: 0; padding-bottom: calc(56.25% + 20px);">
-  <iframe src="https://itch.io/embed-upload/18525983?color=1b1b1e" title="For the people playable HTML5 build" width="1280" height="740"
-    frameborder="0" allow="autoplay; fullscreen; gamepad" allowfullscreen
-    style="position: absolute; inset: 0; width: 100%; height: 100%;"></iframe>
-</div>
+[![For the people gameplay](/assets/img/projects/game-jam/gameplay.png)](https://haelime.itch.io/for-the-people)
+
+[**For the people 플레이하기**](https://haelime.itch.io/for-the-people)
 
 ### 조작법
 
