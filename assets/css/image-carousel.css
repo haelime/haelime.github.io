@@ -26,11 +26,14 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: contain;
+  object-position: center;
   background: #111;
 }
 
 .image-carousel__slide figcaption {
+  display: grid;
   min-height: 3rem;
+  place-items: center;
   padding: 0.75rem 3.5rem;
   text-align: center;
   color: var(--text-muted-color);
