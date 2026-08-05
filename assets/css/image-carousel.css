@@ -2,6 +2,13 @@
   margin: 1.5rem 0 2rem;
 }
 
+.autonomous-section-title {
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--main-border-color);
+  border-left: 0.25rem solid currentColor;
+  color: var(--link-color, #2f80ed);
+}
+
 .image-carousel__viewport {
   display: flex;
   overflow-x: auto;
