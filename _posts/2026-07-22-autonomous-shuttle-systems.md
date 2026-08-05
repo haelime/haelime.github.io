@@ -16,7 +16,7 @@ toc: true
 mermaid: true
 ---
 
-<link rel="stylesheet" href="{{ '/assets/css/image-carousel.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/image-carousel.css' | relative_url }}?v=20260805">
 
 ## 01. 프로젝트 개요
 {: .autonomous-section-title}
