@@ -36,7 +36,7 @@ description: ""
 ## 교육
 {: .home-section-title}
 
-### École 42 Seoul
+### École 42
 
 **42 Seoul 과정 수료** (2022.11–2024.11)
 
