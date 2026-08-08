@@ -10,7 +10,7 @@
   --gfx-card-border: var(--main-border-color);
 }
 
-:root[data-mode='dark'] {
+:root[data-bs-theme='dark'] {
   --gfx-accent: #57d7b7;
   --gfx-action-text: #d8fff4;
   --gfx-action-border: rgba(87, 215, 183, 0.35);

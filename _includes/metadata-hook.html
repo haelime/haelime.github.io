@@ -1,11 +1,10 @@
 <script>
   (() => {
-    const storageKey = 'portfolio-theme';
+    const storageKey = 'theme';
     const savedMode = localStorage.getItem(storageKey);
     const initialMode = savedMode === 'dark' || savedMode === 'light' ? savedMode : 'light';
 
-    document.documentElement.setAttribute('data-mode', initialMode);
-    sessionStorage.setItem('mode', initialMode);
+    Theme.update(initialMode);
 
     const updateToggle = (button, mode) => {
       const darkMode = mode === 'dark';
@@ -28,14 +27,11 @@
       updateToggle(button, initialMode);
 
       button.addEventListener('click', () => {
-        const currentMode = document.documentElement.getAttribute('data-mode');
+        const currentMode = document.documentElement.dataset.bsTheme;
         const nextMode = currentMode === 'dark' ? 'light' : 'dark';
 
-        document.documentElement.setAttribute('data-mode', nextMode);
-        localStorage.setItem(storageKey, nextMode);
-        sessionStorage.setItem('mode', nextMode);
+        Theme.update(nextMode);
         updateToggle(button, nextMode);
-        window.postMessage({ id: 'theme-mode' }, '*');
       });
     });
   })();
