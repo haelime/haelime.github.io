@@ -1,3 +1,27 @@
+:root {
+  --gfx-accent: #147a64;
+  --gfx-action-text: #116450;
+  --gfx-action-border: rgba(20, 122, 100, 0.38);
+  --gfx-action-bg: rgba(20, 122, 100, 0.08);
+  --gfx-action-hover-text: #805c00;
+  --gfx-action-hover-border: rgba(164, 119, 0, 0.5);
+  --gfx-action-hover-bg: rgba(164, 119, 0, 0.1);
+  --gfx-card-bg: var(--card-bg);
+  --gfx-card-border: var(--main-border-color);
+}
+
+:root[data-mode='dark'] {
+  --gfx-accent: #57d7b7;
+  --gfx-action-text: #d8fff4;
+  --gfx-action-border: rgba(87, 215, 183, 0.35);
+  --gfx-action-bg: rgba(87, 215, 183, 0.08);
+  --gfx-action-hover-text: #fff0c2;
+  --gfx-action-hover-border: rgba(255, 202, 87, 0.55);
+  --gfx-action-hover-bg: rgba(255, 202, 87, 0.1);
+  --gfx-card-bg: rgba(20, 27, 36, 0.42);
+  --gfx-card-border: rgba(142, 154, 175, 0.22);
+}
+
 .gfx-hero {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
@@ -16,7 +40,7 @@
 .gfx-kicker,
 .shader-card__eyebrow {
   margin: 0 0 0.6rem;
-  color: #57d7b7;
+  color: var(--gfx-accent);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0;
@@ -51,20 +75,20 @@
   align-items: center;
   justify-content: center;
   min-height: 2.5rem;
-  border: 1px solid rgba(87, 215, 183, 0.35);
+  border: 1px solid var(--gfx-action-border);
   border-radius: 6px;
   padding: 0.45rem 0.85rem;
-  color: #d8fff4;
-  background: rgba(87, 215, 183, 0.08);
+  color: var(--gfx-action-text);
+  background: var(--gfx-action-bg);
   font-weight: 650;
   text-decoration: none;
 }
 
 .gfx-actions a:hover,
 .shader-card a:hover {
-  border-color: rgba(255, 202, 87, 0.55);
-  color: #fff0c2;
-  background: rgba(255, 202, 87, 0.1);
+  border-color: var(--gfx-action-hover-border);
+  color: var(--gfx-action-hover-text);
+  background: var(--gfx-action-hover-bg);
   text-decoration: none;
 }
 
@@ -72,7 +96,7 @@
   position: relative;
   overflow: hidden;
   min-height: 360px;
-  border: 1px solid rgba(142, 154, 175, 0.22);
+  border: 1px solid var(--gfx-card-border);
   border-radius: 8px;
   background:
     linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
@@ -174,10 +198,10 @@
   justify-content: space-between;
   gap: 1rem;
   min-height: 170px;
-  border: 1px solid rgba(142, 154, 175, 0.22);
+  border: 1px solid var(--gfx-card-border);
   border-radius: 8px;
   padding: 1rem;
-  background: rgba(20, 27, 36, 0.42);
+  background: var(--gfx-card-bg);
 }
 
 .shader-card h3 {

@@ -1,3 +1,45 @@
+<script>
+  (() => {
+    const storageKey = 'portfolio-theme';
+    const savedMode = localStorage.getItem(storageKey);
+    const initialMode = savedMode === 'dark' || savedMode === 'light' ? savedMode : 'light';
+
+    document.documentElement.setAttribute('data-mode', initialMode);
+    sessionStorage.setItem('mode', initialMode);
+
+    const updateToggle = (button, mode) => {
+      const darkMode = mode === 'dark';
+      const icon = button.querySelector('i');
+
+      button.setAttribute('aria-label', darkMode ? '라이트 모드로 전환' : '다크 모드로 전환');
+      button.setAttribute('title', darkMode ? '라이트 모드' : '다크 모드');
+      button.setAttribute('aria-pressed', String(darkMode));
+      icon.className = darkMode ? 'fas fa-sun' : 'fas fa-moon';
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const button = document.createElement('button');
+      const icon = document.createElement('i');
+
+      button.type = 'button';
+      button.id = 'portfolio-theme-toggle';
+      button.appendChild(icon);
+      document.body.appendChild(button);
+      updateToggle(button, initialMode);
+
+      button.addEventListener('click', () => {
+        const currentMode = document.documentElement.getAttribute('data-mode');
+        const nextMode = currentMode === 'dark' ? 'light' : 'dark';
+
+        document.documentElement.setAttribute('data-mode', nextMode);
+        localStorage.setItem(storageKey, nextMode);
+        sessionStorage.setItem('mode', nextMode);
+        updateToggle(button, nextMode);
+        window.postMessage({ id: 'theme-mode' }, '*');
+      });
+    });
+  })();
+</script>
 <style>
   #sidebar,
   #sidebar-trigger,
@@ -15,6 +57,40 @@
   main[aria-label='Main Content'] {
     flex: 0 0 100%;
     max-width: 100%;
+  }
+
+  #portfolio-theme-toggle {
+    position: fixed;
+    top: max(1rem, env(safe-area-inset-top));
+    right: max(1rem, env(safe-area-inset-right));
+    z-index: 1040;
+    display: grid;
+    width: 2.75rem;
+    height: 2.75rem;
+    place-items: center;
+    border: 1px solid var(--main-border-color);
+    border-radius: 50%;
+    color: var(--text-color);
+    background: var(--card-bg);
+    box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 12%);
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+  }
+
+  #portfolio-theme-toggle:hover {
+    color: var(--link-color);
+    transform: translateY(-2px);
+  }
+
+  #portfolio-theme-toggle:focus-visible {
+    outline: 3px solid var(--link-color);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #portfolio-theme-toggle {
+      transition: none;
+    }
   }
 
   article > .content > h2,
