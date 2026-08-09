@@ -5,9 +5,9 @@ categories: [Portfolio]
 tags: [C#, Unity, Multiplayer, Netcode, Gameplay]
 description: '서버 권위형 멀티플레이와 데이터 기반 낚시·수집·성장 시스템을 구현 중인 Unity 프로젝트'
 image:
-  path: /assets/img/projects/idle-together/cover.png
+  path: /assets/img/projects/idle-together/placeholder.svg
   alt: IdleTogether 낚시 게임 화면
-thumbnail: /assets/img/projects/idle-together/cover.png
+thumbnail: /assets/img/projects/idle-together/placeholder.svg
 stack: 'C#, Unity 6, Netcode for GameObjects, Steamworks.NET'
 project_order: 1
 project_group: games
@@ -16,7 +16,7 @@ hide_from_home: true
 toc: true
 ---
 
-![IdleTogether 메인 게임 화면](/assets/img/projects/idle-together/cover.png)
+![IdleTogether 메인 게임 화면](/assets/img/projects/idle-together/placeholder.svg)
 
 IdleTogether는 작업하는 동안 데스크톱 한쪽에 머물며 가끔 들여다볼 수 있는 멀티플레이 낚시 게임입니다. 플레이어가 자리를 비운 사이에도 부담 없이 이어지는 작은 세계와, 다른 사람과 같은 공간에 머무는 감각을 만드는 것이 목표입니다.
 
@@ -26,7 +26,7 @@ IdleTogether는 작업하는 동안 데스크톱 한쪽에 머물며 가끔 들�
 
 플레이어가 섬 가장자리를 클릭하면 NavMesh 위의 낚시 가능한 위치를 계산하고 해안으로 이동합니다. 도착한 뒤에는 `Casting → Waiting → Reeling` 단계가 이어집니다. 입질이 오면 화면에 나타나는 표적을 클릭해 포획 진행도를 높이고, 제한 시간 안에 물고기가 요구하는 힘을 채우면 인벤토리에 기록합니다.
 
-![캐스팅부터 릴링까지 이어지는 낚시 화면](/assets/img/projects/idle-together/fishing-loop.png)
+![캐스팅부터 릴링까지 이어지는 낚시 화면](/assets/img/projects/idle-together/placeholder.svg)
 
 플레이어의 상위 행동은 `Idle`, `Moving`, `MovingToFish`, `Fishing` 등의 상태로 관리하고, 낚시 내부 단계는 별도의 상태로 분리했습니다. 이동 명령과 낚시 갱신 조건을 한 상태 머신에서 조정하되, 물고기 선택과 클릭 판정은 `PlayerFishingController`가 담당합니다. 덕분에 낚시 중 들어온 이동 명령을 거부하거나 해안 도착 시점에만 캐스팅을 시작하는 규칙을 명시적으로 표현할 수 있습니다.
 
@@ -45,7 +45,7 @@ IdleTogether는 작업하는 동안 데스크톱 한쪽에 머물며 가끔 들�
 
 ## 수집·장비·경제를 연결한 UI
 
-![물고기 인벤토리와 장비·상점 화면](/assets/img/projects/idle-together/inventory-and-shop.png)
+![물고기 인벤토리와 장비·상점 화면](/assets/img/projects/idle-together/placeholder.svg)
 
 인벤토리는 보유 물고기, 낚시 장비와 코스메틱을 같은 탐색 UI에서 분류해 보여 줍니다. 선택한 물고기의 외형을 별도 렌더 텍스처로 미리 보고 즐겨찾기나 판매를 실행할 수 있습니다. 장비는 구매 여부와 현재 착용 상태를 나누며, 미끼는 입질 시간을 줄이는 소비 아이템으로 처리했습니다.
 
@@ -60,7 +60,7 @@ IdleTogether는 작업하는 동안 데스크톱 한쪽에 머물며 가끔 들�
 
 ## 서버 권위형 멀티플레이
 
-![두 플레이어가 같은 섬에서 낚시하는 멀티플레이 화면](/assets/img/projects/idle-together/multiplayer.png)
+![두 플레이어가 같은 섬에서 낚시하는 멀티플레이 화면](/assets/img/projects/idle-together/placeholder.svg)
 
 Unity Netcode for GameObjects와 Unity Transport를 사용해 Host, Client, Server 실행 흐름을 구성했습니다. 네트워크 세션을 시작하면 오프라인 플레이어를 숨기고 각 클라이언트의 네트워크 플레이어를 NavMesh 위에 배치하며, 세션을 종료하면 오프라인 상태로 되돌립니다.
 

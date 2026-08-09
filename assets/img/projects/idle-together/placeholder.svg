@@ -1,0 +1,10 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900' role='img' aria-labelledby='title description'>
+  <title id='title'>IdleTogether screenshot placeholder</title>
+  <desc id='description'>A placeholder shown until a project screenshot is added.</desc>
+  <rect width='1600' height='900' fill='#202936'/>
+  <circle cx='800' cy='390' r='150' fill='#7fa79a' opacity='0.22'/>
+  <path d='M710 390c55-75 145-75 200 0-55 75-145 75-200 0Zm200 0 80-60v120Z' fill='#b9d3c9'/>
+  <circle cx='758' cy='375' r='10' fill='#202936'/>
+  <text x='800' y='620' fill='#f2f0e8' font-family='sans-serif' font-size='72' text-anchor='middle'>IdleTogether</text>
+  <text x='800' y='690' fill='#b9c2cc' font-family='sans-serif' font-size='30' text-anchor='middle'>Screenshot coming soon</text>
+</svg>
