@@ -1,4 +1,7 @@
 {% assign project_posts = site.posts | where: 'portfolio', true %}
+{% if page.url == '/' %}
+  {% assign project_posts = project_posts | where_exp: 'post', 'post.hide_from_home != true' %}
+{% endif %}
 {% if include.group %}
   {% assign project_posts = project_posts | where: 'project_group', include.group %}
 {% endif %}
