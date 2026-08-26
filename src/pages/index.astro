@@ -1,13 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectGrid from '../components/ProjectGrid.astro';
+import PortfolioAccordion from '../components/PortfolioAccordion.astro';
 import { visibleProjects } from '../lib/portfolio';
 
-const projects = visibleProjects(await getCollection('portfolio'), false);
-const games = projects.filter((project) => project.data.project_group === 'games');
-const graphics = projects.filter((project) => project.data.project_group === 'graphics');
-const general = projects.filter((project) => project.data.project_group === 'general');
+const projects = visibleProjects(await getCollection('portfolio'));
 ---
 
 <BaseLayout>
@@ -33,7 +30,6 @@ const general = projects.filter((project) => project.data.project_group === 'gen
       <p><strong>시스템 소프트웨어 엔지니어 / 주임연구원</strong> (2024.11–2025.04)</p>
       <p>인천국제공항 자율주행 셔틀 프로젝트에서 UDP 기반 LiDAR 데이터 처리, C++/ROS2 기반 FSM 제어 로직, 생존 신호 기반 진단 및 고장 안전 시스템을 개발했습니다.</p>
     </div>
-    <ProjectGrid projects={general} />
   </section>
 
   <section>
@@ -62,10 +58,8 @@ const general = projects.filter((project) => project.data.project_group === 'gen
     </div>
   </section>
 
-  <section>
-    <h2 class="section-title">프로젝트 · 게임</h2>
-    <ProjectGrid projects={games} />
-    <h2 class="section-title">프로젝트 · 그래픽스</h2>
-    <ProjectGrid projects={graphics} />
+  <section class="landing-portfolio">
+    <h2 class="section-title">포트폴리오</h2>
+    <PortfolioAccordion projects={projects} />
   </section>
 </BaseLayout>

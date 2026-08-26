@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { blogPath } from '../../lib/blog';
+
+const posts = (await getCollection('blog'))
+  .filter((post) => !post.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+---
+
+<BaseLayout title="블로그" description="개발 기록과 일상적인 생각을 쌓는 글 게시판">
+  <article class="page-shell">
+    <header class="page-header">
+      <p class="eyebrow">Blog</p>
+      <h1>블로그</h1>
+      <p class="project-description">프로젝트 밖의 개발 기록과 생각을 줄글로 남기는 공간입니다.</p>
+    </header>
+
+    <section class="blog-board" aria-label="블로그 글 목록">
+      <div class="blog-board__header" aria-hidden="true">
+        <span>글</span>
+        <span>작성일</span>
+      </div>
+      {posts.length > 0 ? (
+        <ol class="blog-list">
+          {posts.map((post) => (
+            <li>
+              <a href={blogPath(post)}>
+                <span class="blog-list__copy">
+                  <strong>{post.data.title}</strong>
+                  <small>{post.data.description}</small>
+                </span>
+                <time datetime={post.data.date.toISOString()}>{date.format(post.data.date)}</time>
+              </a>
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <p class="blog-board__empty">아직 공개한 글이 없습니다.</p>
+      )}
+    </section>
+  </article>
+</BaseLayout>

@@ -11,6 +11,8 @@ thumbnail: /assets/img/projects/example/thumb.webp
 stack: "C++, OpenGL"
 project_order: 10
 project_group: graphics
+# 기타 안의 진짜 기타에 넣으려면 다음 줄을 사용합니다.
+# project_subgroup: misc
 portfolio: true
 hide_from_home: false
 unlisted: false

@@ -18,6 +18,7 @@ const portfolio = defineCollection({
     stack: z.string(),
     project_order: z.number().default(999),
     project_group: z.enum(['games', 'graphics', 'general']).default('games'),
+    project_subgroup: z.enum(['misc']).optional(),
     portfolio: z.boolean().default(true),
     hide_from_home: z.boolean().default(false),
     unlisted: z.boolean().default(false),
@@ -29,4 +30,20 @@ const portfolio = defineCollection({
   })
 });
 
-export const collections = { portfolio };
+const blog = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.coerce.date(),
+    description: z.string(),
+    tags: z.array(z.string()).default([]),
+    image: z.object({
+      path: z.string(),
+      alt: z.string()
+    }).optional(),
+    draft: z.boolean().default(false),
+    toc: z.boolean().default(true)
+  })
+});
+
+export const collections = { portfolio, blog };

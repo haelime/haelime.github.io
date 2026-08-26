@@ -26,5 +26,5 @@ C++/C# 프로그래머입니다.
 ## 링크
 
 - [프로젝트](/projects/)
-- [이력](/resume/)
+- [블로그](/blog/)
 - [GitHub](https://github.com/haelime)

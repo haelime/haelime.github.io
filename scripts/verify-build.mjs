@@ -7,8 +7,8 @@ const rootPath = root.pathname.replace(/^\/(.:\/)/, '$1');
 const expectedRoutes = [
   '/',
   '/projects/',
+  '/blog/',
   '/about/',
-  '/resume/',
   '/archives/',
   '/categories/',
   '/categories/portfolio/',
@@ -34,6 +34,7 @@ const failures = [];
 for (const route of expectedRoutes) {
   if (!existsSync(routeFile(route))) failures.push(`missing route: ${route}`);
 }
+if (existsSync(routeFile('/resume/'))) failures.push('retired resume route still exists');
 
 const walk = (directory) => readdirSync(directory).flatMap((name) => {
   const path = join(directory, name);
@@ -73,19 +74,23 @@ for (const route of ['/', '/projects/', '/archives/', '/categories/', '/tags/'])
 const projects = readFileSync(routeFile('/projects/'), 'utf8');
 const modelActivityPath = '/posts/model-activity/';
 const oiiaCatPath = '/posts/oiia-cat/';
-const autonomousShuttlePath = '/posts/autonomous-shuttle-systems/';
 if (!projects.includes(`href="${modelActivityPath}"`)) failures.push('Model activity missing from projects');
-if (projects.indexOf(modelActivityPath) < projects.indexOf(autonomousShuttlePath)) {
-  failures.push('Model activity is not ordered after autonomous shuttle');
-}
 if (!projects.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat missing from projects');
-if (projects.indexOf(oiiaCatPath) < projects.indexOf(modelActivityPath)) {
-  failures.push('Oiia Cat is not the final item in the general group');
+if (!projects.includes('<summary><span>기타</span>')) failures.push('Collapsible general group missing');
+if (!projects.includes('<summary><span>진짜 기타</span>')) failures.push('Nested misc group missing');
+if (projects.indexOf(modelActivityPath) < projects.indexOf(oiiaCatPath)) {
+  failures.push('Model activity is not nested after the general projects');
 }
 
 const home = readFileSync(routeFile('/'), 'utf8');
-if (home.includes(`href="${modelActivityPath}"`)) failures.push('Model activity leaked into home career section');
-if (home.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat leaked into home career section');
+if (!home.includes(`href="${modelActivityPath}"`)) failures.push('Model activity missing from landing portfolio');
+if (!home.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat missing from landing portfolio');
+if (!home.includes('href="/blog/"')) failures.push('Blog navigation link missing');
+if (home.includes('href="/resume/"')) failures.push('Resume navigation link still exists');
+if (home.includes('href="/about/"')) failures.push('About navigation link still exists');
+
+const blog = readFileSync(routeFile('/blog/'), 'utf8');
+if (!blog.includes('class="blog-board"')) failures.push('Blog board missing');
 
 const sitemapPath = join(rootPath, 'sitemap-0.xml');
 if (existsSync(sitemapPath) && readFileSync(sitemapPath, 'utf8').includes('/clasher/')) {

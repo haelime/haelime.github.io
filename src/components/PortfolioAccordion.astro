@@ -1,0 +1,47 @@
+---
+import ProjectGrid from './ProjectGrid.astro';
+import type { Project } from '../lib/portfolio';
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+const games = projects.filter((project) => project.data.project_group === 'games');
+const graphics = projects.filter((project) => project.data.project_group === 'graphics');
+const general = projects.filter(
+  (project) => project.data.project_group === 'general' && project.data.project_subgroup !== 'misc'
+);
+const misc = projects.filter((project) => project.data.project_subgroup === 'misc');
+---
+
+<div class="portfolio-accordion">
+  {games.length > 0 && (
+    <details class="portfolio-fold" open>
+      <summary><span>게임</span><small>{games.length}개</small></summary>
+      <div class="portfolio-fold__content"><ProjectGrid projects={games} /></div>
+    </details>
+  )}
+
+  {graphics.length > 0 && (
+    <details class="portfolio-fold" open>
+      <summary><span>그래픽스</span><small>{graphics.length}개</small></summary>
+      <div class="portfolio-fold__content"><ProjectGrid projects={graphics} /></div>
+    </details>
+  )}
+
+  {(general.length > 0 || misc.length > 0) && (
+    <details class="portfolio-fold">
+      <summary><span>기타</span><small>{general.length + misc.length}개</small></summary>
+      <div class="portfolio-fold__content">
+        {general.length > 0 && <ProjectGrid projects={general} />}
+        {misc.length > 0 && (
+          <details class="portfolio-fold portfolio-fold--nested">
+            <summary><span>진짜 기타</span><small>{misc.length}개</small></summary>
+            <div class="portfolio-fold__content"><ProjectGrid projects={misc} /></div>
+          </details>
+        )}
+      </div>
+    </details>
+  )}
+</div>

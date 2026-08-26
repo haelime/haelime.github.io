@@ -11,6 +11,7 @@ thumbnail: /assets/img/projects/model-activity/thumb.webp
 stack: "Commercial Modeling · Nail Art · Tattoo Sticker"
 project_order: 8
 project_group: general
+project_subgroup: misc
 portfolio: true
 hide_from_home: true
 toc: false

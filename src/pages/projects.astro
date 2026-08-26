@@ -1,15 +1,10 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ProjectGrid from '../components/ProjectGrid.astro';
+import PortfolioAccordion from '../components/PortfolioAccordion.astro';
 import { visibleProjects } from '../lib/portfolio';
 
 const projects = visibleProjects(await getCollection('portfolio'));
-const groups = [
-  { id: 'games', title: '게임' },
-  { id: 'graphics', title: '그래픽스' },
-  { id: 'general', title: '기타' }
-] as const;
 ---
 
 <BaseLayout title="프로젝트" description="게임, 그래픽스와 시스템 소프트웨어 프로젝트">
@@ -19,14 +14,6 @@ const groups = [
       <h1>프로젝트</h1>
       <p class="project-description">C++/C#을 중심으로 게임 진행 로직, 시뮬레이션, 그래픽스 시스템을 구현한 기록입니다.</p>
     </header>
-    {groups.map((group) => {
-      const entries = projects.filter((project) => project.data.project_group === group.id);
-      return entries.length > 0 && (
-        <section>
-          <h2 class="section-title">{group.title}</h2>
-          <ProjectGrid projects={entries} />
-        </section>
-      );
-    })}
+    <PortfolioAccordion projects={projects} />
   </article>
 </BaseLayout>

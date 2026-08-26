@@ -29,7 +29,7 @@ npm run build
 
 ## 콘텐츠
 
-포트폴리오 글은 `src/content/portfolio/`, 정적 페이지는 `src/pages/`, 공개 이미지는 `public/assets/img/`에 둡니다. 자세한 작성 방법은 `docs/authoring-guide.md`를 참고하세요.
+포트폴리오 글은 `src/content/portfolio/`, 블로그 글은 `src/content/blog/`, 정적 페이지는 `src/pages/`, 공개 이미지는 `public/assets/img/`에 둡니다. 자세한 작성 방법은 `docs/authoring-guide.md`를 참고하세요.
 
 Three.js나 웹게임은 독립 앱으로 빌드한 뒤 `/play/` 아래에 연결할 수 있도록 사이트와 콘텐츠 구조를 분리했습니다.
 

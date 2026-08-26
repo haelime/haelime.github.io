@@ -1,0 +1,56 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { blogSlug } from '../../lib/blog';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')).filter((post) => !post.data.draft);
+  return posts.map((post) => ({
+    params: { slug: blogSlug(post) },
+    props: { post }
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.image?.path}
+>
+  <article class="project-shell">
+    <header class="project-header">
+      <p class="eyebrow">Blog</p>
+      <h1>{post.data.title}</h1>
+      <p class="project-description">{post.data.description}</p>
+      <div class="project-meta">
+        <time datetime={post.data.date.toISOString()}>{date.format(post.data.date)}</time>
+      </div>
+      <div class="project-tags">
+        {post.data.tags.map((tag) => <span>{tag}</span>)}
+      </div>
+    </header>
+
+    {post.data.image && (
+      <img
+        class="project-cover"
+        src={post.data.image.path}
+        alt={post.data.image.alt}
+        decoding="async"
+      />
+    )}
+
+    <div class="reading-grid">
+      <div class="prose"><Content /></div>
+      {post.data.toc && <TableOfContents headings={headings} />}
+    </div>
+  </article>
+</BaseLayout>
