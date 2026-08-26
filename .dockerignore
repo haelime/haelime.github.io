@@ -1,0 +1,17 @@
+.git
+.github
+.astro
+dist
+node_modules
+_site
+_data
+_includes
+_plugins
+_posts
+_tabs
+assets
+img
+clasher
+ForThePeople
+GPUBoidsSimulation
+miniRT

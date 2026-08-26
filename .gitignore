@@ -11,9 +11,10 @@ _site
 # RubyGems
 *.gem
 
-# NPM dependencies
+# Node / Astro
 node_modules
-package-lock.json
+dist
+.astro
 
 # IDE configurations
 .idea

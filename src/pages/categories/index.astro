@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const projects = (await getCollection('portfolio')).filter((project) => !project.data.unlisted);
+const categories = [...new Set(projects.flatMap((project) => project.data.categories))].sort();
+---
+
+<BaseLayout title="카테고리">
+  <article class="page-shell">
+    <header class="page-header"><p class="eyebrow">Taxonomy</p><h1>카테고리</h1></header>
+    <div class="taxonomy-list">
+      {categories.map((category) => <a href={`/categories/${category.toLowerCase()}/`}>{category}</a>)}
+    </div>
+  </article>
+</BaseLayout>

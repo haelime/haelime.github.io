@@ -1,79 +1,68 @@
 # 문서 작성 안내
 
-이 저장소는 Jekyll Chirpy와 GitHub Pages로 포트폴리오를 게시합니다.
+이 저장소는 Astro 7과 GitHub Pages로 포트폴리오를 게시합니다.
 
-## 1. 글 작성
+## 1. 프로젝트 글 작성
 
-`_posts`에 다음 형식으로 파일을 만듭니다.
+`src/content/portfolio/`에 Markdown 파일을 만듭니다.
 
-`YYYY-MM-DD-slug.md`
-
-예시:
-
-- `2026-04-06-first-post.md`
-- `2026-04-06-daily-note.md`
-
-다음 서식 중 하나를 사용합니다.
-
-- `docs/templates/post-tech.md`
-- `docs/templates/post-diary.md`
-
-## 2. 소개 페이지 수정
-
-`_tabs/about.md`를 수정합니다.
-
-이 파일의 내용이 `/about/` 페이지에 표시됩니다.
-
-## 3. 프로필 사진 변경
-
-1. 이미지 파일을 `assets/img/`에 넣습니다.
-2. `_config.yml`의 `avatar` 값을 설정합니다.
-
-예시:
-
-```yml
-avatar: /assets/img/profile.jpg
+```text
+YYYY-MM-DD-project-slug.md
 ```
 
-사용 가능한 형식:
+`docs/templates/portfolio-project.md`의 frontmatter를 복사해 사용합니다. 파일명의 날짜는 정렬용이며 실제 표시 날짜는 `date` 필드입니다.
 
-- `/assets/img/profile.jpg`
-- `https://example.com/profile.png`
+## 2. 프로젝트 목록 제어
 
-## 4. 사이트 소개 문구 변경
+- `project_group`: `games`, `graphics`, `general` 중 하나
+- `project_order`: 그룹 안의 표시 순서
+- `hide_from_home: true`: 홈에서만 제외하고 프로젝트 목록에는 표시
+- `unlisted: true`: URL은 만들지만 모든 목록과 분류 페이지에서 제외
+- `noindex: true`: 검색 엔진 색인 방지
+- `sitemap: false`: 사이트맵 제외
+- `permalink: /custom-path/`: 기본 `/posts/<파일명>/` 대신 사용할 URL
 
-`_config.yml`에서 다음 값을 수정합니다.
+Clasher가 링크로만 접근 가능한 구성의 예시입니다.
 
-```yml
-title: "haeli.log"
-tagline: "tech blog and diary"
-description: "Notes on development and everyday life."
+## 3. 이미지
+
+공개 이미지는 `public/assets/img/projects/<project>/`에 넣고 Markdown에서 다음처럼 참조합니다.
+
+```markdown
+![설명](/assets/img/projects/example/screenshot.png)
 ```
 
-이 값은 사이트 정보와 미리보기에 표시됩니다.
+포트폴리오 본문의 단독 이미지는 데스크톱에서 화면 너비의 50%, 모바일에서 100%로 표시됩니다.
 
-## 5. 연락처 링크
+## 4. 페이지와 프로필
 
-`_config.yml`을 수정합니다.
+- 홈: `src/pages/index.astro`
+- 소개: `src/pages/about.md`
+- 이력: `src/pages/resume.md`
+- 프로젝트 목록: `src/pages/projects.astro`
+- 공통 레이아웃: `src/layouts/BaseLayout.astro`
+- 프로필 사진: `public/assets/img/IMG_8923.jpg`
 
-```yml
-social:
-  name: haelime
-  email: me@example.com
-  links:
-    - https://github.com/haelime
+## 5. Three.js와 웹게임
+
+짧은 Three.js 데모는 Astro 컴포넌트로 만들고, 규모가 큰 게임은 독립 Vite 앱으로 빌드해 `/play/<game>/` 링크나 iframe으로 연결합니다. Unity WebGL 빌드는 저장소 용량과 응답 헤더를 고려해 별도 호스팅을 권장합니다.
+
+## 6. 로컬 확인
+
+```bash
+npm run dev
 ```
 
-하단에 프로필 링크를 표시하지 않으려면 `links`를 비워 둡니다.
+Docker:
 
-## 6. 문서 표현 원칙
+```bash
+docker compose up --build
+```
 
-- 가운뎃점을 사용하지 않습니다. 항목은 쉼표나 접속어로 연결합니다.
-- 한글이 더 자연스러운 문장에서는 영어 표현을 한글로 씁니다.
-- 함수명, 클래스명, API 이름과 같이 정확성이 필요한 코드 식별자는 원문을 유지합니다.
+## 7. 게시 전 검증
 
-## 7. 게시
+```bash
+npm run build
+```
 
-변경 사항을 커밋하고 GitHub에 올립니다.
-
-Pages 게시 방식이 `GitHub Actions`로 설정되어 있으면 사이트가 자동으로 빌드되고 배포됩니다.
+빌드가 통과하면 `main`에 반영된 변경을 GitHub Actions가 GitHub Pages에 배포합니다.

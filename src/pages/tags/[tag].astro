@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectGrid from '../../components/ProjectGrid.astro';
+import { sortProjects, taxonomySlug } from '../../lib/portfolio';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('portfolio')).filter((project) => !project.data.unlisted);
+  const tags = [...new Set(projects.flatMap((project) => project.data.tags))];
+  return tags.map((tag) => ({
+    params: { tag: taxonomySlug(tag) },
+    props: { tag, projects: sortProjects(projects.filter((project) => project.data.tags.includes(tag))) }
+  }));
+}
+
+const { tag, projects } = Astro.props;
+---
+
+<BaseLayout title={tag}>
+  <article class="page-shell">
+    <header class="page-header"><p class="eyebrow">Tag</p><h1>{tag}</h1></header>
+    <ProjectGrid projects={projects} />
+  </article>
+</BaseLayout>

@@ -1,0 +1,22 @@
+<script>
+  import mermaid from 'mermaid';
+
+  const diagrams = document.querySelectorAll<HTMLElement>('pre[data-language="mermaid"]');
+
+  if (diagrams.length > 0) {
+    diagrams.forEach((code) => {
+      const container = document.createElement('div');
+      container.className = 'mermaid';
+      container.textContent = code.textContent;
+      code.replaceWith(container);
+    });
+
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default',
+      securityLevel: 'strict'
+    });
+
+    await mermaid.run({ querySelector: '.mermaid' });
+  }
+</script>

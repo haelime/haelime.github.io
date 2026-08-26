@@ -1,0 +1,68 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TableOfContents from '../components/TableOfContents.astro';
+import Mermaid from '../components/Mermaid.astro';
+import { projectPath, taxonomySlug, type Project } from '../lib/portfolio';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('portfolio');
+  return projects.map((project) => ({
+    params: { slug: projectPath(project).replace(/^\//, '').replace(/\/$/, '') },
+    props: { project }
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { Content, headings } = await render(project);
+const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<BaseLayout
+  title={project.data.title}
+  description={project.data.description}
+  image={project.data.image?.path ?? project.data.thumbnail}
+  noindex={project.data.noindex}
+>
+  <article class="project-shell">
+    <header class="project-header">
+      <p class="eyebrow">{project.data.project_group}</p>
+      <h1>{project.data.title}</h1>
+      <p class="project-description">{project.data.description}</p>
+      <div class="project-meta">
+        <time datetime={project.data.date.toISOString()}>{date.format(project.data.date)}</time>
+        <span>{project.data.stack}</span>
+      </div>
+      <div class="project-tags">
+        {project.data.tags.map((tag) =>
+          project.data.unlisted
+            ? <span>{tag}</span>
+            : <a href={`/tags/${taxonomySlug(tag)}/`}>{tag}</a>
+        )}
+      </div>
+    </header>
+
+    {project.data.image && (
+      <img
+        class="project-cover"
+        src={project.data.image.path}
+        alt={project.data.image.alt}
+        width="1280"
+        height="720"
+        decoding="async"
+      />
+    )}
+
+    <div class="reading-grid">
+      <div class="prose">
+        <Content />
+      </div>
+      {project.data.toc && <TableOfContents headings={headings} />}
+    </div>
+  </article>
+  {project.data.mermaid && <Mermaid />}
+</BaseLayout>

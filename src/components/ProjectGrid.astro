@@ -1,0 +1,31 @@
+---
+import type { Project } from '../lib/portfolio';
+import { projectPath } from '../lib/portfolio';
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<div class="project-gallery">
+  {projects.map((project) => (
+    <article class="project-card">
+      <a
+        class="project-card__thumbnail"
+        href={projectPath(project)}
+        aria-label={`${project.data.title} 프로젝트 보기`}
+      >
+        {project.data.thumbnail && (
+          <img src={project.data.thumbnail} alt="" loading="lazy" decoding="async" />
+        )}
+      </a>
+      <a class="project-card__body" href={projectPath(project)}>
+        <small>{project.data.stack}</small>
+        <strong>{project.data.title}</strong>
+        <span>{project.data.description}</span>
+      </a>
+    </article>
+  ))}
+</div>

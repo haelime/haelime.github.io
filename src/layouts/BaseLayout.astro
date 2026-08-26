@@ -1,0 +1,86 @@
+---
+import ThemeToggle from '../components/ThemeToggle.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = 'Hae Eem',
+  description = 'C++ / C# Game Programmer',
+  image = '/assets/img/IMG_8923.jpg',
+  noindex = false
+} = Astro.props;
+
+const documentTitle = title === 'Hae Eem' ? title : `${title} | Hae Eem`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const socialImage = new URL(image, Astro.site);
+---
+
+<!doctype html>
+<html lang="ko" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/assets/img/favicons/github-profile.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Hae Eem" />
+    <meta property="og:title" content={documentTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {noindex && <meta name="robots" content="noindex, nofollow, noarchive" />}
+    <title>{documentTitle}</title>
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('portfolio-theme');
+        document.documentElement.dataset.theme = saved === 'dark' || saved === 'light' ? saved : 'light';
+      })();
+    </script>
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-XTYN04QGJX"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XTYN04QGJX', { anonymize_ip: true });
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-brand" href="/">
+        <strong>Hae Eem</strong>
+        <span>C++ / C# Game Programmer</span>
+      </a>
+      <nav aria-label="주 메뉴">
+        <a href="/projects/">프로젝트</a>
+        <a href="/about/">소개</a>
+        <a href="/resume/">이력</a>
+        <a href="https://github.com/haelime" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+    <main class="site-main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <span>© {new Date().getFullYear()} Hae Eem</span>
+      <a href="mailto:loreminder@gmail.com">loreminder@gmail.com</a>
+    </footer>
+    <ThemeToggle />
+    {import.meta.env.PROD && (
+      <script is:inline>
+        if ('serviceWorker' in navigator) {
+          addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
+        }
+      </script>
+    )}
+  </body>
+</html>

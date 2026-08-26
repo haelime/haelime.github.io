@@ -1,0 +1,24 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectGrid from '../../components/ProjectGrid.astro';
+import { sortProjects } from '../../lib/portfolio';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('portfolio')).filter((project) => !project.data.unlisted);
+  const categories = [...new Set(projects.flatMap((project) => project.data.categories))];
+  return categories.map((category) => ({
+    params: { category: category.toLowerCase() },
+    props: { category, projects: sortProjects(projects.filter((project) => project.data.categories.includes(category))) }
+  }));
+}
+
+const { category, projects } = Astro.props;
+---
+
+<BaseLayout title={category}>
+  <article class="page-shell">
+    <header class="page-header"><p class="eyebrow">Category</p><h1>{category}</h1></header>
+    <ProjectGrid projects={projects} />
+  </article>
+</BaseLayout>

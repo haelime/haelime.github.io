@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { projectPath } from '../lib/portfolio';
+
+const projects = (await getCollection('portfolio'))
+  .filter((project) => !project.data.unlisted)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+---
+
+<BaseLayout title="아카이브" description="포트폴리오 게시물 전체 목록">
+  <article class="page-shell">
+    <header class="page-header">
+      <p class="eyebrow">Archive</p>
+      <h1>아카이브</h1>
+    </header>
+    <ol class="archive-list">
+      {projects.map((project) => (
+        <li>
+          <time datetime={project.data.date.toISOString()}>{date.format(project.data.date)}</time>
+          <a href={projectPath(project)}>{project.data.title}</a>
+        </li>
+      ))}
+    </ol>
+  </article>
+</BaseLayout>
