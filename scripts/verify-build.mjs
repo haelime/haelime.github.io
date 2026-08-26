@@ -21,7 +21,8 @@ const expectedRoutes = [
   '/posts/minirt/',
   '/posts/rimworld-portrait-overlay/',
   '/posts/idle-together/',
-  '/posts/model-activity/'
+  '/posts/model-activity/',
+  '/posts/oiia-cat/'
 ];
 
 const routeFile = (route) =>
@@ -71,14 +72,20 @@ for (const route of ['/', '/projects/', '/archives/', '/categories/', '/tags/'])
 
 const projects = readFileSync(routeFile('/projects/'), 'utf8');
 const modelActivityPath = '/posts/model-activity/';
+const oiiaCatPath = '/posts/oiia-cat/';
 const autonomousShuttlePath = '/posts/autonomous-shuttle-systems/';
 if (!projects.includes(`href="${modelActivityPath}"`)) failures.push('Model activity missing from projects');
 if (projects.indexOf(modelActivityPath) < projects.indexOf(autonomousShuttlePath)) {
-  failures.push('Model activity is not the final item in the general group');
+  failures.push('Model activity is not ordered after autonomous shuttle');
+}
+if (!projects.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat missing from projects');
+if (projects.indexOf(oiiaCatPath) < projects.indexOf(modelActivityPath)) {
+  failures.push('Oiia Cat is not the final item in the general group');
 }
 
 const home = readFileSync(routeFile('/'), 'utf8');
 if (home.includes(`href="${modelActivityPath}"`)) failures.push('Model activity leaked into home career section');
+if (home.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat leaked into home career section');
 
 const sitemapPath = join(rootPath, 'sitemap-0.xml');
 if (existsSync(sitemapPath) && readFileSync(sitemapPath, 'utf8').includes('/clasher/')) {

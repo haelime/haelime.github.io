@@ -70,6 +70,8 @@ Time.fixedDeltaTime = 0.02f * scale;
 
 창의성 부문 326위, 재미 부문 382위를 기록했습니다.
 
+![itch.io에 집계된 For the people의 GMTK Game Jam 2026 부문별 순위와 점수](/assets/img/projects/game-jam/itch-results.webp)
+
 | 부문   |    순위 |  점수 |
 | ------ | ------: | ----: |
 | 창의성 |   326위 | 4.292 |
