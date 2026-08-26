@@ -1,118 +1,123 @@
 ---
-layout: page
-title: Clasher
-description: Unity 클라이언트와 Node.js 인증·매치메이킹, C# authoritative 전투 서버로 구성한 실시간 카드 전략 게임 포트폴리오
+layout: post
+title: "Clasher: Unity 실시간 카드 전략 게임"
+date: 2026-08-27 00:00:00 +0900
+categories: [Portfolio]
+tags: [C#, Unity, GameServer, TCP, Node.js]
+description: "Unity 클라이언트, Node.js 인증·매치메이킹, C# authoritative 전투 서버로 구현한 실시간 카드 전략 게임"
+stack: "C#, Unity 6.2, .NET 10, Node.js, MySQL, Redis"
 permalink: /clasher/
+portfolio_content: true
+hide_from_home: true
 toc: true
+mermaid: true
 comments: false
 sitemap: false
 noindex: true
 ---
 
-<link rel="stylesheet" href="{{ '/assets/css/clasher-portfolio.css' | relative_url }}">
+Clasher는 카드를 전장에 배치해 유닛과 스펠을 사용하는 1대1 실시간 전략 게임입니다. Unity 클라이언트의 덱·핸드·배치 입력부터 Node.js 인증·매치메이킹, C# 전투 서버의 판정과 상태 동기화까지 구현했습니다.
 
-<div class="clasher-portfolio">
-  <section class="clasher-hero" aria-labelledby="clasher-title">
-    <div class="clasher-hero__content">
-      <p class="clasher-eyebrow">Unity client · real-time game server</p>
-      <h2 id="clasher-title">Clasher</h2>
-      <p class="clasher-hero__lead">카드 한 장의 입력부터 서버 판정과 상태 동기화까지. Unity 클라이언트, 인증·매치메이킹, authoritative 전투 서버의 경계를 직접 설계한 1대1 전략 게임 프로젝트입니다.</p>
-      <div class="clasher-tags" aria-label="기술 스택">
-        <span class="clasher-tag">Unity 6.2</span>
-        <span class="clasher-tag">C# · .NET 10</span>
-        <span class="clasher-tag">Node.js · Express</span>
-        <span class="clasher-tag">MySQL · Redis</span>
-        <span class="clasher-tag">TCP · HTTP · WebSocket</span>
-      </div>
-    </div>
-    <div class="clasher-arena" aria-hidden="true"></div>
-  </section>
+현재 Unity 빌드는 외부 서비스 없이 로비에서 전투 샌드박스까지 실행할 수 있는 제출용 로컬 쇼케이스입니다. 인증·매치메이킹·전투 서버는 별도 서비스로 보존했으며, 복구한 .NET 10 GameServer는 Release 빌드를 통과했습니다. 온라인 Unity 클라이언트 경로는 최신 로컬 구조에 맞춰 재통합하는 단계입니다.
 
-  <div class="clasher-metrics" aria-label="프로젝트 수치">
-    <div class="clasher-metric"><strong>8</strong><span>커스텀 덱 슬롯</span></div>
-    <div class="clasher-metric"><strong>4</strong><span>순환 전투 핸드</span></div>
-    <div class="clasher-metric"><strong>5</strong><span>런타임 UI 언어</span></div>
-    <div class="clasher-metric"><strong>3</strong><span>자동 빌드 변형</span></div>
-  </div>
+## 프로젝트 개요
 
-  <div class="clasher-status-row" aria-label="검증 상태">
-    <span class="clasher-status">로컬 Unity 쇼케이스</span>
-    <span class="clasher-status">GameServer Release 빌드</span>
-    <span class="clasher-status--pending clasher-status">온라인 클라이언트 재통합 예정</span>
-  </div>
+| 항목 | 내용 |
+| --- | --- |
+| 장르 | 실시간 1대1 카드 전략 |
+| 클라이언트 | Unity 6.2, C#, Addressables, uGUI |
+| 게임 서버 | .NET 10, TCP 바이너리 프로토콜 |
+| 인증·매칭 | Node.js, Express, WebSocket, JWT |
+| 데이터 | MySQL, Redis |
+| 빌드 | PC 16:9, PC 9:16, Android 9:16 |
+| 담당 | 클라이언트, 서버, 프로토콜, 빌드 자동화 |
 
-  <div class="clasher-note">
-    <strong>현재 상태</strong>
-    <p>제출용 Unity 빌드는 외부 서버 없이 로비에서 전투 샌드박스까지 바로 실행됩니다. 인증·매치메이킹·전투 서버 구현은 별도 서비스로 복구해 빌드를 검증했으며, 현재 Unity 온라인 경로는 최신 로컬 클라이언트 구조에 맞춰 재통합하는 단계입니다.</p>
-  </div>
+## 전체 구조
 
-  <h2>한 번의 카드 입력이 전투가 되기까지</h2>
+```mermaid
+flowchart LR
+    Client[Unity Client]
+    Login[LoginServer\nNode.js]
+    Redis[(Redis)]
+    MySQL[(MySQL)]
+    Game[GameServer\nC# TCP]
 
-  <div class="clasher-flow" role="list" aria-label="온라인 액션 처리 흐름">
-    <div class="clasher-flow__node" role="listitem"><strong>01 · 인증</strong><small>bcrypt 계정 검증과 access/refresh token 회전</small></div>
-    <div class="clasher-flow__node" role="listitem"><strong>02 · 매칭</strong><small>Redis 큐와 WebSocket 알림, 서명된 match ticket</small></div>
-    <div class="clasher-flow__node" role="listitem"><strong>03 · 요청</strong><small>Unity는 카드 종류와 배치 좌표만 TCP로 전달</small></div>
-    <div class="clasher-flow__node" role="listitem"><strong>04 · 판정</strong><small>서버가 중복·빈도·영역·비용·타깃 규칙 검사</small></div>
-    <div class="clasher-flow__node" role="listitem"><strong>05 · 동기화</strong><small>승인된 유닛·스펠·타워·결과 상태를 브로드캐스트</small></div>
-  </div>
+    Client -->|HTTP 인증| Login
+    Login -->|세션·매칭 상태| Redis
+    Login -->|계정·전적| MySQL
+    Login -->|WebSocket 매칭 결과와 티켓| Client
+    Client -->|TCP 카드 입력| Game
+    Game -->|판정된 전투 상태| Client
+    Game -->|결과 저장 요청| Login
+```
 
-  <h2>해결한 문제</h2>
+LoginServer는 계정과 세션, 매칭 큐를 관리하고 입장 권한을 담은 match ticket을 발급합니다. GameServer는 티켓을 검증한 뒤 유닛 소환, 스펠, 엘릭서, 타깃과 승패를 판정합니다. Unity 클라이언트는 입력을 보내고 서버가 확정한 상태를 화면에 반영합니다.
 
-  <div class="clasher-grid">
-    <article class="clasher-card">
-      <span class="clasher-card__index">01</span>
-      <h3>로그인했다고 아무 방에나 들어갈 수 있는 문제</h3>
-      <p>인증 서버가 room ID, player slot, 만료와 고유 ID를 담은 서명 티켓을 발급합니다. GameServer는 JWT 계정과 티켓 계정을 다시 대조하고, 레거시 직접 입장은 차단해 매칭 결과가 입장 권한이 되도록 만들었습니다.</p>
-    </article>
-    <article class="clasher-card">
-      <span class="clasher-card__index">02</span>
-      <h3>클라이언트 입력을 그대로 믿을 수 없는 문제</h3>
-      <p>유닛·스펠 요청마다 세션 상태, request ID 중복과 rollback, rate limit, 카드 정의, 동적 배치 영역과 엘릭서를 서버가 순서대로 검증합니다. 클라이언트는 결과를 확정하지 않고 승인된 상태만 표현합니다.</p>
-    </article>
-    <article class="clasher-card">
-      <span class="clasher-card__index">03</span>
-      <h3>연결이 끊기면 현재 전투를 잃는 문제</h3>
-      <p>20초의 재접속 유예를 두고 동일 플레이어 세션을 교체합니다. 복귀 시 남은 시간, 엘릭서, 타워 HP와 살아 있는 유닛 스냅샷을 보내 클라이언트가 전투 화면을 다시 구성할 수 있게 했습니다.</p>
-    </article>
-    <article class="clasher-card">
-      <span class="clasher-card__index">04</span>
-      <h3>씬 전환 중 필요한 에셋이 늦게 준비되는 문제</h3>
-      <p>Addressables 로딩을 주입 가능한 backend로 감싸 진행률·완료·실패를 분리했습니다. 카드 데이터와 프리팹을 전투 씬 진입 전에 준비하고, 누락된 label에는 명시적 fallback을 적용합니다.</p>
-    </article>
-  </div>
+## 매치 티켓으로 입장 권한 분리
 
-  <h2>클라이언트 안의 게임플레이</h2>
+JWT로 로그인했다는 사실만으로 임의의 전투 방에 들어갈 수 있게 하면 room ID나 player slot을 위조할 수 있습니다. 이를 막기 위해 매칭 결과와 게임 입장 권한을 분리했습니다.
 
-  <p>로비에서 8장의 고유 덱을 편집하면 전투 시작 시 순서를 섞어 4장을 핸드에 배치합니다. 카드를 사용하면 다음 카드가 들어오고 사용한 카드는 큐 뒤로 돌아갑니다. 유닛 배치는 진영과 강을 기준으로 제한되며, 라인의 타워가 파괴되면 전진 가능 영역도 달라집니다.</p>
+매치메이커가 두 플레이어를 연결하면 room ID, player slot, 계정 ID와 만료 시간을 담은 서명 티켓을 발급합니다. GameServer는 레거시 직접 입장을 거절하고 `C_ENTER_GAME_TICKET` 경로에서 다음 조건을 다시 확인합니다.
 
-  <p>유닛은 type별 오브젝트 풀에서 꺼내 재사용하고, 카드 비용·표시 이름·프리팹·스프라이트는 데이터 카탈로그를 통해 연결합니다. 전투와 로비는 60/30 FPS 정책을 나누고, UI는 영어·스페인어·프랑스어·독일어·포르투갈어를 런타임에 전환합니다.</p>
+- 티켓 서명과 타입
+- 만료 시간
+- 로그인 계정과 티켓 계정의 일치
+- room ID와 player slot
+- 이미 연결된 다른 계정이나 세션과의 충돌
 
-  <div class="clasher-stack">
-    <section class="clasher-stack__item">
-      <h3>Unity Client</h3>
-      <p>씬 상태, 덱·핸드 순환, 드래그 배치, 오브젝트 풀, Addressables, 반응형 UI와 다국어</p>
-    </section>
-    <section class="clasher-stack__item">
-      <h3>Login & Matchmaking</h3>
-      <p>Express, bcrypt, JWT 회전, Redis 매칭 큐·세션, WebSocket 알림, MySQL 전적 저장</p>
-    </section>
-    <section class="clasher-stack__item">
-      <h3>Authoritative GameServer</h3>
-      <p>.NET TCP 세션, 바이너리 프로토콜, 티켓 입장, 룸 시뮬레이션, 보안 규칙과 재접속 스냅샷</p>
-    </section>
-  </div>
+인증 서버는 “누가 어느 방에 들어갈 수 있는가”를 결정하고, 전투 서버는 그 권한을 신뢰하기 전에 독립적으로 검증합니다.
 
-  <h2>반복 가능한 빌드와 검증</h2>
+## 클라이언트 입력을 서버에서 다시 판정
 
-  <div class="clasher-verification">
-    <h3>검증된 결과</h3>
-    <ul>
-      <li>복구한 .NET 10 GameServer Release 빌드: 경고 0, 오류 0</li>
-      <li>PC 16:9, PC 9:16, Android 9:16 빌드 변형과 PlayerSettings 자동 복원</li>
-      <li>Addressables backend·다국어 fallback EditMode 테스트</li>
-      <li>Addressables 진행률·씬 전환 후 덱 유지 PlayMode 테스트</li>
-    </ul>
-  </div>
+클라이언트가 보낸 유닛 종류와 좌표를 그대로 적용하면 엘릭서 조작, 금지 영역 소환, 중복 요청을 막을 수 없습니다. `Room`은 카드 액션을 다음 순서로 검사합니다.
 
-  <p>다음 단계는 로컬과 온라인 실행을 공통 battle gateway 아래 묶고, 두 클라이언트의 로그인부터 결과 저장까지 자동 스모크 테스트로 고정하는 것입니다. 동시에 전장·배치 표시·결과 UI 같은 presentation hierarchy를 씬과 프리팹에 완전히 authoring해 Edit Mode와 런타임 구조를 일치시킬 계획입니다.</p>
-</div>
+1. 인게임 세션과 룸 소속 확인
+2. 중복 request ID 검사
+3. 요청 빈도와 request ID rollback 검사
+4. 유닛·스펠 데이터 확인
+5. 진영, 강과 타워 상태를 반영한 배치 영역 확인
+6. 엘릭서 잔량 확인
+7. 승인된 상태 변경과 패킷 브로드캐스트
+
+서버의 카드 테이블은 9개 유닛 type과 2개 스펠 type의 비용, HP, 공격력, 사거리, 이동 속도와 공중·지상 타깃 규칙을 관리합니다. 다중 소환, 스포너, 스플래시와 스펠의 타워 피해 계수도 같은 데이터에서 결정합니다.
+
+잘못된 요청은 이유 코드와 함께 거절합니다. 짧은 시간에 요청을 반복하거나 request ID를 되돌리는 동작은 별도의 보안 상태에 기록하고, 임계치를 넘으면 해당 플레이어의 액션을 일시적으로 차단합니다.
+
+## 재접속 후 전투 화면 복원
+
+전투 중 연결이 끊기면 즉시 패배시키지 않고 20초 동안 재접속을 기다립니다. 같은 플레이어가 다시 로그인하면 기존 룸의 세션을 교체하고 다음 스냅샷을 전송합니다.
+
+- 남은 전투 시간과 플레이어 진영
+- 현재 엘릭서
+- 여섯 타워의 HP와 파괴 상태
+- 살아 있는 유닛의 ID, 위치와 HP
+
+이 스냅샷을 기준으로 클라이언트가 화면을 다시 구성하므로 재접속 처리와 전투 표현을 분리할 수 있습니다.
+
+## 덱과 카드 순환
+
+로비에서는 8장의 고유 덱을 편집하고 저장합니다. 전투 시작 시 덱을 섞어 4장을 핸드에 넣고 다음 카드를 별도로 표시합니다. 카드를 사용하면 큐의 다음 카드가 빈자리에 들어오며 사용한 카드는 큐 뒤로 돌아갑니다.
+
+유닛 카드를 드래그하면 진영과 강을 기준으로 배치 가능 영역을 계산합니다. 좌우 라인의 타워가 파괴되면 해당 라인의 전진 가능 영역도 확장되거나 축소됩니다. 스펠은 카드별 반경을 표시하고 전장 전체 좌표 안에서 사용할 수 있습니다.
+
+카드 비용, 표시 이름, UI 프리팹과 유닛 프리팹은 `CardDataCatalog`가 연결합니다. 전투 씬에 들어가기 전에 Addressables label을 프리로드하고, 진행률·완료·실패 콜백을 분리했습니다. 로딩 backend는 테스트용 구현으로 교체할 수 있습니다.
+
+## 오브젝트 수명과 빌드 자동화
+
+유닛은 type별 오브젝트 풀에서 꺼내 사용하고 사망 연출이 끝나면 풀로 돌려보냅니다. 전투와 로비의 목표 프레임을 각각 60 FPS와 30 FPS로 나누고, UI는 영어·스페인어·프랑스어·독일어·포르투갈어를 런타임에 전환합니다.
+
+`BuildPlayerCli`는 다음 세 변형을 연속으로 생성합니다.
+
+- Windows 1136×640
+- Windows 640×1136
+- Android 640×1136
+
+빌드 과정에서 화면 크기, 방향과 bundle version을 변경한 뒤 `finally`에서 기존 PlayerSettings와 active build target을 복원합니다. 에디터 메뉴와 command line 양쪽에서 같은 빌드 경로를 사용할 수 있습니다.
+
+## 검증과 현재 상태
+
+복구한 GameServer 솔루션을 .NET 10 Release 구성으로 빌드해 경고 0개, 오류 0개를 확인했습니다. LoginServer와 load-test 스크립트도 Node.js 구문 검사를 통과했습니다.
+
+Unity에는 다국어 fallback과 Addressables backend를 검사하는 EditMode 테스트, Addressables 진행률과 씬 전환 뒤 덱 유지를 검사하는 PlayMode 테스트가 있습니다.
+
+현재 서버와 클라이언트의 핵심 코드는 남아 있지만 최신 Unity 로컬 쇼케이스에서 과거 온라인 연결 계층을 분리한 상태입니다. 다음 작업은 로컬과 온라인 실행을 공통 battle gateway 아래 묶고, 두 클라이언트의 로그인부터 결과 저장까지 자동 스모크 테스트로 고정하는 것입니다.

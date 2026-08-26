@@ -1,0 +1,29 @@
+article > header .preview-img,
+article > .content > p > .img-link:only-child,
+article > .content > p > img:only-child,
+article > .content .image-carousel {
+  display: block;
+  width: 50vw;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+article > header .preview-img > img,
+article > .content > p > .img-link:only-child > img,
+article > .content > p > img:only-child {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (max-width: 768px) {
+  article > header .preview-img,
+  article > .content > p > .img-link:only-child,
+  article > .content > p > img:only-child,
+  article > .content .image-carousel {
+    width: 100%;
+  }
+}

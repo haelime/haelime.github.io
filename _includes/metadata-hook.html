@@ -2,6 +2,10 @@
 <meta name="robots" content="noindex, nofollow, noarchive">
 {% endif %}
 
+{% if page.portfolio_content or page.categories contains 'Portfolio' %}
+<link rel="stylesheet" href="{{ '/assets/css/portfolio-content.css' | relative_url }}">
+{% endif %}
+
 <script>
   (() => {
     const storageKey = 'theme';
