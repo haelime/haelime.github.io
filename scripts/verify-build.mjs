@@ -74,8 +74,10 @@ for (const route of ['/', '/projects/', '/archives/', '/categories/', '/tags/'])
 const projects = readFileSync(routeFile('/projects/'), 'utf8');
 const modelActivityPath = '/posts/model-activity/';
 const oiiaCatPath = '/posts/oiia-cat/';
+const autonomousShuttlePath = '/posts/autonomous-shuttle-systems/';
 if (!projects.includes(`href="${modelActivityPath}"`)) failures.push('Model activity missing from projects');
 if (!projects.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat missing from projects');
+if (projects.includes(`href="${autonomousShuttlePath}"`)) failures.push('Career project leaked into general projects');
 if (!projects.includes('<summary><span>기타</span>')) failures.push('Collapsible general group missing');
 if (!projects.includes('<summary><span>진짜 기타</span>')) failures.push('Nested misc group missing');
 if (projects.indexOf(modelActivityPath) < projects.indexOf(oiiaCatPath)) {
@@ -85,6 +87,9 @@ if (projects.indexOf(modelActivityPath) < projects.indexOf(oiiaCatPath)) {
 const home = readFileSync(routeFile('/'), 'utf8');
 if (!home.includes(`href="${modelActivityPath}"`)) failures.push('Model activity missing from landing portfolio');
 if (!home.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat missing from landing portfolio');
+if ((home.match(new RegExp(`href="${autonomousShuttlePath}"`, 'g')) ?? []).length !== 1) {
+  failures.push('Autonomous shuttle career detail link missing or duplicated');
+}
 if (!home.includes('href="/blog/"')) failures.push('Blog navigation link missing');
 if (home.includes('href="/resume/"')) failures.push('Resume navigation link still exists');
 if (home.includes('href="/about/"')) failures.push('About navigation link still exists');

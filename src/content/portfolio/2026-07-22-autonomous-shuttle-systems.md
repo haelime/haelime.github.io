@@ -11,6 +11,7 @@ thumbnail: /assets/img/projects/autonomous-shuttle/cover-clean.png
 stack: "C++, ROS2, UDP, LiDAR"
 project_order: 7
 project_group: general
+project_subgroup: career
 portfolio: true
 toc: true
 mermaid: true

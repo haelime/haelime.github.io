@@ -18,7 +18,7 @@ const portfolio = defineCollection({
     stack: z.string(),
     project_order: z.number().default(999),
     project_group: z.enum(['games', 'graphics', 'general']).default('games'),
-    project_subgroup: z.enum(['misc']).optional(),
+    project_subgroup: z.enum(['misc', 'career']).optional(),
     portfolio: z.boolean().default(true),
     hide_from_home: z.boolean().default(false),
     unlisted: z.boolean().default(false),

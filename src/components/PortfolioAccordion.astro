@@ -10,7 +10,7 @@ const { projects } = Astro.props;
 const games = projects.filter((project) => project.data.project_group === 'games');
 const graphics = projects.filter((project) => project.data.project_group === 'graphics');
 const general = projects.filter(
-  (project) => project.data.project_group === 'general' && project.data.project_subgroup !== 'misc'
+  (project) => project.data.project_group === 'general' && project.data.project_subgroup === undefined
 );
 const misc = projects.filter((project) => project.data.project_subgroup === 'misc');
 ---
