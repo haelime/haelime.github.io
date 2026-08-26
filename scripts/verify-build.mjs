@@ -20,7 +20,8 @@ const expectedRoutes = [
   '/posts/raymarch-shaders/',
   '/posts/minirt/',
   '/posts/rimworld-portrait-overlay/',
-  '/posts/idle-together/'
+  '/posts/idle-together/',
+  '/posts/model-activity/'
 ];
 
 const routeFile = (route) =>
@@ -67,6 +68,17 @@ for (const route of ['/', '/projects/', '/archives/', '/categories/', '/tags/'])
   const html = readFileSync(routeFile(route), 'utf8');
   if (html.includes('href="/clasher/"')) failures.push(`Clasher leaked into listing: ${route}`);
 }
+
+const projects = readFileSync(routeFile('/projects/'), 'utf8');
+const modelActivityPath = '/posts/model-activity/';
+const autonomousShuttlePath = '/posts/autonomous-shuttle-systems/';
+if (!projects.includes(`href="${modelActivityPath}"`)) failures.push('Model activity missing from projects');
+if (projects.indexOf(modelActivityPath) < projects.indexOf(autonomousShuttlePath)) {
+  failures.push('Model activity is not the final item in the general group');
+}
+
+const home = readFileSync(routeFile('/'), 'utf8');
+if (home.includes(`href="${modelActivityPath}"`)) failures.push('Model activity leaked into home career section');
 
 const sitemapPath = join(rootPath, 'sitemap-0.xml');
 if (existsSync(sitemapPath) && readFileSync(sitemapPath, 'utf8').includes('/clasher/')) {
