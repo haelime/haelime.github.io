@@ -22,7 +22,8 @@ const expectedRoutes = [
   '/posts/rimworld-portrait-overlay/',
   '/posts/idle-together/',
   '/posts/model-activity/',
-  '/posts/oiia-cat/'
+  '/posts/oiia-cat/',
+  '/posts/cat-meme-detector/'
 ];
 
 const routeFile = (route) =>
@@ -96,6 +97,12 @@ if (home.includes('href="/about/"')) failures.push('About navigation link still 
 
 const blog = readFileSync(routeFile('/blog/'), 'utf8');
 if (!blog.includes('class="blog-board"')) failures.push('Blog board missing');
+
+const catMemeDetector = readFileSync(routeFile('/posts/cat-meme-detector/'), 'utf8');
+if (!catMemeDetector.includes('2026.08.27–2026.08.28')) failures.push('Cat Meme Detector period missing');
+if (!catMemeDetector.includes('GitHub Repository')) failures.push('Cat Meme Detector repository link missing');
+if (!catMemeDetector.includes('project-media-placeholder')) failures.push('Cat Meme Detector media placeholder missing');
+if (!catMemeDetector.includes('릴리스 ZIP 자체를 검증')) failures.push('Cat Meme Detector evidence-led troubleshooting missing');
 
 const sitemapPath = join(rootPath, 'sitemap-0.xml');
 if (existsSync(sitemapPath) && readFileSync(sitemapPath, 'utf8').includes('/clasher/')) {

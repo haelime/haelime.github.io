@@ -20,6 +20,9 @@ const { projects } = Astro.props;
         {project.data.thumbnail && (
           <img src={project.data.thumbnail} alt="" loading="lazy" decoding="async" />
         )}
+        {!project.data.thumbnail && (
+          <span class="project-card__placeholder" aria-hidden="true">Preview pending</span>
+        )}
       </a>
       <a class="project-card__body" href={projectPath(project)}>
         <small>{project.data.stack}</small>

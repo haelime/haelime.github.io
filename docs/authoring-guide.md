@@ -22,6 +22,9 @@ YYYY-MM-DD-project-slug.md
 - `noindex: true`: 검색 엔진 색인 방지
 - `sitemap: false`: 사이트맵 제외
 - `permalink: /custom-path/`: 기본 `/posts/<파일명>/` 대신 사용할 URL
+- `period`: 커밋의 최초·최종 시각을 기준으로 한 진행 기간
+- `repository`, `live_demo`: 상세 페이지 상단의 증빙 링크
+- `media_placeholder`: 대표 이미지가 없을 때 표시할 16:9 교체용 프레임 설명
 
 Clasher가 링크로만 접근 가능한 구성의 예시입니다.
 
@@ -34,6 +37,8 @@ Clasher가 링크로만 접근 가능한 구성의 예시입니다.
 ```
 
 포트폴리오 본문의 단독 이미지는 데스크톱에서 화면 너비의 50%, 모바일에서 100%로 표시됩니다.
+
+대표 화면이나 15–30초 시연 GIF가 아직 없다면 임의 이미지를 채우지 말고 `media_placeholder`를 사용합니다. 자료가 준비되면 `image`로 교체합니다.
 
 ## 4. 블로그 글 작성
 

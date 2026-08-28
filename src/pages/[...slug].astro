@@ -20,6 +20,11 @@ interface Props {
 const { project } = Astro.props;
 const { Content, headings } = await render(project);
 const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+const groupLabels = {
+  games: '게임',
+  graphics: '그래픽스',
+  general: '프로젝트'
+};
 ---
 
 <BaseLayout
@@ -30,13 +35,26 @@ const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', 
 >
   <article class="project-shell">
     <header class="project-header">
-      <p class="eyebrow">{project.data.project_group}</p>
+      <p class="eyebrow">{groupLabels[project.data.project_group]}</p>
       <h1>{project.data.title}</h1>
       <p class="project-description">{project.data.description}</p>
       <div class="project-meta">
-        <time datetime={project.data.date.toISOString()}>{date.format(project.data.date)}</time>
+        {project.data.period
+          ? <span>{project.data.period}</span>
+          : <time datetime={project.data.date.toISOString()}>{date.format(project.data.date)}</time>
+        }
         <span>{project.data.stack}</span>
       </div>
+      {(project.data.repository || project.data.live_demo) && (
+        <nav class="project-actions" aria-label="프로젝트 링크">
+          {project.data.repository && (
+            <a href={project.data.repository} target="_blank" rel="noreferrer">GitHub Repository</a>
+          )}
+          {project.data.live_demo && (
+            <a href={project.data.live_demo} target="_blank" rel="noreferrer">Live Demo</a>
+          )}
+        </nav>
+      )}
       <div class="project-tags">
         {project.data.tags.map((tag) =>
           project.data.unlisted
@@ -55,6 +73,17 @@ const date = new Intl.DateTimeFormat('ko-KR', { year: 'numeric', month: 'long', 
         height="720"
         decoding="async"
       />
+    )}
+    {!project.data.image && project.data.media_placeholder && (
+      <figure class="project-media-placeholder">
+        <div class="project-media-placeholder__frame" aria-hidden="true">
+          <span>16:9</span>
+        </div>
+        <figcaption>
+          <strong>시연 자료 자리</strong>
+          <span>{project.data.media_placeholder}</span>
+        </figcaption>
+      </figure>
     )}
 
     <div class="reading-grid">
