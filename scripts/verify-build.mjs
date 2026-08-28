@@ -102,7 +102,9 @@ const catMemeDetector = readFileSync(routeFile('/posts/cat-meme-detector/'), 'ut
 if (!catMemeDetector.includes('2026.08.27–2026.08.28')) failures.push('Cat Meme Detector period missing');
 if (!catMemeDetector.includes('GitHub Repository')) failures.push('Cat Meme Detector repository link missing');
 if (!catMemeDetector.includes('project-media-placeholder')) failures.push('Cat Meme Detector media placeholder missing');
-if (!catMemeDetector.includes('릴리스 ZIP 자체를 검증')) failures.push('Cat Meme Detector evidence-led troubleshooting missing');
+if (!catMemeDetector.includes('Windows 배포 과정을 자동화')) failures.push('Cat Meme Detector deployment work missing');
+if (catMemeDetector.includes('Troubleshooting')) failures.push('Unsupported Cat Meme Detector troubleshooting should be omitted');
+if (catMemeDetector.includes('성능 향상 수치는 주장')) failures.push('Cat Meme Detector contains editorial meta-commentary');
 
 const sitemapPath = join(rootPath, 'sitemap-0.xml');
 if (existsSync(sitemapPath) && readFileSync(sitemapPath, 'utf8').includes('/clasher/')) {
