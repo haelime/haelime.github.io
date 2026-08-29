@@ -17,7 +17,7 @@ mermaid: false
 
 웹캠에서 표정과 손동작을 감지해 어울리는 고양이 밈을 고르는 C++ 데스크톱 앱입니다.
 
-OpenCV의 DNN 모듈로 ONNX 모델을 실행하고, 이미지 특징과 CSV 라벨을 함께 사용해 밈을 선택합니다. 정지 이미지와 웹캠 입력을 지원하며 GIF 밈은 애니메이션으로 재생합니다.
+OpenCV의 Deep neural network 모듈로 ONNX 모델을 실행하고, 이미지 특징과 CSV 라벨을 함께 사용해 밈을 선택합니다. 정지 이미지와 웹캠 입력을 지원하며 GIF 밈은 애니메이션으로 재생합니다.
 
 ## 구현한 것
 
@@ -28,7 +28,9 @@ OpenCV의 DNN 모듈로 ONNX 모델을 실행하고, 이미지 특징과 CSV 라
 
 ## 기술 선택
 
-OpenCV는 카메라 입력, 이미지·GIF 디코딩, DNN 추론과 특징 추출을 한 라이브러리에서 처리할 수 있어 선택했습니다. 표정·손바닥·손 관절 모델은 ONNX 형식으로 통일해 OpenCV DNN에서 실행했습니다. CMake와 PowerShell은 Windows 빌드와 배포 단계를 반복 가능한 명령으로 묶는 데 사용했습니다.
+OpenCV
+표정·손바닥·손 관절 모델은 ONNX(Open Neural Network Exchange) 형식으로 통일해 OpenCV DNN에서 실행했습니다.
+CMake, PowerShell script
 
 ## 링크
 
