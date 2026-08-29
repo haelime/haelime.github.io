@@ -1,52 +1,40 @@
 ---
-title: "RimWorld: Selected Pawn Portrait Overlay"
+title: Selected Pawn Portrait Overlay
 date: 2026-07-27 09:00:00 +0900
-categories: [Portfolio]
-tags: [C#, RimWorld, Modding, UI]
-description: "RimWorld UI 동작을 분석해 구현하고 Steam 창작마당 사용자 지표로 완성도를 검증한 C# 모드"
+categories:
+  - Portfolio
+tags:
+  - C#
+  - RimWorld
+  - Modding
+  - UI
+  - Reflection
+description: RimWorld UI 모드
 image:
   path: /assets/img/projects/rimworld/cover.png
-  alt: RimWorld 선택 폰 초상화 오버레이 모드
+  alt: RimWorld에서 선택한 폰의 전신 초상화를 화면 왼쪽에 표시한 모습
 thumbnail: /assets/img/projects/rimworld/thumb.webp
-stack: "C#, RimWorld 모드 제작, UI"
+stack: C# · RimWorld 1.6 · Unity IMGUI · Reflection
+period: 2026.03.16–2026.03.25
+repository: https://github.com/haelime/SelectedPawnPortraitOverlay
 project_order: 4
-project_group: games
+project_group: general
 portfolio: true
 toc: true
 ---
-- 기존 코드 분석 후 
-- Steam 창작마당 구독자 **2,000명**
-- 사용자 평가 **96% 긍정적**
+## 
+
+- **Steam 창작마당에서 고유 방문자 10,452명과 현재 구독자 2,104명, 평가 84건 중 긍정 81건(96%)을 기록.**
+- **RimWorld의 초상화 메서드 오버로드를 실행 시점에 해석해 회전, 카메라, 장비 옵션을 원본 렌더링 경로에 연결**
+- **비공개 캐시와 전역 표시 설정을 한 경계에서 정리·복원하고, 지원하지 않는 대상은 오버레이 내부에서 중단하도록 격리**
+
+선택한 폰의 전신 초상화를 기존 UI 위에 표시하는 RimWorld 모드입니다.
+폰은 정착민, 동물, 메카노이드처럼 게임에서 행동하는 개별 캐릭터를 뜻합니다.
+
+[GitHub에서 소스 보기](https://github.com/haelime/SelectedPawnPortraitOverlay) · [Steam 창작마당에서 보기](https://steamcommunity.com/sharedfiles/filedetails/?id=3685326018)
 
 
-### 소개
+## 결과
 
-RimWorld는 여러 정착민이 낯선 행성에서 기지를 짓고 살아남는 과정을 관리하는 공상 과학 정착지 운영 게임입니다. 각 정착민과 생물 같은 개별 캐릭터를 게임 안에서는 폰이라고 부릅니다. 플레이어는 작은 하향식 화면에서 폰을 선택해 작업, 장비, 전투를 지시합니다.
+2026년 8월 29일 Steam 창작마당 통계에서 고유 방문자 10,452명, 현재 구독자 2,104명, 즐겨찾기 238명을 기록했습니다. 평가 84건 가운데 81건이 긍정 평가로 집계돼 긍정 비율은 96%입니다.
 
-이 모드는 현재 선택한 폰의 정면 전신 초상화를 화면 정보 영역에 크게 표시합니다. 넓은 기지에서 여러 폰을 번갈아 선택할 때 외형과 현재 대상을 바로 알아볼 수 있고, 초상화의 위치와 크기, 확대 정도, 배경, 장비 표시 여부를 설정할 수 있습니다.
-
-## 무엇을 바꾼 모드인가
-
-기존 선택과 명령 흐름은 건드리지 않고, 선택된 폰을 보여 주는 이동 가능한 초상화 창을 덧붙였습니다. 사람뿐 아니라 동물, 기계 생명체, 포로처럼 게임에서 선택할 수 있는 여러 대상을 설정에 따라 표시하며, 지원하지 않는 차량형 대상은 그리지 않고 안전하게 넘어갑니다.
-
-## 코드 분석과 구현
-
-게임의 선택 상태가 화면에 그려지는 경로를 추적한 뒤 `GameComponentOnGUI`에서 현재 선택 대상을 확인하고 초상화 창을 그렸습니다. 게임 내부 구현을 그대로 복제하기보다 기존 초상화 캐시와 렌더링 경로를 재사용해 원본 캐릭터 외형과 다른 모드가 적용한 모습을 함께 반영했습니다.
-
-- `PortraitsCache.Get` 호출 형식의 차이를 실행 중에 판별해 알맞은 매개변수를 전달하도록 구현
-- 자세가 바뀐 초상화를 실시간으로 갱신할 때 기존 캐시를 무효화하고 사용이 끝난 렌더 텍스처를 정리
-- 무기와 머리 장비 표시 설정을 렌더링 동안만 바꾸고 `finally`에서 원래 값으로 복원해 다른 화면에 영향이 남지 않도록 처리
-- 창 이동, 화면 경계 제한, 크기와 확대 비율 조절, 선택 대상 필터를 설정 화면과 연결
-- 지원하지 않는 대상이나 다른 모드가 없는 환경에서도 예외 대신 기본 초상화로 돌아가는 대체 경로 구성
-
-게임의 공개된 확장 지점만으로는 필요한 전신 초상화 결과를 얻기 어려워 내부 메서드와 캐시 동작을 코드에서 확인해야 했습니다. 호출 형식, 전역 설정, 렌더 자원 수명처럼 게임 갱신에 따라 깨지기 쉬운 지점을 한곳에 모으고, 실패해도 원래 화면 사용을 막지 않도록 대체 경로를 둔 것이 핵심입니다.
-
-## 배포와 실사용 검증
-
-
-
-기존 코드와 동작을 파악하고, 기능을 구현해 배포한 뒤 실제 사용자 지표로 완성도를 확인했습니다. 코드 분석부터 출시와 검증까지 이어지는 실무형 개발 과정을 경험한 프로젝트입니다.
-
-[GitHub에서 소스 보기](https://github.com/haelime/SelectedPawnPortraitOverlay)
-
-[Steam 창작마당에서 보기](https://steamcommunity.com/sharedfiles/filedetails/?id=3685326018)

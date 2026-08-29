@@ -1,13 +1,16 @@
 ---
-title: "Cat Meme Detector"
+title: Cat Meme Detector
 date: 2026-08-28 00:27:07 +0900
-categories: [Portfolio]
-tags: [C++, OpenCV, ONNX]
-description: "표정과 손동작을 읽어 어울리는 고양이 밈을 골라 주는 C++ 데스크톱 앱"
-stack: "C++17 · OpenCV 5.0 · ONNX · CMake"
-period: "2026.08.27–2026.08.28"
-repository: "https://github.com/haelime/cat-meme-detector"
-media_placeholder: "표정이나 손동작에 따라 밈이 바뀌는 15초 내외의 시연 GIF · 16:9"
+categories:
+  - Portfolio
+tags:
+  - C++
+  - OpenCV
+description: 표정과 손동작을 읽어 어울리는 고양이 밈을 골라 주는 C++ 데스크톱 앱
+stack: C++17 · OpenCV 5.0 · ONNX · CMake
+period: 2026.08.27–2026.08.28
+repository: https://github.com/haelime/cat-meme-detector
+media_placeholder: 표정이나 손동작에 따라 밈이 바뀌는 15초 내외의 시연 GIF · 16:9
 project_order: 10
 project_group: general
 portfolio: true
