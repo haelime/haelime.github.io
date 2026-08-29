@@ -370,6 +370,24 @@ iframe {
   line-height: 1.4;
 }
 
+.project-shell .prose h2[id='요약'] {
+  margin-top: 0;
+}
+
+.project-shell .prose h2[id='요약'] + ul {
+  color: var(--heading);
+  font-size: clamp(1.03rem, 1.7vw, 1.12rem);
+  line-height: 1.65;
+}
+
+.project-shell .prose h2[id='요약'] + ul li + li {
+  margin-top: 0.55rem;
+}
+
+.project-shell .prose h2[id='요약'] + ul strong {
+  font-weight: 750;
+}
+
 .project-shell .prose h3 {
   margin: 1.85rem 0 0.7rem;
   color: var(--text-muted);
