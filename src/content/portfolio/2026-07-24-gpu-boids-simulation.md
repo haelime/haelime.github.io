@@ -14,8 +14,7 @@ project_group: graphics
 portfolio: true
 toc: true
 ---
-
-Craig Reynolds의 Boids 알고리즘을 Unity 컴퓨트 셰이더로 구현한 대규모 군집 시뮬레이션입니다.
+Craig Reynolds의 Boids 알고리즘을 compute shader로 구현한 시뮬레이션입니다.
 
 보이드의 상태와 계산 결과를 GPU 메모리에 유지하고, 시뮬레이션부터 렌더링까지 CPU로 다시 읽어 오지 않고 처리하도록 구성했습니다.
 

@@ -22,13 +22,8 @@ project_group: general
 portfolio: true
 toc: true
 ---
-## 
-
-- **Steam 창작마당에서 고유 방문자 10,452명과 현재 구독자 2,104명, 평가 84건 중 긍정 81건(96%)을 기록.**
-- **RimWorld의 초상화 메서드 오버로드를 실행 시점에 해석해 회전, 카메라, 장비 옵션을 원본 렌더링 경로에 연결**
-- **비공개 캐시와 전역 표시 설정을 한 경계에서 정리·복원하고, 지원하지 않는 대상은 오버레이 내부에서 중단하도록 격리**
-
 선택한 폰의 전신 초상화를 기존 UI 위에 표시하는 RimWorld 모드입니다.
+
 폰은 정착민, 동물, 메카노이드처럼 게임에서 행동하는 개별 캐릭터를 뜻합니다.
 
 [GitHub에서 소스 보기](https://github.com/haelime/SelectedPawnPortraitOverlay) · [Steam 창작마당에서 보기](https://steamcommunity.com/sharedfiles/filedetails/?id=3685326018)
