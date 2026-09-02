@@ -1,12 +1,12 @@
-# IdleTogether 포트폴리오 스크린샷
+# Idle Together 포트폴리오 스크린샷
 
-현재 포스트에는 `placeholder.svg`가 표시됩니다. 아래 스크린샷을 추가한 뒤 포스트의 각 플레이스홀더 경로를 해당 파일명으로 교체합니다. 권장 비율은 16:9이며, `cover.png`는 프로젝트 카드에서도 사용되므로 중요한 UI가 가장자리에서 잘리지 않게 촬영합니다.
+`cover.png`는 현재 데스크톱 오버레이 게임 화면입니다. 새 스크린샷을 추가할 때는 16:9 비율을 권장하며, `cover.png`는 프로젝트 카드에서도 사용되므로 중요한 UI가 가장자리에서 잘리지 않게 촬영합니다.
 
 | 파일 | 권장 장면 |
 | --- | --- |
-| `cover.png` | 섬과 플레이어, 낚시 지점이 함께 보이는 대표 게임 화면 |
-| `fishing-loop.png` | 입질 후 표적과 릴링 진행도가 표시된 낚시 미니게임 |
-| `inventory-and-shop.png` | 물고기 미리보기, 인벤토리와 상점 또는 장비 UI |
-| `multiplayer.png` | 같은 섬에 두 플레이어가 접속해 낚시하는 화면 |
+| `cover.png` | 투명 배경 위 섬, 플레이어와 모닥불이 함께 보이는 대표 화면 |
+| `campfire.png` | 장작 운반, 점화 또는 좌석 동기화가 드러나는 장면 |
+| `multiplayer.png` | Steam Lobby 생성·참가와 멤버 목록 화면 |
+| `radio.png` | 공유 라디오와 로컬 음량 설정 화면 |
 
-`cover.png`를 추가할 때 프런트매터의 `image.path`와 `thumbnail`도 함께 교체합니다.
+프런트매터의 `image.path`와 `thumbnail`은 `cover.png`를 사용합니다.
