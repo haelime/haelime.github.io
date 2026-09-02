@@ -24,38 +24,28 @@ hide_from_home: true
 toc: true
 ---
 
-- Host 권위로 장작·좌석의 동시 요청을 하나만 승인하고, 늦게 참가한 Client에도 같은 모닥불 상태를 복원합니다.
-- 로컬 검증은 Unity Transport, 배포 연결은 Steam Networking Sockets로 분리해 게임 규칙을 전송 계층에서 독립시켰습니다.
-- 장작 한 개의 연소 시간을 25분으로 두고 이모트·라디오·낮밤을 결합해 플레이를 강제하지 않는 동행 경험을 만들었습니다.
+- Host가 장작·좌석의 동시 요청을 직렬 판정해 하나의 소유 상태만 확정합니다.
+- 서버 종료 시각 하나로 모닥불을 동기화해 늦게 참가한 Client도 같은 상태를 복원합니다.
+- 게임 규칙을 NGO에 고정하고 Unity Transport와 Steam Networking Sockets를 실행 환경에 따라 교체합니다.
 
 ![Idle Together의 투명 데스크톱 섬](/assets/img/projects/idle-together/cover.png)
 
-Idle Together는 Windows 바탕화면 위 작은 섬에서 두 사람이 각자의 일을 하며 함께 머무는 개인 프로젝트입니다. Unity 6과 C#으로 투명 오버레이, Host 권위형 멀티플레이와 Steam Lobby를 구현했습니다.
+Idle Together는 Windows 바탕화면 위 투명한 섬을 공유하는 멀티플레이 게임으로, Unity 6과 C#으로 개발한 개인 프로젝트입니다.
 
-초기 건설·낚시 프로토타입에서 기능 범위를 줄이고, 모닥불·음악·짧은 반응을 공유하는 동행 공간을 첫 출시 목표로 정했습니다.
+## 서버 권위 상태 동기화
 
-## 핵심 구현
+Client는 클릭 의도만 RPC로 보내고 Host가 거리·대상 상태·현재 소유권을 검증합니다. 동시에 같은 장작이나 좌석을 선택해도 먼저 처리한 유효 요청 하나만 승인합니다.
 
-### Host가 공유 상태를 결정합니다
+모닥불은 연료량 대신 `burnEndServerTime`을 `NetworkVariable`로 복제합니다. 늦게 참가한 Client는 서버 시간으로 남은 연료를 복원하고, 불꽃·조명·소리는 그 값에서 로컬로 재현합니다. 현재 Host migration은 지원하지 않습니다.
 
-Client는 클릭 의도만 RPC로 보내고 Host가 거리와 대상 상태를 검증합니다. 같은 장작이나 좌석에 요청이 겹쳐도 먼저 처리한 유효 요청 하나만 승인합니다.
+## 실행 환경 경계
 
-모닥불은 연료량 대신 종료 시각 `burnEndServerTime`을 복제합니다. 늦게 참가한 Client도 서버 시간으로 남은 연료를 계산하며, 불꽃·조명·소리는 각 Client가 같은 값에서 재현합니다. Host migration은 아직 없어 Host가 나가면 세션이 종료됩니다.
+게임플레이는 Netcode for GameObjects의 RPC와 `NetworkVariable`만 사용합니다. 로컬 테스트는 Unity Transport의 loopback, Steam 세션은 전용 `SteamNetworkingSocketsTransport`를 사용합니다. Steam Lobby 비밀번호는 원문을 공개 metadata에 저장하지 않고 Lobby ID 기반 SHA-256 proof로 승인합니다.
 
-### 로컬 테스트와 Steam 전송을 분리했습니다
-
-게임플레이는 Netcode for GameObjects의 RPC와 `NetworkVariable`만 사용합니다. 로컬 Host·Client 테스트는 Unity Transport의 loopback으로 실행하고, Steam 세션에서는 전용 `SteamNetworkingSocketsTransport`로 교체합니다.
-
-Steam Lobby 생성·검색·참가, 친구 초대, 연결 종료와 강퇴를 연결했습니다. 비밀번호 원문은 공개 Lobby metadata에 저장하지 않고 Lobby ID로 만든 SHA-256 proof를 연결 승인 과정에서 검증합니다.
-
-### 공유 기능이 집중을 방해하지 않게 했습니다
-
-모닥불이 꺼져도 불이익을 주지 않으며 장작 한 개는 25분 동안 탑니다. 공유 라디오의 재생 상태와 네 가지 낮밤 Look은 Host 시간을 따르지만 음량은 각자의 로컬 설정으로 남습니다.
-
-투명 창의 빈 영역은 바탕화면으로 클릭을 통과시키고 UI와 상호작용 대상만 입력을 받습니다. VFX·Light·AudioSource와 UI는 씬·프리팹에 미리 저작했으며, 회귀 테스트로 런타임 시각 오브젝트 생성 fallback이 다시 생기지 않게 고정했습니다.
+투명 창은 Win32 `WS_EX_TRANSPARENT`를 제어해 빈 영역의 클릭만 바탕화면으로 통과시킵니다. VFX·Light·AudioSource와 UI는 씬·프리팹에 저작하고, 회귀 테스트로 런타임 시각 오브젝트 생성 fallback을 금지했습니다.
 
 ## 현재 상태
 
-클릭 이동, 네트워크 플레이어, 장작 운반과 모닥불, 좌석, 이모트, Steam Lobby, 공유 라디오와 낮밤까지 수직 슬라이스가 연결되어 있습니다. 출시 전에는 실제 Steam 2계정 통합 테스트, 배포 음원 라이선스 확정과 Windows IL2CPP 빌드 검증이 남아 있습니다.
+멀티플레이 수직 슬라이스는 연결됐으며, 출시 전 실제 Steam 2계정 통합 테스트와 Windows IL2CPP 빌드 검증이 남아 있습니다.
 
 [GitHub에서 소스 보기](https://github.com/haelime/IdleTogether-2026-06-24_16-19-29)
