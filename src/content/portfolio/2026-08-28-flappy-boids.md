@@ -23,7 +23,11 @@ toc: true
 </div>
 Unity 6과 DOTS로 제작한 3D Flappy Bird 게임입니다.
 
-Boids 움직임에 매력을 느껴 만들기 시작했고, boids data의 cache hit 등 최적화를 신경쓰기 위해 DOTS를 적용해 개발했습니다.
+## What
+
+Boids 움직임에 매력을 느껴, 게임엔 어떻게 적용하면 좋을까 고민하다, 사이드 프로젝트로 제작하게 되었습니다.
+
+Boid 데이터를 연속된 메모리에 배치해 cache locality와 병렬 처리 효율을 높이기 위해, gameObject 중심 구조 대신 Unity DOTS를 적용했습니다.
 
 Cube로는 복잡한 굴곡의 바닷속을 표현하기 어렵다고 판단해 Marching cubes 알고리즘으로 벽면과 바닥 에셋을 생성해 사용했습니다.
 

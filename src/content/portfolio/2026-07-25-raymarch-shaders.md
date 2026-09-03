@@ -17,13 +17,17 @@ toc: true
 
 레이마칭으로 표면과 입체 효과를 구현한 셰이더 프로젝트입니다.
 
+좋은 비주얼을 연출하고 실시간 렌더링을 위해 여러 셰이더들을 보고 연구했습니다.
+
 ## Cloudy Crystal
 
 <div class="ratio ratio-16x9 mb-4">
   <iframe src="https://www.youtube.com/embed/sKYhIVCjzfU" title="Cloudy Crystal 셰이더 미리보기" allowfullscreen></iframe>
 </div>
 
-반투명 보석 내부에 움직이는 구름이 들어 있는 판타지 아이템 셰이더입니다. 하나의 렌더링 단계 안에서 표면 렌더링과 볼륨 레이마칭을 결합했습니다.
+반투명 보석 내부에 움직이는 구름이 들어 있는 셰이더입니다.
+
+유리 표면 렌더링과 볼륨 레이마칭을 결합했습니다.
 
 ### 표면 렌더링
 

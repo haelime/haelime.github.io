@@ -16,8 +16,8 @@ portfolio: true
 toc: true
 mermaid: true
 ---
-
-## 01. 프로젝트 개요
+인천공항 공식 홈페이지 https://www.airport.kr/ap_ko/6697/subview.do
+## 01. 개요
 
 ### 참여 기간과 역할
 
@@ -25,60 +25,74 @@ mermaid: true
 
 ### 담당 범위
 
-차량 시스템의 센서 통신, 최상위 제어 구조, 분산 모듈 상태 감시와 고장 안전 로직을 개발했습니다.
+차량 2D 라이다 디버깅 툴, 차량의 상태 머신(FSM)과 Watchdog Fail-safe 모듈을 개발했습니다.
 
-<div class="image-carousel" aria-label="인천국제공항 자율주행 셔틀 사진">
-  <div class="image-carousel__viewport" tabindex="0">
-    <figure class="image-carousel__slide" id="shuttle-photo-1">
-      <img src="/assets/img/projects/autonomous-shuttle/01.41347061.1.jpg" alt="인천국제공항 여객 터미널에서 승객이 탑승 중인 자율주행 셔틀" loading="lazy" decoding="async">
-      <figcaption>1 / 2. 여객 터미널에서 승객 탑승을 지원하는 셔틀</figcaption>
-      <a class="image-carousel__nav image-carousel__nav--prev" href="#shuttle-photo-2" aria-label="이전 사진">‹</a>
-      <a class="image-carousel__nav image-carousel__nav--next" href="#shuttle-photo-2" aria-label="다음 사진">›</a>
-    </figure>
-    <figure class="image-carousel__slide" id="shuttle-photo-2">
-      <img src="/assets/img/projects/autonomous-shuttle/SE-5076ee58-3a46-48e5-8f8a-213687567468.jpg" alt="인천국제공항 제2여객터미널에 배치된 자율주행 셔틀 두 대" loading="lazy" decoding="async">
-      <figcaption>2 / 2. 제2여객터미널에 배치된 직행 셔틀 차량</figcaption>
-      <a class="image-carousel__nav image-carousel__nav--prev" href="#shuttle-photo-1" aria-label="이전 사진">‹</a>
-      <a class="image-carousel__nav image-carousel__nav--next" href="#shuttle-photo-1" aria-label="다음 사진">›</a>
-    </figure>
-  </div>
-  <p class="image-carousel__hint">사진을 좌우로 밀거나 화살표를 눌러 넘길 수 있습니다.</p>
+<div class="ratio ratio-16x9 mb-4">
+  <iframe src="https://www.youtube.com/embed/rgcX4jCHJcA" title="인천국제공항 자율주행 셔틀 시범 운행 영상" allowfullscreen></iframe>
 </div>
 
 ---
 
-## 02. 센서 데이터 처리 및 네트워크 통신
+## 02. 주행 시나리오 기반 FSM
 
-32kHz 샘플링 주파수와 600RPM 사양의 2D LiDAR 하드웨어 원시 데이터를 UDP 프로토콜로 직접 수신하고 해석하는 로직을 구현했습니다.
-
-- 맞춤형 LiDAR 패킷의 수신, 검증, 해석 흐름 구현
-- 비전 센서 없이 포인트 클라우드를 사용하는 3차원 인지 환경에 맞춘 센서 데이터 처리 흐름 구축
-- 맞춤형 하드웨어와 자율주행 시스템 사이의 안정적인 데이터 연동 확보
-
----
-
-## 03. 주행 시나리오 기반 시스템 구조 및 제어 로직
-
-승객 탑승, 대기, 주행 등 공항 셔틀 운행 시나리오를 시스템 상태와 전이 조건으로 정의하고 C++/ROS2 기반 최상위 제어 로직을 구현했습니다.
+승객 탑승, 대기, 주행, 비상 상황 등 공항 셔틀 운행 시나리오를 기반으로 차량의 상태와 transition 조건들을 정의해. C++ / ROS2 기반 최상위 제어 로직을 구현했습니다.
 
 - 상태별 책임과 전이 조건을 분리한 FSM 설계
 - 모든 운행 상태에서 즉시 비상 정지로 전환할 수 있는 전역 상태 전이 구성
 - 안전 조건을 충족한 뒤 운행 흐름으로 복귀할 수 있는 양방향 비상 정지 구조 설계
 
+### Why?
+
+- SLAM, Vision, Object Recognition 등 여러 모듈의 역할을 묶고 효율적으로 작동하게 해 줄 커맨드 센터가 필요.
+- 승객이 운행 중 갑자기 내리거나, 앞을 가로막는 등, 발생할 수 있는 비상 상황에서 위험을 최소화
+- 시나리오에서 파생될 수 있는 일들을 시스템적으로 제한해 예측할 수 있는 운행 보장
+
+### How?
+
+- 센서들의 데이터만으로 어떻게 차량에서 일어나는 일들을 정의해야 하는가?
+	- 예 : 좌석 센서가 작동한 것 만으로도 승객이 탑승한 것을 보장할 수 있는가?
+- 거대하고 복잡해질 수 있는 상태와 전이 조건들을 어떻게 관리해야 하는가?
+
+### Solution
+
+- State와 Transition을 각각 클래스로 분리하고, 센서 데이터가 정의된 조건을 충족하면 ROS2 이벤트를 발행했으며, FSM은 현재 State에서 해당 Transition이 허용되는지 검사한 뒤 상태를 변경하도록 구성했음.
+- 비상 정지를 모든 운행 상태에서 진입할 수 있는 전역 상태로 두고, 위험 해소와 제어 권한 재확보 조건을 모두 충족한 뒤에만 운행 상태로 복귀하도록 했음.
+
 ---
 
-## 04. 시스템 안정성 및 상태 감시
+## 03. Watchdog Fail-safe
 
-생존 신호 메시지의 발행 및 수신 방식을 구현해 SLAM과 인지 등 자율주행 분산 모듈의 작동 상태와 생존 여부를 실시간으로 감시했습니다.
+차량 모든 모듈과 센서들의 heartbeat를 감시하고, 이상 상태를 차량 정지까지 연결하는 Watchdog Fail-safe 모듈 구현
 
-- 모듈별 생존 신호와 경고 및 오류 단계 수신과 상태 판정
-- 센서 장애물 근접 경고나 모듈 오류 발생 시 하드웨어 제어 권한 회수
-- 위험 상황에서 셔틀을 즉시 정지시키는 고장 안전 로직 구현
-- 분산 모듈의 이상 상태가 차량 제어 계층까지 전달되는 진단 흐름 구축
+### Why?
+
+- 각 모듈들은 서로 다른 시점에 언제든 고장 날 수 있어, 사고를 미연에 방지하기 위해 모든 모듈들의 정상 상태가 보장되어야 했음
+- Timeout이 너무 짧으면 순간적인 통신 지연에도 정지하고 너무 길면 실제 장애 이후에도 운행 명령이 유지될 수 있었음
+- 동선 상 벽에 닿지 않을 초음파 등 운행해도 괜찮은 센서들 구분도 필요했음
+
+### How?
+
+- Heartbeat 누락과 모듈이 직접 보고한 warning / error를 어떤 기준으로 장애로 판단할지 고민했음.
+- 감지한 장애를 log로만 남기지 않고 하드웨어 제어 권한 회수와 비상 정지까지 어떻게 연결할지?
+
+### Solution
+
+- 각 모듈의 heartbeat 수신 결과를 Sliding Window algorithm으로 확인해 일시적인 누락과 연속 장애를 구분하고, warning / error 상태와 함께 생존 여부를 판정.
+- 장애물 근접 warning이나 module error가 발생하면 하드웨어 제어 권한을 회수하고 FSM을 비상 정지로 전환.
+- Timeout과 연속 누락 기준의 측정 조건 및 수치가 남아 있지 않아 정지 응답 시간은 성과로 주장하지 않음.
 
 ---
 
-## 05. 설계 과정에서 고민한 점
+## 04. 센서 데이터 처리 및 네트워크 통신
+
+32kHz 샘플링 주파수와 600RPM 사양의 2D LiDAR Raw Data를 visualize, 명령, 모니터링 가능한 비동기 QT 툴 개발
+
+- 프로토콜 문서 기반으로 소켓 통신을 통해 LiDAR 패킷 송/수신
+- RViz보다 빠른 개별 visualize 및 고유 패킷 명령 가능
+
+---
+
+## 05. 설계 과정에서 고민한 점들
 
 프로젝트를 회고하며 실제 구현 범위에서 중요했던 판단 기준을 다음과 같이 정리했습니다.
 
