@@ -1,5 +1,5 @@
 ---
-title: FlappyBoids
+title: Flappy Boids
 date: 2026-08-28 20:00:00 +0900
 categories:
   - Portfolio

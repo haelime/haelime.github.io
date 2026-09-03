@@ -23,6 +23,7 @@ portfolio: true
 hide_from_home: true
 toc: true
 ---
+AI로 작성된 초안입니다.
 
 - Host가 장작·좌석의 동시 요청을 직렬 판정해 하나의 소유 상태만 확정합니다.
 - 서버 종료 시각 하나로 모닥불을 동기화해 늦게 참가한 Client도 같은 상태를 복원합니다.
