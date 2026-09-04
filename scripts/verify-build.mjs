@@ -76,17 +76,14 @@ const projects = readFileSync(routeFile('/projects/'), 'utf8');
 const modelActivityPath = '/posts/model-activity/';
 const oiiaCatPath = '/posts/oiia-cat/';
 const autonomousShuttlePath = '/posts/autonomous-shuttle-systems/';
-if (!projects.includes(`href="${modelActivityPath}"`)) failures.push('Model activity missing from projects');
+if (projects.includes(`href="${modelActivityPath}"`)) failures.push('Model activity leaked into projects');
 if (!projects.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat missing from projects');
 if (projects.includes(`href="${autonomousShuttlePath}"`)) failures.push('Career project leaked into general projects');
 if (!projects.includes('<summary><span>기타</span>')) failures.push('Collapsible general group missing');
-if (!projects.includes('<summary><span>진짜 기타</span>')) failures.push('Nested misc group missing');
-if (projects.indexOf(modelActivityPath) < projects.indexOf(oiiaCatPath)) {
-  failures.push('Model activity is not nested after the general projects');
-}
+if (projects.includes('<summary><span>진짜 기타</span>')) failures.push('Empty nested misc group remains');
 
 const home = readFileSync(routeFile('/'), 'utf8');
-if (!home.includes(`href="${modelActivityPath}"`)) failures.push('Model activity missing from landing portfolio');
+if (home.includes(`href="${modelActivityPath}"`)) failures.push('Model activity leaked into landing portfolio');
 if (!home.includes(`href="${oiiaCatPath}"`)) failures.push('Oiia Cat missing from landing portfolio');
 if ((home.match(new RegExp(`href="${autonomousShuttlePath}"`, 'g')) ?? []).length !== 1) {
   failures.push('Autonomous shuttle career detail link missing or duplicated');
