@@ -12,9 +12,15 @@ description: C++ / C# Game Programmer
 
 인천국제공항 자율주행 셔틀 프로젝트에서 UDP 기반 LiDAR 데이터 처리, C++/ROS2 기반 FSM 제어 로직, 생존 신호 기반 진단 및 고장 안전 시스템을 개발했습니다.
 
-<a class="career-detail-link" href="/posts/autonomous-shuttle-systems/">
-  <img src="/assets/img/projects/autonomous-shuttle/SE-5076ee58-3a46-48e5-8f8a-213687567468.jpg" alt="" loading="lazy" decoding="async" />
-  <span>자율주행 셔틀 프로젝트 상세보기 →</span>
+<a class="project-card career-project-card" href="/posts/autonomous-shuttle-systems/">
+  <span class="project-card__thumbnail">
+    <img src="/assets/img/projects/autonomous-shuttle/SE-5076ee58-3a46-48e5-8f8a-213687567468.jpg" alt="" loading="lazy" decoding="async" />
+  </span>
+  <span class="project-card__body">
+    <small>C++, ROS2, UDP, LiDAR</small>
+    <strong>자율주행 셔틀: FSM 제어와 시스템 진단</strong>
+    <span>인천국제공항 자율주행 셔틀 프로젝트 상세보기</span>
+  </span>
 </a>
 
 ## 기술
