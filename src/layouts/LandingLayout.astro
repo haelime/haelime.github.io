@@ -16,12 +16,27 @@ const projects = visibleProjects(await getCollection('portfolio'));
 ---
 
 <BaseLayout title={frontmatter.title} description={frontmatter.description}>
-  <article class="landing-document prose">
-    <slot />
-  </article>
+  <section class="landing-document prose">
+    <h1>프로필</h1>
+    <div class="profile-intro">
+      <img src="/assets/img/IMG_8923.jpg" alt="Hae Eem 프로필 사진" />
+      <div>
+        <h2>Hae Eem</h2>
+        <p>C++ / C# 프로그래머입니다.</p>
+        <div class="profile-links">
+          <a href="https://github.com/haelime" target="_blank" rel="noreferrer">GitHub</a>
+          <a href="mailto:loreminder@gmail.com">이메일</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <section class="landing-portfolio">
     <h2 class="section-title">포트폴리오</h2>
     <PortfolioAccordion projects={projects} />
   </section>
+
+  <article class="landing-document prose">
+    <slot />
+  </article>
 </BaseLayout>

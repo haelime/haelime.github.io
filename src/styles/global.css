@@ -680,8 +680,20 @@ iframe {
 }
 
 .career-detail-link {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.75rem;
   margin-bottom: 0;
   font-weight: 700;
+}
+
+.career-detail-link img {
+  width: 5rem;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  object-fit: cover;
 }
 
 .project-card {
