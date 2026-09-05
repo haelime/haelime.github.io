@@ -81,6 +81,10 @@ PNG를 Unity Sprite로 import한 뒤 frame 우선, direction 후순서로 `Eight
 
 *할버더 `Attack_A`의 같은 프레임을 여덟 방향에서 촬영한 실제 PNG 출력. 방향 이름은 베이크 카메라의 시점.*
 
+<figure style="margin:1.5rem 0">
+  <img src="/assets/img/projects/clasher/archer-png-output.gif" alt="탐색기에서 궁수의 여러 방향과 동작별 PNG 출력물을 확인하는 화면 녹화" width="960" height="602" loading="lazy" style="display:block;width:100%;height:auto;border-radius:12px" />
+  <figcaption>궁수 PNG 출력물을 탐색기에서 확인하는 과정. 제공된 화면 녹화 전체를 GIF로 변환.</figcaption>
+</figure>
 ### 해상도와 시간 해상도를 함께 조절
 
 기본 출력은 256×256, 12fps, clip당 최대 48프레임으로 설정함. 모바일 전장의 작은 캐릭터에 필요한 실루엣과 공격 동작을 읽을 수 있는지 확인하면서, 해상도와 샘플 수를 조절할 수 있게 한 구성임. 고해상도 출력이 항상 유리한 것은 아니며, 가로와 세로를 각각 두 배로 올리면 프레임당 픽셀 수는 네 배가 됨.
