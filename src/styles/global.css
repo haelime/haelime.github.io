@@ -652,7 +652,7 @@ iframe {
 }
 
 .portfolio-fold .project-card,
-.career-project-card {
+.project-card.career-project-card {
   min-height: 6.5rem;
   flex-direction: row;
 }
