@@ -11,12 +11,12 @@ stack: "C#, Unity Editor, Playables, RenderTexture, ComfyUI API, PowerShell"
 project_group: games
 permalink: /clasher/
 portfolio: true
-hide_from_home: true
-unlisted: true
+hide_from_home: false
+unlisted: false
 toc: true
 mermaid: true
-sitemap: false
-noindex: true
+sitemap: true
+noindex: false
 ---
 
 모바일 전투에서 여러 캐릭터를 동시에 표시하기 위해 **3D 애니메이션을 8방향 PNG로 미리 계산하는 베이크 파이프라인**을 구현함. 같은 과정에서 얻은 정면 렌더를 ComfyUI 초상화 자동화의 입력으로 사용하고, 두 출력물을 전투 유닛과 카드 UI에 연결함.

@@ -12,7 +12,7 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !['/clasher/', '/posts/point-nemo/'].some((path) => page.endsWith(path))
+      filter: (page) => !['/posts/point-nemo/'].some((path) => page.endsWith(path))
     })
   ],
   markdown: {

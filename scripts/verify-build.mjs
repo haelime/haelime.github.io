@@ -65,11 +65,11 @@ for (const htmlFile of htmlFiles) {
 }
 
 const clasher = readFileSync(routeFile('/clasher/'), 'utf8');
-if (!clasher.includes('noindex, nofollow, noarchive')) failures.push('Clasher noindex metadata missing');
+if (clasher.includes('noindex')) failures.push('Clasher is still marked noindex');
 
-for (const route of ['/', '/projects/', '/archives/', '/categories/', '/tags/']) {
+for (const route of ['/', '/projects/', '/archives/', '/categories/portfolio/', '/tags/unity/']) {
   const html = readFileSync(routeFile(route), 'utf8');
-  if (html.includes('href="/clasher/"')) failures.push(`Clasher leaked into listing: ${route}`);
+  if (!html.includes('href="/clasher/"')) failures.push(`Clasher missing from listing: ${route}`);
 }
 
 const projects = readFileSync(routeFile('/projects/'), 'utf8');
@@ -104,8 +104,8 @@ if (catMemeDetector.includes('Troubleshooting')) failures.push('Unsupported Cat 
 if (catMemeDetector.includes('성능 향상 수치는 주장')) failures.push('Cat Meme Detector contains editorial meta-commentary');
 
 const sitemapPath = join(rootPath, 'sitemap-0.xml');
-if (existsSync(sitemapPath) && readFileSync(sitemapPath, 'utf8').includes('/clasher/')) {
-  failures.push('Clasher leaked into sitemap');
+if (existsSync(sitemapPath) && !readFileSync(sitemapPath, 'utf8').includes('/clasher/')) {
+  failures.push('Clasher missing from sitemap');
 }
 
 const css = files.filter((file) => extname(file) === '.css').map((file) => readFileSync(file, 'utf8')).join('\n');
