@@ -31,7 +31,7 @@ noindex: true
 
 ## 모바일에서 반복되는 캐릭터 표현 비용
 
-최적화의 출발점은 캐릭터 한 개의 폴리곤 수보다 **전투 중 늘어나는 유닛 수에 따라 어떤 작업이 반복되는가**였음.
+최적화의 출발점은 캐릭터 한 개의 폴리곤 수보다 **유닛 수에 따라 반복되는 작업의 비용**.
 
 유닛이 추가되면 이동과 타깃 탐색뿐 아니라 각 인스턴스의 애니메이션 포즈 평가, bone transform 갱신과 skinned mesh 변형도 함께 발생함. 캐릭터 모델이 작고 저해상도로 보이더라도 포즈를 계산하는 과정 자체가 사라지지는 않으므로, 메시의 폴리곤 수를 줄이는 것과 애니메이션 실행 경로를 바꾸는 것은 서로 다른 최적화 대상임. ([Unity 캐릭터 최적화 문서](https://docs.unity3d.com/6000.0/Documentation/Manual/ModelingOptimizedCharacters.html))
 
@@ -41,16 +41,16 @@ noindex: true
 
 | 구분 | 원본 3D 캐릭터 재생 | PNG sprite actor 재생 |
 | --- | --- | --- |
-| 동작 표현 | 실행 중 포즈를 평가하고 mesh를 변형함 | 제작 단계에서 계산한 프레임을 선택함 |
-| 표면 표현 | 원본 geometry와 재질을 렌더함 | 촬영한 표면 표현을 texture에서 읽음 |
-| 방향 전환 | 현재 시점에서 모델을 다시 그릴 수 있음 | 준비된 8방향 중 하나를 선택함 |
+| 동작 표현 | 실행 중 포즈 평가와 mesh 변형 | 제작 단계에서 계산한 프레임 선택 |
+| 표면 표현 | 원본 geometry와 재질 렌더링 | 촬영한 표면 표현을 texture에서 조회 |
+| 방향 전환 | 현재 시점에서 모델을 다시 그릴 수 있음 | 준비된 8방향 중 하나를 선택 |
 | 관리할 비용 | bone, vertex와 재질 구성이 중요함 | texture memory, 투명 픽셀과 배치 구성이 중요함 |
 
 이 선택으로 동적인 조명에 대한 원본 3D 표면의 반응이나 연속적인 시점 변화는 제한됨. 대신 동일 캐릭터의 여러 인스턴스가 공유하는 PNG와 SpriteSet을 사용하면서, 각 유닛은 자신의 동작, 방향과 재생 시간만 관리하도록 구성함.
 
 ## 3D Prefab에서 게임용 PNG까지
 
-베이크의 결과를 이미지 파일에서 끝내지 않고, 게임이 바로 읽을 수 있는 재생 데이터와 프리팹까지 생성하도록 구성함.
+베이크 결과를 이미지 파일에서 끝내지 않고, 게임이 바로 읽을 수 있는 재생 데이터와 프리팹까지 생성.
 
 ```mermaid
 flowchart LR
@@ -79,7 +79,7 @@ PNG를 Unity Sprite로 import한 뒤 frame 우선, direction 후순서로 `Eight
   <figure style="margin:0;text-align:center"><img src="/assets/img/projects/clasher/halberdier-nw.png" alt="할버더 공격 프레임, nw 방향" width="256" height="256" loading="lazy" style="width:100%;height:auto" /><figcaption>nw</figcaption></figure>
 </div>
 
-*할버더 `Attack_A`의 같은 프레임을 여덟 방향에서 촬영한 실제 PNG 출력이며, 방향 이름은 베이크 카메라의 시점을 나타냄.*
+*할버더 `Attack_A`의 같은 프레임을 여덟 방향에서 촬영한 실제 PNG 출력. 방향 이름은 베이크 카메라의 시점.*
 
 ### 해상도와 시간 해상도를 함께 조절
 
@@ -89,7 +89,7 @@ PNG를 Unity Sprite로 import한 뒤 frame 우선, direction 후순서로 `Eight
 
 ## 베이크 중 포즈와 크기가 흔들리는 문제
 
-프레임을 많이 출력하는 것보다 **각 PNG가 의도한 포즈와 일관된 크기를 담는 것**이 먼저였음.
+프레임 수보다 먼저 확보해야 할 것은 **각 PNG의 정확한 포즈와 일관된 크기**
 
 포즈를 샘플링해도 offscreen 상태의 skinned mesh가 갱신되지 않으면 변경한 팔 동작이 촬영 결과에 반영되지 않는 문제가 있었음. Animator가 있는 모델은 manual `PlayableGraph`에서 clip의 시간을 지정해 평가하고, `AlwaysAnimate`, `updateWhenOffscreen`, `forceMatrixRecalculationPerRender`를 설정해 포즈와 렌더의 갱신을 맞춤. 공격 팔의 가독성 보정도 샘플링 이후에 적용해 최종 포즈가 이미지에 포함되도록 구성함.
 
@@ -119,13 +119,13 @@ PNG 베이크는 실행 중 계산하던 정보를 texture에 저장하는 선�
 
 | 단말에서 확인할 비용 | 우선 검토할 항목 |
 | --- | --- |
-| texture memory와 로딩량 | 출력 해상도, 프레임 수와 asset 로딩 범위를 검토함 |
-| texture 전환과 batches | atlas 구성과 재질 공유, 정렬 조건을 검토함 |
-| 투명 효과가 겹친 구간의 GPU 시간 | 투명 영역과 그림자 및 이펙트가 덮는 면적을 검토함 |
+| texture memory와 로딩량 | 출력 해상도, 프레임 수와 asset 로딩 범위 |
+| texture 전환과 batches | atlas 구성과 재질 공유, 정렬 조건 |
+| 투명 효과가 겹친 구간의 GPU 시간 | 투명 영역과 그림자 및 이펙트가 덮는 면적 |
 
 ## ComfyUI로 카드 초상화 제작 자동화
 
-같은 3D 원본을 전투용 PNG와 카드 초상화의 입력으로 사용해, 캐릭터별 이미지 준비부터 결과 저장까지 이어지는 제작 경로를 구성함.
+같은 3D 원본에서 전투용 PNG와 카드 초상화를 만들고, 캐릭터별 입력 준비부터 결과 저장까지 연결.
 
 모바일의 카드 슬롯에서는 캐릭터를 빠르게 구분해야 하지만 전신 sprite를 축소하면 얼굴이 작아지는 문제가 있었음. 베이크 시 생성한 정면 고해상도 렌더에서 alpha bounds를 찾고, 상반신을 중심으로 정사각형 crop을 만들어 1024×1024 입력으로 정규화함.
 
@@ -135,7 +135,7 @@ PNG 베이크는 실행 중 계산하던 정보를 texture에 저장하는 선�
   <figure style="margin:0"><img src="/assets/img/projects/clasher/portrait-output.png" alt="기존 ComfyUI workflow로 생성한 할버더 카드 초상화" width="1024" height="1024" loading="lazy" style="width:100%;height:auto" /><figcaption>ComfyUI 출력</figcaption></figure>
 </div>
 
-*기존 파이프라인에서 생성한 정면 렌더, 자동 crop 입력과 ComfyUI 초상화 출력의 비교임.*
+*기존 파이프라인의 정면 렌더 → 자동 crop 입력 → ComfyUI 초상화 출력*
 
 `comfy-generate-portraits.ps1`은 표준 API workflow에 입력 이미지, 공통 prompt, 캐릭터별 설명, checkpoint, LoRA와 seed를 주입함. `/upload/image`로 입력을 전송하고 `/prompt`로 작업을 제출한 뒤, `/history/{promptId}`에서 완료를 확인하고 `/view`로 결과를 내려받도록 구현함. 캐릭터마다 crop, 업로드와 workflow 설정을 반복하는 부분을 자동화한 작업임.
 
