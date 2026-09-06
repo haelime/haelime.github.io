@@ -18,24 +18,19 @@ portfolio: true
 toc: true
 ---
 
-<figure>
-  <div class="ratio">
-    <iframe src="https://www.youtube.com/embed/ohuVXfWt2A4" title="Coral reef 수중 렌더링 데모 영상" loading="lazy" allowfullscreen></iframe>
-  </div>
-  <figcaption><a href="https://www.youtube.com/watch?v=ohuVXfWt2A4">Coral reef 영상</a></figcaption>
-</figure>
+Sebastian Lague의 [Coding Adventure: Boids](https://www.youtube.com/watch?v=bqtqltqcQhw) 영상에서 영감을 받아 시작한 프로젝트.
 
-<nav aria-label="Boids 프로젝트 본문 바로가기">
-  <ul>
-    <li><a href="#gpu-boids">GPU Boids, 군집 계산과 렌더링</a></li>
-    <li><a href="#coral-reef">Coral reef, 수중 장면 표현</a></li>
-    <li><a href="#flappy-boids">Flappy Boids, 조작 가능한 게임으로 적용</a></li>
-  </ul>
-</nav>
+## Boid의 움직임 이해하기
 
-**Boids의 군집 움직임을 계산하고, 수중 장면으로 표현하고, 게임에 적용한 세 프로젝트.** GPU 시뮬레이션의 데이터 흐름부터 빛과 그림자가 있는 수중 환경, 플레이어가 조작하는 물고기 무리까지 각각의 구현을 정리함.
+Boids는 각 개체가 주변 이웃에 반응하는 규칙으로 군집의 움직임을 만드는 알고리즘. 분리, 정렬과 응집을 함께 적용함.
 
-## GPU Boids
+- **분리:** 너무 가까운 이웃에게서 멀어짐.
+- **정렬:** 주변 이웃의 이동 방향에 맞춤.
+- **응집:** 주변 이웃의 중심으로 모임.
+
+이 규칙을 GPU에서 계산하는 시뮬레이션을 구현하고, 물고기 군집이 있는 수중 장면과 직접 조작하는 게임에 활용했음. 아래에서는 **군집 계산의 구현 → 수중 장면 표현 → 게임 적용** 순서로 정리함.
+
+## GPU Boids, 군집 계산 구현
 
 <figure>
   <div class="ratio">
@@ -84,9 +79,18 @@ Craig Reynolds의 Boids 규칙을 compute shader로 구현한 군집 시뮬레�
 
 [GPU Boids 소스 코드](https://github.com/haelime/GPUBoidsSimulation)
 
-## Coral reef
+## Coral reef, 수중 장면에 활용
+
+<figure>
+  <div class="ratio">
+    <iframe src="https://www.youtube.com/embed/ohuVXfWt2A4" title="Coral reef 수중 렌더링 데모 영상" loading="lazy" allowfullscreen></iframe>
+  </div>
+  <figcaption><a href="https://www.youtube.com/watch?v=ohuVXfWt2A4">Coral reef 영상</a></figcaption>
+</figure>
 
 GPU 물고기 군집과 산호가 있는 장면에 **거리, 그림자와 시선에 반응하는 수중 표현**을 구현한 렌더링 데모. 가까운 산호의 색과 먼 배경의 가시성을 구분하고, 햇빛이 가려지는 위치를 물속 산란에 반영했음.
+
+여기서는 움직이는 군집을 수중 환경의 일부로 사용하고, 물고기와 산호가 놓인 공간의 빛과 거리감을 표현하는 데 집중함.
 
 ### 거리와 그림자를 반영하는 빛
 
@@ -94,9 +98,50 @@ GPU 물고기 군집과 산호가 있는 장면에 **거리, 그림자와 시선
 
 URP의 opaque texture와 depth texture에서 장면 색과 거리를 얻고, RGB별 Beer-Lambert 감쇠와 backscatter를 계산함. 시선 경로의 16개 지점에서 햇빛의 그림자와 감쇠를 평가하고, Henyey-Greenstein 위상 함수로 빛과 시선 방향의 관계를 반영했음.
 
+#### RGB 감쇠와 backscatter
+
+물속을 통과하는 거리를 $d$, 경로 중간점에서 구한 상대 밀도를 $\rho$라 하면, 셰이더는 유효 거리 $D=\rho d$를 사용함. RGB 각 채널 $c$의 투과율과 배경 산란광은 다음과 같이 계산함.
+
+$$
+\begin{aligned}
+T_c(D) &= e^{-\beta_c D} \\
+L_{\mathrm{base},c} &= L_{\mathrm{scene},c}T_c(D)
+  + B_c\left(1-e^{-\gamma_c D}\right)
+\end{aligned}
+$$
+
+$\beta_c$는 직접광 감쇠 계수, $\gamma_c$는 backscatter 감쇠 계수, $B_c$는 물속 배경 산란색임. 거리가 길어질수록 물체에서 오는 신호는 줄고 배경 산란색의 비중은 커짐. 채널마다 계수가 달라 거리별 색 변화도 표현할 수 있음.
+
+위 식은 직접 신호와 backscatter의 합성을 나타냄. 실제 셰이더는 거리별 흐림을 적용한 장면 색을 사용하고, 여기에 햇빛 산란과 caustics 등을 더함. 밀도는 경로 전체를 적분하는 대신 중간점의 값으로 근사했음.
+
+#### 그림자를 따르는 햇빛 산란
+
+산란 방향에 따른 밝기는 Henyey-Greenstein 위상 함수로 계산함.
+
+$$
+p_g(\mu)=
+\frac{1-g^2}
+{4\pi\left(1+g^2-2g\mu\right)^{3/2}}
+$$
+
+$g$는 산란의 방향성을 조절하는 값이고, $\mu$는 카메라에서 장면으로 향하는 방향과 샘플에서 광원으로 향하는 방향의 내적임. 이 방향 정의에서 $g>0$이면 광원 쪽을 바라볼수록 산란이 강해짐. 구현에서는 분모 괄호의 값을 최소 0.01로 제한해 지나치게 큰 값을 방지함.
+
+햇빛 산란은 시선 경로의 샘플마다 **그림자 가시성 × 두 광 경로의 투과율 × 샘플 간격**을 누적함. 색과 강도 계수를 $K_c$로 묶으면 다음과 같이 표현할 수 있음.
+
+$$
+L_{\mathrm{sun},c}\approx
+K_c\,p_g(\mu)
+\sum_{i=0}^{N-1}
+V_i\,e^{-\beta_c(\rho s_i+\ell_i)}\,\Delta s
+$$
+
+$s_i$는 카메라에서 샘플까지의 거리, $\ell_i$는 수면에서 샘플까지 햇빛이 이동한 거리, $V_i$는 shadow map에서 얻은 가시성임. $K_c$에는 광원색, 산란색과 강도, 밀도 및 backscatter 계수가 포함됨. 그림자에 가려진 샘플은 기여가 줄어들므로 산호의 그림자와 물속 밝기가 연결됨.
+
+현재 설정은 $N=16$이며 $\Delta s=\min(d,80)/N$으로 구간을 나눔. 시선이 수면을 만나면 물속 구간을 거기서 끝내고, 샘플 위치에는 jitter를 적용함. 전체 다중 산란을 푸는 방식이 아닌 단일 산란의 이산 근사임.
+
 ![동일한 카메라에서 수중 셰이더를 단계별로 적용한 비교](/assets/img/projects/point-nemo/point-nemo-shader-breakdown.gif)
 
-수면, RGB 감쇠, 산란과 환경 합성을 순서대로 추가한 비교. 카메라와 셰이더 시간을 고정한 정지 캡처이며, 실제 움직임은 상단 영상으로 제시함. 현재 구도에서 ON/OFF 차이가 검출되지 않은 바닥 카우스틱 단계는 제외했음.
+수면, RGB 감쇠, 산란과 환경 합성을 순서대로 추가한 비교. 카메라와 셰이더 시간을 고정한 정지 캡처이며, 실제 움직임은 위 Coral reef 영상으로 제시함. 현재 구도에서 ON/OFF 차이가 검출되지 않은 바닥 caustics 단계는 제외했음.
 
 ### 파랗게 뭉개지는 모래 바닥 수정
 
@@ -106,7 +151,39 @@ URP의 opaque texture와 depth texture에서 장면 색과 거리를 얻고, RGB
 
 ### 수면과 장면 설정 연결
 
-Gerstner 파도에 프레넬 계산과 전반사 조건을 적용해, 수면을 보는 각도에 따라 하늘이 보이는 영역과 반사가 강한 영역을 구분함. 카우스틱은 표면 방향, 수심과 주광원 그림자에 따라 강도를 조절했음. 반사는 환경색 근사이며 카우스틱은 해석적 무늬 계산임.
+Gerstner 파도에 프레넬 계산과 전반사 조건을 적용해, 수면을 보는 각도에 따라 하늘이 보이는 영역과 반사가 강한 영역을 구분함. caustics는 표면 방향, 수심과 주광원 그림자에 따라 강도를 조절했음. 반사는 환경색 근사이며 caustics는 해석적 무늬 계산임.
+
+#### 수면의 굴절과 전반사
+
+수면 법선에서 잰 물속 입사각을 $\theta_i$, 공기 쪽 굴절각을 $\theta_t$라 하면 Snell의 법칙은 다음과 같음.
+
+$$
+\begin{aligned}
+n_w\sin\theta_i &= n_a\sin\theta_t \\
+\theta_{\mathrm{crit}}
+&=\arcsin\left(\frac{n_a}{n_w}\right)
+\approx 48.6^\circ
+\end{aligned}
+$$
+
+셰이더는 물의 굴절률 $n_w=1.333$, 공기의 굴절률 $n_a=1$을 사용함. 물속 입사각이 임계각 이상이면 투과가 사라지고 전반사가 일어나도록 처리함. 이 경계가 수중에서 하늘을 볼 수 있는 Snell window를 만듦.
+
+임계각 아래에서는 두 편광의 Fresnel 반사율을 평균해 반사와 투과를 혼합함. 물 위에서 보는 경우에는 Schlick 근사를 사용하며, 파도 법선이 바뀌면 같은 시선에서도 반사 비율이 달라짐.
+
+#### 표면과 그림자를 따르는 caustics
+
+물결 무늬는 두 개의 움직이는 간섭 패턴으로 근사하고, 받는 표면의 방향과 수심으로 강도를 조절함. 셰이더의 곱셈 구조를 정리하면 다음과 같음.
+
+$$
+A(\mathbf{x},t)=
+P(\mathbf{x},t)\,
+\max(0,\mathbf{n}\cdot\mathbf{l})\,
+e^{-0.035h}\,V(\mathbf{x})\,F(r)\,M\,S
+$$
+
+$P$는 해석적 무늬, $\mathbf{n}$은 depth에서 복원한 표면 법선, $\mathbf{l}$은 광원 방향, $h$는 수심임. $V$는 그림자 가시성, $F$는 카메라 거리 $r$에 따른 감쇠, $M$은 수중 geometry 마스크, $S$는 조절 가능한 강도임.
+
+caustics 기여는 원래 표면색에 $A$와 caustics 색, 카메라까지의 투과율을 곱해 더함. 따라서 어두운 표면과 그늘까지 같은 밝기로 빛나는 것을 피할 수 있음. 광자의 굴절 경로를 추적해 집광을 계산하는 물리 시뮬레이션은 아님.
 
 산호 배치와 광학 설정은 씬에 저장하고, 베이크 시 재질과 런타임 컴포넌트의 계수를 동기화함. 런타임에는 저장된 시각 객체의 상태를 갱신하도록 구성했으며, Play Mode에서 계층이 늘어나지 않고 광학 값이 유지되는 것을 확인했음.
 
@@ -114,7 +191,7 @@ GPU frame time과 메모리 비교는 아직 측정하지 않았음. 산호는 S
 
 [Coral reef 소스 코드](https://github.com/haelime/Point-nemo)
 
-## Flappy Boids
+## Flappy Boids, 조작하는 게임으로 활용
 
 <figure>
   <div class="ratio">

@@ -502,6 +502,12 @@ iframe {
   border: 0;
 }
 
+.prose .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25rem 0;
+}
+
 .toc {
   position: sticky;
   top: 6rem;
