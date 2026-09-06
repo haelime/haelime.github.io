@@ -1,28 +1,25 @@
 ---
-title: "레이마칭 셰이더"
+title: Shader sandbox
 date: 2026-07-25 09:00:00 +0900
-categories: [Portfolio]
-tags: [GLSL, HLSL, Shader, Raymarching, SDF]
-description: "표면 렌더링과 볼륨 레이마칭을 결합한 Cloudy Crystal, SDF 기반 Cubestorm 셰이더"
+categories:
+  - Portfolio
+tags:
+  - GLSL
+  - HLSL
+  - Shader
+  - Raymarching
+  - SDF
+description: 셰이더 작업물들
 image:
   path: /assets/img/projects/raymarch-shaders/cover.png
   alt: 레이마칭 셰이더 미리보기
 thumbnail: /assets/img/projects/raymarch-shaders/cloudy-crystal.gif
-stack: "GLSL, HLSL, 레이마칭, SDF"
+stack: GLSL, HLSL, 레이마칭, SDF
 project_order: 6
 project_group: graphics
 portfolio: true
 toc: true
 ---
-
-레이마칭으로 표면과 입체 효과를 구현한 셰이더 프로젝트입니다.
-
-좋은 비주얼을 연출하고 실시간 렌더링을 위해 여러 셰이더들을 보고 연구했습니다.
-
-3D 모델 아티스트와 협업해 작업했습니다.
-
-[BOOTH에서 협업 작업 보기](https://fuwahebiya.booth.pm/items/7770402)
-
 ## Cloudy Crystal
 
 <div class="ratio ratio-16x9 mb-4">
@@ -32,6 +29,12 @@ toc: true
 반투명 보석 내부에 움직이는 구름이 들어 있는 셰이더입니다.
 
 유리 표면 렌더링과 볼륨 레이마칭을 결합했습니다.
+
+좋은 비주얼을 연출하고 실시간 렌더링을 위해 여러 셰이더들을 보고 연구했습니다.
+
+3D 모델 아티스트와 협업해 작업했습니다.
+
+[BOOTH에서 협업 작업 보기](https://fuwahebiya.booth.pm/items/7770402)
 
 ### 표면 렌더링
 

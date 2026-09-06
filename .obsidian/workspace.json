@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "src/pages/index.md",
+                "file": "src/content/portfolio/2026-09-05-clashers.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "index"
+              "title": "2026-09-05-clashers"
             }
           }
         ]
@@ -189,13 +189,17 @@
   },
   "active": "516373237a8f0abb",
   "lastOpenFiles": [
+    "src/content/portfolio/2026-09-05-point-nemo.md",
+    "src/content/portfolio/2026-07-27-rimworld-portrait-overlay.md",
+    "src/content/portfolio/2026-08-09-idle-together.md",
+    "src/content/portfolio/2026-07-26-minirt.md",
+    "src/content/portfolio/2026-07-25-raymarch-shaders.md",
+    "src/content/portfolio/2026-07-24-gpu-boids-simulation.md",
+    "src/pages/index.md",
     "src/content/portfolio/2026-09-05-clashers.md",
     "index.md",
     "src/content/blog/_draft.md",
     "src/pages/about.md",
-    "src/pages/index.md",
-    "src/content/portfolio/2026-07-25-raymarch-shaders.md",
-    "src/content/portfolio/2026-07-24-gpu-boids-simulation.md",
     "src/content/portfolio/2026-08-28-flappy-boids.md",
     "dist/tags/c/index.html",
     "dist/tags/c",
@@ -219,21 +223,17 @@
     "dist/assets/img/projects/point-nemo/09_final_with_fish_and_particles.png",
     "dist/assets/img/projects/idle-together/README.md",
     "node_modules/@types/katex/README.md",
-    "src/content/portfolio/2026-09-05-point-nemo.md",
     "src/content/portfolio/2026-07-22-autonomous-shuttle-systems.md",
     "src/content/portfolio/2026-07-23-game-jam-for-the-people.md",
-    "src/content/portfolio/2026-07-26-minirt.md",
     "src/content/portfolio/2026-08-28-cat-meme-detector.md",
     "src/content/portfolio/2026-08-27-oiia-cat.md",
     "src/content/portfolio/2026-08-27-model-activity.md",
-    "src/content/portfolio/2026-08-09-idle-together.md",
     "src/content/portfolio/clasher2d.md",
     "docs/boids-portfolio-connection-draft.md",
     "_tabs/about.md",
     "_tabs/archives.md",
     "_tabs/categories.md",
     "_tabs/tags.md",
-    "_tabs/projects.md",
-    "src/content/portfolio/2026-07-27-rimworld-portrait-overlay.md"
+    "_tabs/projects.md"
   ]
 }
