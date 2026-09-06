@@ -10,17 +10,15 @@ tags:
   - Gameplay
 description: GMTK Game Jam 2026
 image:
-  path: /assets/img/projects/game-jam/screen-2.png
-  alt: For the people 게임 화면
-thumbnail: /assets/img/projects/game-jam/screen-2.png
+  path: /assets/img/projects/game-jam/for-the-people-gameplay.webp
+  alt: 동심원으로 표시된 폭발 범위 사이에서 시민을 구조하는 For the people 플레이 영상
+thumbnail: /assets/img/projects/game-jam/for-the-people-gameplay.webp
 stack: C#, Unity, HTML5
 project_order: 3
 project_group: games
 portfolio: true
 toc: true
 ---
-[![For the people 플레이 화면](/assets/img/projects/game-jam/gameplay.png)](https://haelime.itch.io/for-the-people)
-
 [**For the people 플레이하기**](https://haelime.itch.io/for-the-people)
 
 ## 요약
