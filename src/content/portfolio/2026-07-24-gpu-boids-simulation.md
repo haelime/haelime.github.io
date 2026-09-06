@@ -10,7 +10,7 @@ tags:
   - ComputeShader
   - GPU
 description: Boid의 이해와 활용
-thumbnail: /assets/img/projects/gpu-boids/thumb.webp
+thumbnail: /assets/img/projects/point-nemo/point-nemo-shader-breakdown.gif
 stack: C#, Unity, HLSL, Compute Shader, DOTS, URP
 project_order: 2
 project_group: graphics
@@ -18,38 +18,31 @@ portfolio: true
 toc: true
 ---
 
-<div class="boids-videos">
-  <figure>
-    <div class="ratio">
-      <iframe src="https://www.youtube.com/embed/zoZexSNFHc8" title="GPU Boids 군집 시뮬레이션 영상" loading="lazy" allowfullscreen></iframe>
-    </div>
-    <figcaption><a href="https://www.youtube.com/watch?v=zoZexSNFHc8">GPU Boids 영상</a></figcaption>
-  </figure>
-  <figure>
-    <div class="ratio">
-      <iframe src="https://www.youtube.com/embed/UZPNwhEVvLM" title="Flappy Boids 게임플레이 영상" loading="lazy" allowfullscreen></iframe>
-    </div>
-    <figcaption><a href="https://www.youtube.com/watch?v=UZPNwhEVvLM">Flappy Boids 영상</a></figcaption>
-  </figure>
-  <figure>
-    <div class="ratio">
-      <iframe src="https://www.youtube.com/embed/ohuVXfWt2A4" title="Point Nemo 수중 렌더링 데모 영상" loading="lazy" allowfullscreen></iframe>
-    </div>
-    <figcaption><a href="https://www.youtube.com/watch?v=ohuVXfWt2A4">Point Nemo 영상</a></figcaption>
-  </figure>
-</div>
+<figure>
+  <div class="ratio">
+    <iframe src="https://www.youtube.com/embed/ohuVXfWt2A4" title="Coral reef 수중 렌더링 데모 영상" loading="lazy" allowfullscreen></iframe>
+  </div>
+  <figcaption><a href="https://www.youtube.com/watch?v=ohuVXfWt2A4">Coral reef 영상</a></figcaption>
+</figure>
 
 <nav aria-label="Boids 프로젝트 본문 바로가기">
   <ul>
     <li><a href="#gpu-boids">GPU Boids, 군집 계산과 렌더링</a></li>
+    <li><a href="#coral-reef">Coral reef, 수중 장면 표현</a></li>
     <li><a href="#flappy-boids">Flappy Boids, 조작 가능한 게임으로 적용</a></li>
-    <li><a href="#point-nemo">Point Nemo, 수중 장면 표현</a></li>
   </ul>
 </nav>
 
-**Boids의 군집 움직임을 계산하고, 게임에 적용하고, 수중 장면으로 표현한 세 프로젝트.** GPU 시뮬레이션의 데이터 흐름부터 플레이어가 조작하는 물고기 무리, 빛과 그림자가 있는 수중 환경까지 각각의 구현을 정리함.
+**Boids의 군집 움직임을 계산하고, 수중 장면으로 표현하고, 게임에 적용한 세 프로젝트.** GPU 시뮬레이션의 데이터 흐름부터 빛과 그림자가 있는 수중 환경, 플레이어가 조작하는 물고기 무리까지 각각의 구현을 정리함.
 
 ## GPU Boids
+
+<figure>
+  <div class="ratio">
+    <iframe src="https://www.youtube.com/embed/zoZexSNFHc8" title="GPU Boids 군집 시뮬레이션 영상" loading="lazy" allowfullscreen></iframe>
+  </div>
+  <figcaption><a href="https://www.youtube.com/watch?v=zoZexSNFHc8">GPU Boids 영상</a></figcaption>
+</figure>
 
 Craig Reynolds의 Boids 규칙을 compute shader로 구현한 군집 시뮬레이션. 위치와 속도를 GPU 메모리에 유지하고, 계산 결과를 CPU로 다시 읽어 오지 않고 렌더링까지 연결했음.
 
@@ -91,19 +84,7 @@ Craig Reynolds의 Boids 규칙을 compute shader로 구현한 군집 시뮬레�
 
 [GPU Boids 소스 코드](https://github.com/haelime/GPUBoidsSimulation)
 
-## Flappy Boids
-
-Boids의 움직임을 직접 조작하는 게임으로 만들어 보고자 제작한 **물고기 무리를 조종하는 3D Flappy Bird**. Unity 6과 DOTS로 군집 데이터를 구성했음.
-
-### 군집 데이터와 플레이 공간 구성
-
-반복 처리하는 보이드 데이터를 연속된 메모리에 배치해 cache locality와 병렬 처리 효율을 높이려는 목적으로 DOTS를 적용했음. 앞의 compute shader 프로젝트와 별도로, 이 프로젝트에서는 군집 움직임을 게임에 사용하는 데 초점을 맞춤.
-
-바닷속 벽과 바닥의 복잡한 굴곡은 Marching Cubes로 환경 에셋을 생성해 표현했음. 군집을 조작하는 플레이와 함께, 물고기가 움직일 수중 공간을 구성한 프로젝트임.
-
-[Flappy Boids 소스 코드](https://github.com/haelime/FlappyBoids)
-
-## Point Nemo
+## Coral reef
 
 GPU 물고기 군집과 산호가 있는 장면에 **거리, 그림자와 시선에 반응하는 수중 표현**을 구현한 렌더링 데모. 가까운 산호의 색과 먼 배경의 가시성을 구분하고, 햇빛이 가려지는 위치를 물속 산란에 반영했음.
 
@@ -131,4 +112,23 @@ Gerstner 파도에 프레넬 계산과 전반사 조건을 적용해, 수면을 
 
 GPU frame time과 메모리 비교는 아직 측정하지 않았음. 산호는 Smithsonian CC0/Open Access 스캔, 물고기와 일부 환경 소품은 Kenney 에셋을 사용했으며 직접 모델링한 작업에 포함하지 않음. 코드 수정, 씬 베이크, 진단과 테스트 실행에는 AI 코딩 도구를 활용했으며, 개인 설계와 검증 범위는 정리 중임.
 
-[Point Nemo 소스 코드](https://github.com/haelime/Point-nemo)
+[Coral reef 소스 코드](https://github.com/haelime/Point-nemo)
+
+## Flappy Boids
+
+<figure>
+  <div class="ratio">
+    <iframe src="https://www.youtube.com/embed/UZPNwhEVvLM" title="Flappy Boids 게임플레이 영상" loading="lazy" allowfullscreen></iframe>
+  </div>
+  <figcaption><a href="https://www.youtube.com/watch?v=UZPNwhEVvLM">Flappy Boids 영상</a></figcaption>
+</figure>
+
+Boids의 움직임을 직접 조작하는 게임으로 만들어 보고자 제작한 **물고기 무리를 조종하는 3D Flappy Bird**. Unity 6과 DOTS로 군집 데이터를 구성했음.
+
+### 군집 데이터와 플레이 공간 구성
+
+반복 처리하는 보이드 데이터를 연속된 메모리에 배치해 cache locality와 병렬 처리 효율을 높이려는 목적으로 DOTS를 적용했음. 앞의 compute shader 프로젝트와 별도로, 이 프로젝트에서는 군집 움직임을 게임에 사용하는 데 초점을 맞춤.
+
+바닷속 벽과 바닥의 복잡한 굴곡은 Marching Cubes로 환경 에셋을 생성해 표현했음. 군집을 조작하는 플레이와 함께, 물고기가 움직일 수중 공간을 구성한 프로젝트임.
+
+[Flappy Boids 소스 코드](https://github.com/haelime/FlappyBoids)
