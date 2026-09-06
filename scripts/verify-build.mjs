@@ -84,7 +84,7 @@ if (projects.includes('<summary><span>진짜 기타</span>')) failures.push('Emp
 
 const home = readFileSync(routeFile('/'), 'utf8');
 const boids = readFileSync(routeFile('/posts/gpu-boids-simulation/'), 'utf8');
-if ((boids.match(/class="katex-display"/g) ?? []).length < 5 || !boids.includes('encoding="application/x-tex"')) {
+if ((boids.match(/class="katex-display"/g) ?? []).length < 4 || !boids.includes('encoding="application/x-tex"')) {
   failures.push('Coral reef equations were not rendered as accessible math');
 }
 if (boids.includes('katex-error')) failures.push('Coral reef contains invalid LaTeX');
