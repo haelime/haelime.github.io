@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "src/content/portfolio/2026-08-09-idle-together.md",
+                "file": "src/content/portfolio/2026-07-22-autonomous-shuttle-systems.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2026-08-09-idle-together"
+              "title": "2026-07-22-autonomous-shuttle-systems"
             }
           }
         ]
@@ -189,6 +189,13 @@
   },
   "active": "516373237a8f0abb",
   "lastOpenFiles": [
+    "public/assets/img/projects/gpu-boids/boids-simulation.gif",
+    "src/content/portfolio/2026-07-23-game-jam-for-the-people.md",
+    "src/content/portfolio/2026-07-24-gpu-boids-simulation.md",
+    "src/content/portfolio/2026-07-22-autonomous-shuttle-systems.md",
+    "src/content/portfolio/2026-07-25-raymarch-shaders.md",
+    "src/content/portfolio/2026-09-05-clashers.md",
+    "src/content/portfolio/2026-08-09-idle-together.md",
     "dist/sitemap-0.xml",
     "dist/sitemap-index.xml",
     "dist/clasher/index.html",
@@ -199,18 +206,12 @@
     "dist/posts/point-nemo/index.html",
     "dist/posts/oiia-cat/index.html",
     "dist/posts/idle-together/index.html",
-    "dist/posts/minirt/index.html",
     "dist/assets/img/projects/game-jam/for-the-people-gameplay.webp",
-    "src/content/portfolio/2026-07-23-game-jam-for-the-people.md",
-    "src/content/portfolio/2026-09-05-clashers.md",
     "public/assets/img/projects/game-jam/for-the-people-gameplay.webp",
     "public/assets/img/projects/game-jam/for-the-people-gameplay.gif",
     "src/content/portfolio/2026-09-05-point-nemo.md",
     "src/content/portfolio/2026-07-27-rimworld-portrait-overlay.md",
-    "src/content/portfolio/2026-08-09-idle-together.md",
     "src/content/portfolio/2026-07-26-minirt.md",
-    "src/content/portfolio/2026-07-25-raymarch-shaders.md",
-    "src/content/portfolio/2026-07-24-gpu-boids-simulation.md",
     "src/pages/index.md",
     "index.md",
     "src/content/blog/_draft.md",
@@ -225,7 +226,6 @@
     "dist/assets/img/projects/raymarch-shaders/cloudy-crystal.gif",
     "dist/assets/img/projects/idle-together/README.md",
     "node_modules/@types/katex/README.md",
-    "src/content/portfolio/2026-07-22-autonomous-shuttle-systems.md",
     "src/content/portfolio/2026-08-28-cat-meme-detector.md",
     "src/content/portfolio/2026-08-27-oiia-cat.md",
     "src/content/portfolio/2026-08-27-model-activity.md",

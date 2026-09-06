@@ -10,7 +10,7 @@ tags:
   - ComputeShader
   - GPU
 description: Boid의 이해와 활용
-thumbnail: /assets/img/projects/point-nemo/point-nemo-shader-breakdown.gif
+thumbnail: /assets/img/projects/gpu-boids/boids-simulation.gif
 stack: C#, Unity, HLSL, Compute Shader, DOTS, URP
 project_order: 2
 project_group: graphics
@@ -32,6 +32,8 @@ GPU Boids에서는 이웃 탐색과 상태 갱신의 데이터 흐름을, Coral 
 ## GPU Boids, 군집 계산 구현
 
 **군집 상태의 계산부터 렌더링까지 GPU 메모리 안에서 연결.** 타일 단위로 이웃 데이터를 공유하고, 힘 계산과 상태 갱신을 분리해 갱신 전후의 데이터가 섞이지 않도록 구성했음.
+
+![GPU Boids 군집 시뮬레이션 3초 재생](/assets/img/projects/gpu-boids/boids-simulation.gif)
 
 <figure>
   <div class="ratio">
@@ -99,6 +101,8 @@ Craig Reynolds의 Boids 규칙을 compute shader로 구현함. 각 개체는 주
 
 물고기 군집을 수중 환경의 일부로 사용한 렌더링 데모. 군집의 이동 규칙에 더해 주변 공간의 빛과 거리감을 표현하는 데 집중했음.
 
+수면 표현은 기존 에셋을 사용했으며, 여기서는 수면 구현 설명을 생략함.
+
 ### 거리와 그림자를 반영하는 빛
 
 물체에서 오는 빛의 감쇠와 물속에서 더해지는 산란광을 나누어 계산함. 기존의 밝은 광선 기둥이 산호의 그림자와 연결되지 않아, 독립된 발광 물체처럼 보이는 문제를 다루기 위한 변경.
@@ -155,10 +159,6 @@ $s_i$는 카메라에서 샘플까지의 거리, $\ell_i$는 수면에서 샘플
 
 </details>
 
-![동일한 카메라에서 수중 셰이더를 단계별로 적용한 비교](/assets/img/projects/point-nemo/point-nemo-shader-breakdown.gif)
-
-수면, RGB 감쇠, 산란과 환경 합성을 순서대로 추가한 비교. 카메라와 셰이더 시간을 고정한 정지 캡처이며, 실제 움직임은 위 Coral reef 영상으로 제시함. 현재 구도에서 ON/OFF 차이가 검출되지 않은 바닥 caustics 단계는 제외했음.
-
 ### 파랗게 뭉개지는 모래 바닥 수정
 
 **바닥의 depth 입력을 수정해 가까운 모래가 먼 배경처럼 처리되는 문제를 해결.** 밝은 재질을 적용해도 수중 효과를 켜면 바닥이 파랗게 뭉개져, 재질색과 깊이 입력을 나누어 확인했음.
@@ -169,31 +169,12 @@ $s_i$는 카메라에서 샘플까지의 거리, $\ell_i$는 수면에서 샘플
 
 수정 후 가까운 모래의 색과 깊이 처리가 함께 표시되는 것을 확인했음. 패스의 존재와 opaque texture 설정을 회귀 검사 대상으로 남김.
 
-### 시선과 표면에 맞춰 수면과 caustics 표현
+### 표면과 그림자에 맞춘 caustics 표현
 
-수면을 보는 각도에 따라 하늘이 보이는 영역과 반사가 강한 영역을 구분함. Gerstner 파도에 Fresnel 계산과 전반사 조건을 적용하고, 물속 입사각이 약 48.6도 이상이면 전반사하도록 처리했음.
-
-caustics는 표면 방향, 수심과 주광원 그림자에 따라 강도를 조절함. 원래 표면색과 투과율을 곱해 더하므로 어두운 표면과 그늘까지 같은 밝기로 빛나는 것을 피할 수 있음. 반사는 환경색 근사이며, caustics는 광자 추적이 아닌 해석적 무늬 계산임.
+caustics는 표면 방향, 수심과 주광원 그림자에 따라 강도를 조절함. 원래 표면색과 투과율을 곱해 더하므로 어두운 표면과 그늘까지 같은 밝기로 빛나는 것을 피할 수 있음. caustics는 광자 추적이 아닌 해석적 무늬 계산임.
 
 <details>
-<summary>전반사 조건과 caustics의 수식</summary>
-
-#### 수면의 굴절과 전반사
-
-수면 법선에서 잰 물속 입사각을 $\theta_i$, 공기 쪽 굴절각을 $\theta_t$라 하면 Snell의 법칙은 다음과 같음.
-
-$$
-\begin{aligned}
-n_w\sin\theta_i &= n_a\sin\theta_t \\
-\theta_{\mathrm{crit}}
-&=\arcsin\left(\frac{n_a}{n_w}\right)
-\approx 48.6^\circ
-\end{aligned}
-$$
-
-셰이더는 물의 굴절률 $n_w=1.333$, 공기의 굴절률 $n_a=1$을 사용함. 물속 입사각이 임계각 이상이면 투과가 사라지고 전반사가 일어나도록 처리함. 이 경계가 수중에서 하늘을 볼 수 있는 Snell window를 만듦.
-
-임계각 아래에서는 두 편광의 Fresnel 반사율을 평균해 반사와 투과를 혼합함. 물 위에서 보는 경우에는 Schlick 근사를 사용하며, 파도 법선이 바뀌면 같은 시선에서도 반사 비율이 달라짐.
+<summary>caustics의 수식</summary>
 
 #### 표면과 그림자를 따르는 caustics
 
