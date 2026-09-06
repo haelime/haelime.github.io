@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="robots" content="noindex" />
+    <title>2D Boids 시뮬레이션</title>
+  </head>
+  <body>
+    <main>
+      <header><strong>2D Boids</strong><span>100마리</span><button id="pause" type="button">일시정지</button><button id="reset" type="button">다시 섞기</button></header>
+      <div id="view" role="img" aria-label="세 규칙에 따라 움직이는 100마리의 보이드">
+        <p id="status" role="status">시뮬레이션을 불러오는 중입니다.</p>
+      </div>
+      <form aria-label="Boids 규칙 강도" onsubmit="return false">
+        <label>Separation <output id="separation-value">1.5</output><input id="separation" type="range" min="0" max="3" step="0.1" value="1.5" /></label>
+        <label>Alignment <output id="alignment-value">1.0</output><input id="alignment" type="range" min="0" max="3" step="0.1" value="1" /></label>
+        <label>Cohesion <output id="cohesion-value">1.0</output><input id="cohesion" type="range" min="0" max="3" step="0.1" value="1" /></label>
+      </form>
+      <p class="hint">슬라이더를 0으로 내리면 해당 규칙이 꺼집니다.</p>
+      <noscript>시뮬레이션을 보려면 JavaScript를 켜 주세요.</noscript>
+    </main>
+    <script>
+      import * as THREE from 'three';
+      import { createBoids, stepBoids, WIDTH, HEIGHT } from '../../lib/boids.mjs';
+
+      const view = document.querySelector<HTMLElement>('#view')!;
+      const status = document.querySelector<HTMLElement>('#status')!;
+      const pause = document.querySelector<HTMLButtonElement>('#pause')!;
+      const reset = document.querySelector<HTMLButtonElement>('#reset')!;
+      try {
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+        renderer.domElement.setAttribute('aria-hidden', 'true');
+        view.append(renderer.domElement);
+        status.hidden = true;
+        const scene = new THREE.Scene();
+        const camera = new THREE.OrthographicCamera(0, WIDTH, HEIGHT, 0, 0.1, 10);
+        camera.position.z = 1;
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute([8, 0, 0, -5, 4, 0, -3, 0, 0, 8, 0, 0, -3, 0, 0, -5, -4, 0], 3));
+        const material = new THREE.MeshBasicMaterial({ color: 0x72d9ff, side: THREE.DoubleSide });
+        const mesh = new THREE.InstancedMesh(geometry, material, 100);
+        mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+        mesh.frustumCulled = false;
+        scene.add(mesh);
+        const transform = new THREE.Object3D();
+        let flock = createBoids();
+        const weights = { separation: 1.5, alignment: 1, cohesion: 1 };
+        let paused = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let visible = true;
+        let previous = 0;
+        let accumulator = 0;
+        const draw = () => {
+          flock.forEach((boid, index) => {
+            transform.position.set(boid.x, boid.y, 0);
+            transform.rotation.z = Math.atan2(boid.vy, boid.vx);
+            transform.updateMatrix();
+            mesh.setMatrixAt(index, transform.matrix);
+          });
+          mesh.instanceMatrix.needsUpdate = true;
+          renderer.render(scene, camera);
+        };
+        const animate = (time: number) => {
+          if (previous) accumulator += Math.min((time - previous) / 1000, 0.05);
+          previous = time;
+          while (accumulator >= 1 / 60) {
+            flock = stepBoids(flock, 1 / 60, weights);
+            accumulator -= 1 / 60;
+          }
+          draw();
+        };
+        const sync = () => {
+          previous = 0; accumulator = 0;
+          pause.textContent = paused ? '재생' : '일시정지';
+          renderer.setAnimationLoop(!paused && visible && !document.hidden ? animate : null);
+        };
+        const resize = new ResizeObserver(() => {
+          renderer.setSize(view.clientWidth, view.clientHeight);
+          draw();
+        });
+        resize.observe(view);
+        const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
+        observer.observe(view);
+        document.addEventListener('visibilitychange', sync);
+        pause.addEventListener('click', () => { paused = !paused; sync(); });
+        reset.addEventListener('click', () => { flock = createBoids(); draw(); });
+        for (const key of ['separation', 'alignment', 'cohesion'] as const) {
+          const input = document.querySelector<HTMLInputElement>(`#${key}`)!;
+          const output = document.querySelector<HTMLOutputElement>(`#${key}-value`)!;
+          input.addEventListener('input', () => {
+            weights[key] = Number(input.value);
+            output.value = weights[key].toFixed(1);
+          });
+        }
+        renderer.domElement.addEventListener('webglcontextlost', (event) => {
+          event.preventDefault(); paused = true; sync();
+          status.textContent = '그래픽 연결이 끊겼습니다. 페이지를 새로고침해 주세요.';
+          status.hidden = false;
+        });
+        sync();
+      } catch {
+        status.textContent = '이 브라우저에서 WebGL을 사용할 수 없습니다.';
+        pause.disabled = true; reset.disabled = true;
+      }
+    </script>
+  </body>
+</html>
+
+<style>
+  :global(*) { box-sizing: border-box; }
+  :global(body) { margin: 0; font: 14px/1.5 system-ui, sans-serif; color: #e5f3ff; background: #0d1b2b; }
+  main { padding: 16px; }
+  header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  header strong { font-size: 17px; }
+  header span { color: #9bb6cc; margin-right: auto; }
+  button { color: #e5f3ff; background: #1c344b; border: 1px solid #41627d; border-radius: 6px; padding: 8px 10px; cursor: pointer; font: inherit; }
+  button:focus-visible, input:focus-visible { outline: 2px solid #72d9ff; outline-offset: 3px; }
+  #view { position: relative; width: 100%; aspect-ratio: 2; overflow: hidden; border: 1px solid #294057; border-radius: 8px; background: linear-gradient(#18334855 1px, transparent 1px), linear-gradient(90deg, #18334855 1px, transparent 1px); background-size: 32px 32px; }
+  #view :global(canvas) { display: block; }
+  #status { position: absolute; inset: 15px; text-align: center; }
+  form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 14px; }
+  label { display: block; font-size: 12px; }
+  output { float: right; color: #72d9ff; }
+  input { display: block; width: 100%; margin: 8px 0 0; accent-color: #72d9ff; }
+  .hint { margin: 10px 0 0; color: #a9bfd1; font-size: 12px; }
+  @media (max-width: 400px) { main { padding: 10px; } form { gap: 8px; } header strong { font-size: 15px; } button { padding: 8px; } }
+</style>
