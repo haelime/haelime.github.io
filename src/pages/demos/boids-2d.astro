@@ -8,7 +8,6 @@
   </head>
   <body>
     <main>
-      <header><strong>2D Boids</strong><span>100마리</span><button id="pause" type="button">일시정지</button><button id="reset" type="button">다시 섞기</button></header>
       <div id="view" role="img" aria-label="세 규칙에 따라 움직이는 100마리의 보이드">
         <p id="status" role="status">시뮬레이션을 불러오는 중입니다.</p>
       </div>
@@ -17,7 +16,6 @@
         <label>Alignment <output id="alignment-value">1.0</output><input id="alignment" type="range" min="0" max="3" step="0.1" value="1" /></label>
         <label>Cohesion <output id="cohesion-value">1.0</output><input id="cohesion" type="range" min="0" max="3" step="0.1" value="1" /></label>
       </form>
-      <p class="hint">슬라이더를 0으로 내리면 해당 규칙이 꺼집니다.</p>
       <noscript>시뮬레이션을 보려면 JavaScript를 켜 주세요.</noscript>
     </main>
     <script>
@@ -26,8 +24,6 @@
 
       const view = document.querySelector<HTMLElement>('#view')!;
       const status = document.querySelector<HTMLElement>('#status')!;
-      const pause = document.querySelector<HTMLButtonElement>('#pause')!;
-      const reset = document.querySelector<HTMLButtonElement>('#reset')!;
       try {
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
@@ -72,7 +68,6 @@
         };
         const sync = () => {
           previous = 0; accumulator = 0;
-          pause.textContent = paused ? '재생' : '일시정지';
           renderer.setAnimationLoop(!paused && visible && !document.hidden ? animate : null);
         };
         const resize = new ResizeObserver(() => {
@@ -83,14 +78,13 @@
         const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); });
         observer.observe(view);
         document.addEventListener('visibilitychange', sync);
-        pause.addEventListener('click', () => { paused = !paused; sync(); });
-        reset.addEventListener('click', () => { flock = createBoids(); draw(); });
         for (const key of ['separation', 'alignment', 'cohesion'] as const) {
           const input = document.querySelector<HTMLInputElement>(`#${key}`)!;
           const output = document.querySelector<HTMLOutputElement>(`#${key}-value`)!;
           input.addEventListener('input', () => {
             weights[key] = Number(input.value);
             output.value = weights[key].toFixed(1);
+            if (paused) { flock = stepBoids(flock, 1 / 60, weights); draw(); }
           });
         }
         renderer.domElement.addEventListener('webglcontextlost', (event) => {
@@ -101,7 +95,6 @@
         sync();
       } catch {
         status.textContent = '이 브라우저에서 WebGL을 사용할 수 없습니다.';
-        pause.disabled = true; reset.disabled = true;
       }
     </script>
   </body>
@@ -111,11 +104,7 @@
   :global(*) { box-sizing: border-box; }
   :global(body) { margin: 0; font: 14px/1.5 system-ui, sans-serif; color: #e5f3ff; background: #0d1b2b; }
   main { padding: 16px; }
-  header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  header strong { font-size: 17px; }
-  header span { color: #9bb6cc; margin-right: auto; }
-  button { color: #e5f3ff; background: #1c344b; border: 1px solid #41627d; border-radius: 6px; padding: 8px 10px; cursor: pointer; font: inherit; }
-  button:focus-visible, input:focus-visible { outline: 2px solid #72d9ff; outline-offset: 3px; }
+  input:focus-visible { outline: 2px solid #72d9ff; outline-offset: 3px; }
   #view { position: relative; width: 100%; aspect-ratio: 2; overflow: hidden; border: 1px solid #294057; border-radius: 8px; background: linear-gradient(#18334855 1px, transparent 1px), linear-gradient(90deg, #18334855 1px, transparent 1px); background-size: 32px 32px; }
   #view :global(canvas) { display: block; }
   #status { position: absolute; inset: 15px; text-align: center; }
@@ -123,6 +112,5 @@
   label { display: block; font-size: 12px; }
   output { float: right; color: #72d9ff; }
   input { display: block; width: 100%; margin: 8px 0 0; accent-color: #72d9ff; }
-  .hint { margin: 10px 0 0; color: #a9bfd1; font-size: 12px; }
-  @media (max-width: 400px) { main { padding: 10px; } form { gap: 8px; } header strong { font-size: 15px; } button { padding: 8px; } }
+  @media (max-width: 400px) { main { padding: 10px; } form { gap: 8px; } }
 </style>
