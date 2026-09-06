@@ -502,6 +502,29 @@ iframe {
   border: 0;
 }
 
+.boids-videos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.boids-videos figure {
+  min-width: 0;
+  margin: 0;
+}
+
+.boids-videos .ratio {
+  width: 100%;
+  margin: 0 0 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .boids-videos {
+    grid-template-columns: 1fr;
+  }
+}
+
 .toc {
   position: sticky;
   top: 6rem;

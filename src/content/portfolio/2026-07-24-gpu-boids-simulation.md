@@ -1,101 +1,134 @@
 ---
-title: "GPU 보이드 군집 시뮬레이션"
+title: Boids!
 date: 2026-07-24 09:00:00 +0900
-categories: [Portfolio]
-tags: [C#, Unity, HLSL, ComputeShader, GPU]
-description: "타일 기반 N-body, 2단계 버퍼 분리, 간접 인스턴싱으로 구현한 대규모 GPU 군집 시뮬레이션"
-image:
-  path: /assets/img/projects/gpu-boids/cover.png
-  alt: GPU 보이드 군집 시뮬레이션
+categories:
+  - Portfolio
+tags:
+  - C#
+  - Unity
+  - HLSL
+  - ComputeShader
+  - GPU
+description: Boid의 이해와 활용
 thumbnail: /assets/img/projects/gpu-boids/thumb.webp
-stack: "C#, Unity, HLSL, 컴퓨트 셰이더"
+stack: C#, Unity, HLSL, Compute Shader, DOTS, URP
 project_order: 2
 project_group: graphics
 portfolio: true
 toc: true
 ---
-Craig Reynolds의 Boids 알고리즘을 compute shader로 구현한 시뮬레이션입니다.
 
-보이드의 상태와 계산 결과를 GPU 메모리에 유지하고, 시뮬레이션부터 렌더링까지 CPU로 다시 읽어 오지 않고 처리하도록 구성했습니다.
-
-<div class="ratio ratio-16x9 mb-4">
-  <iframe src="https://www.youtube.com/embed/zoZexSNFHc8" title="GPU 보이드 군집 시뮬레이션" allowfullscreen></iframe>
+<div class="boids-videos">
+  <figure>
+    <div class="ratio">
+      <iframe src="https://www.youtube.com/embed/zoZexSNFHc8" title="GPU Boids 군집 시뮬레이션 영상" loading="lazy" allowfullscreen></iframe>
+    </div>
+    <figcaption><a href="https://www.youtube.com/watch?v=zoZexSNFHc8">GPU Boids 영상</a></figcaption>
+  </figure>
+  <figure>
+    <div class="ratio">
+      <iframe src="https://www.youtube.com/embed/UZPNwhEVvLM" title="Flappy Boids 게임플레이 영상" loading="lazy" allowfullscreen></iframe>
+    </div>
+    <figcaption><a href="https://www.youtube.com/watch?v=UZPNwhEVvLM">Flappy Boids 영상</a></figcaption>
+  </figure>
+  <figure>
+    <div class="ratio">
+      <iframe src="https://www.youtube.com/embed/ohuVXfWt2A4" title="Point Nemo 수중 렌더링 데모 영상" loading="lazy" allowfullscreen></iframe>
+    </div>
+    <figcaption><a href="https://www.youtube.com/watch?v=ohuVXfWt2A4">Point Nemo 영상</a></figcaption>
+  </figure>
 </div>
 
-## 목표와 문제
+<nav aria-label="Boids 프로젝트 본문 바로가기">
+  <ul>
+    <li><a href="#gpu-boids">GPU Boids, 군집 계산과 렌더링</a></li>
+    <li><a href="#flappy-boids">Flappy Boids, 조작 가능한 게임으로 적용</a></li>
+    <li><a href="#point-nemo">Point Nemo, 수중 장면 표현</a></li>
+  </ul>
+</nav>
 
-16,000개 보이드가 모든 이웃을 탐색하면 한 프레임에 약 2.56억 번의 거리 계산이 필요합니다. CPU 순차 처리로는 실시간성을 확보하기 어려워 이웃 탐색과 물리 적분을 GPU 병렬 작업으로 옮겼습니다.
+**Boids의 군집 움직임을 계산하고, 게임에 적용하고, 수중 장면으로 표현한 세 프로젝트.** GPU 시뮬레이션의 데이터 흐름부터 플레이어가 조작하는 물고기 무리, 빛과 그림자가 있는 수중 환경까지 각각의 구현을 정리함.
 
-## 렌더링 처리 흐름
+## GPU Boids
 
-### 1단계: ForceCS
+Craig Reynolds의 Boids 규칙을 compute shader로 구현한 군집 시뮬레이션. 위치와 속도를 GPU 메모리에 유지하고, 계산 결과를 CPU로 다시 읽어 오지 않고 렌더링까지 연결했음.
 
-각 GPU 스레드가 하나의 보이드를 담당해 분리, 정렬, 응집을 계산합니다.
+### 전체 이웃 탐색을 GPU에서 처리
 
-- 256개 보이드를 하나의 타일로 구성
-- 타일 데이터를 그룹 공유 메모리에 저장
-- 연속된 스레드가 연속된 주소를 읽는 병합 메모리 접근 구성
-- 결과는 별도의 힘 버퍼에 기록
+각 보이드가 모든 개체를 확인하면 검사 수는 N²으로 증가함. 16,384개 기준 프레임당 268,435,456회의 쌍 검사가 필요하므로, 개체마다 GPU 스레드를 할당해 분리, 정렬과 응집을 계산했음.
 
-```hlsl
-groupshared BoidData tile[256];
+이웃 데이터를 256개씩 그룹 공유 메모리에 올리고 같은 타일을 스레드들이 재사용하도록 구성함. 타일을 읽기 전과 교체하기 전에 동기화해 계산 도중 데이터가 덮어써지지 않도록 했음. 전역 메모리의 반복 읽기를 줄이는 방식이며, 전체 탐색의 O(N²) 연산량은 유지됨.
 
-for (uint block = 0; block < tileCount; ++block)
-{
-    tile[groupIndex] = boids[block * 256 + groupIndex];
-    GroupMemoryBarrierWithGroupSync();
-    // 분리, 정렬, 응집
-    GroupMemoryBarrierWithGroupSync();
-}
-```
+### 힘 계산과 상태 갱신을 분리
 
-### 2단계: IntegrateCS
+이웃을 읽는 도중 다른 스레드가 위치를 바꾸면 이전 상태와 다음 상태가 섞일 수 있음. 이를 피하기 위해 두 단계로 나누었음.
 
-누적된 힘으로 속도와 위치를 갱신합니다. 최대 조향력, 최대 속도, 벽 회피를 적용하고 오일러 적분으로 다음 상태를 계산합니다.
+1. **ForceCS:** 현재 위치와 속도를 읽어 조향력을 별도 힘 버퍼에 기록.
+2. **IntegrateCS:** 이웃 탐색이 끝난 뒤 힘 버퍼를 읽어 각 개체의 속도와 위치를 갱신. 최대 조향력, 최대 속도와 벽 회피를 적용하고 다음 상태를 계산함.
 
-`ForceCS`는 현재 보이드 상태를 읽고 별도의 힘 버퍼에 결과를 기록합니다. 이후 `IntegrateCS`가 힘을 읽어 각 보이드의 위치와 속도를 갱신합니다. 두 계산 단계의 실행 순서와 버퍼 역할을 분리해 다른 스레드가 갱신 중인 상태를 읽지 않도록 했습니다.
+### 시뮬레이션 버퍼를 렌더링에서 직접 읽기
 
-### 3단계와 4단계: 간접 렌더링
+<code>ComputeBuffer</code>를 재질에 연결하고, 정점 셰이더가 보이드 상태를 직접 읽도록 구성함. <code>GetData()</code>로 위치를 복사하지 않고 <code>Graphics.DrawMeshInstancedIndirect()</code>로 군집을 그리도록 연결했음.
 
-`ComputeBuffer`를 재질에 직접 연결하고 `Graphics.DrawMeshInstancedIndirect()`로 모든 보이드를 한 번의 그리기 호출로 렌더링합니다.
+시뮬레이션 영역 전체를 하나의 bounds로 사용해 개체별 CPU 경계 갱신을 피했으며, 개별 보이드 단위의 세밀한 컬링은 이 방식에서 제공하지 않음.
 
-CPU에서 위치 데이터를 가져오지 않으며, 시뮬레이션 영역 전체를 하나의 경계 상자로 사용해 절두체 컬링에 필요한 CPU 계산도 제거했습니다.
+<details>
+<summary>규모별 연산량과 벤치마크 수집 방식</summary>
 
-## 해결한 문제
+| 보이드 수 | 스레드 그룹 | 프레임당 쌍 검사 |
+| ---: | ---: | ---: |
+| 1,024 | 4 | 1,048,576 |
+| 2,048 | 8 | 4,194,304 |
+| 4,096 | 16 | 16,777,216 |
+| 8,192 | 32 | 67,108,864 |
+| 16,384 | 64 | 268,435,456 |
 
-### O(n²) 이웃 탐색
+표는 N²으로 계산한 작업량이며 성능 측정값은 아님. 현재 구현은 개체 수를 256개 단위의 스레드 그룹 크기에 맞추는 조건을 사용함.
 
-각 보이드에 하나의 스레드를 할당하고 타일 기반 N-body 방식으로 전역 메모리 접근을 줄였습니다. 스레드 그룹당 256개를 기준으로 보이드 수를 맞춰 범위 검사 분기도 제거했습니다.
+<code>BoidBenchmarkRunner</code>는 위 규모를 순회하며 수직 동기화를 끄고 예열한 뒤, 전체 프레임 시간의 중앙값과 95번째 백분위수 및 수집 가능한 CPU/GPU 시간을 CSV로 기록함. 실제 측정 결과는 아직 이 문서에 포함하지 않았으며, GPU 시간 수집 여부는 그래픽스 API와 실행 환경에 따라 달라짐.
 
-### 읽기와 쓰기 충돌
+</details>
 
-`BoidData 읽기 → Force 기록 → BoidData 적분` 구조로 읽기와 쓰기 시점을 분리했습니다. 모든 이웃 탐색이 끝난 다음 `IntegrateCS` 실행에서 자기 상태만 갱신하므로 갱신 전후 데이터가 섞이지 않습니다.
+[GPU Boids 소스 코드](https://github.com/haelime/GPUBoidsSimulation)
 
-### CPU–GPU 전송 비용
+## Flappy Boids
 
-`GetData()`를 사용하지 않고 정점 셰이더가 시뮬레이션 버퍼를 직접 읽도록 구성했습니다. 시뮬레이션과 렌더링 사이에 CPU 복사가 없습니다.
+Boids의 움직임을 직접 조작하는 게임으로 만들어 보고자 제작한 **물고기 무리를 조종하는 3D Flappy Bird**. Unity 6과 DOTS로 군집 데이터를 구성했음.
 
-## 연산량 및 성능 프로파일링
+### 군집 데이터와 플레이 공간 구성
 
-`ForceCS`는 각 보이드가 전체 보이드를 확인하므로 한 프레임의 이웃 검사는 `N²`으로 증가합니다.
+반복 처리하는 보이드 데이터를 연속된 메모리에 배치해 cache locality와 병렬 처리 효율을 높이려는 목적으로 DOTS를 적용했음. 앞의 compute shader 프로젝트와 별도로, 이 프로젝트에서는 군집 움직임을 게임에 사용하는 데 초점을 맞춤.
 
-| 보이드 수 | 스레드 그룹 | 프레임당 쌍 검사 | 이전 단계 대비 |
-| ---: | ---: | ---: | ---: |
-| 1,024 | 4 | 1,048,576 | 1× |
-| 2,048 | 8 | 4,194,304 | 4× |
-| 4,096 | 16 | 16,777,216 | 4× |
-| 8,192 | 32 | 67,108,864 | 4× |
-| 16,384 | 64 | 268,435,456 | 4× |
+바닷속 벽과 바닥의 복잡한 굴곡은 Marching Cubes로 환경 에셋을 생성해 표현했음. 군집을 조작하는 플레이와 함께, 물고기가 움직일 수중 공간을 구성한 프로젝트임.
 
-`BoidBenchmarkRunner`를 추가해 위 규모를 자동 순회하도록 구성했습니다. 수직 동기화를 끄고 각 구간을 예열한 뒤 전체 프레임 시간의 중앙값과 95번째 백분위수, Unity가 제공하는 CPU 및 GPU 프레임 시간을 CSV로 기록합니다. 이 데이터를 `pair_checks` 증가율과 비교하면 병목이 이웃 탐색, 렌더링 또는 CPU 제출 비용 중 어디에서 커지는지 확인할 수 있습니다.
+[Flappy Boids 소스 코드](https://github.com/haelime/FlappyBoids)
 
-GPU 시간은 그래픽스 API와 실행 환경에 따라 수집되지 않을 수 있으므로, 같은 실행 빌드와 하드웨어에서 반복 측정하도록 했습니다.
+## Point Nemo
 
-## 배운 점
+GPU 물고기 군집과 산호가 있는 장면에 **거리, 그림자와 시선에 반응하는 수중 표현**을 구현한 렌더링 데모. 가까운 산호의 색과 먼 배경의 가시성을 구분하고, 햇빛이 가려지는 위치를 물속 산란에 반영했음.
 
-- GPU 병렬 프로그래밍과 스레드 그룹 설계
-- 공유 메모리를 활용한 메모리 접근 최적화
-- 2단계 버퍼 분리를 이용한 데이터 경합 방지
-- 시뮬레이션과 렌더링을 연결하는 GPU 내부 처리 흐름
+### 거리와 그림자를 반영하는 빛
 
-[GitHub에서 소스 보기](https://github.com/haelime/GPUBoidsSimulation)
+기존의 밝은 광선 기둥이 산호의 그림자와 연결되지 않아 독립된 발광 물체처럼 보였음. 물체에서 오는 빛의 감쇠와 물속에서 더해지는 산란광을 구분해 이 관계를 표현했음.
+
+URP의 opaque texture와 depth texture에서 장면 색과 거리를 얻고, RGB별 Beer-Lambert 감쇠와 backscatter를 계산함. 시선 경로의 16개 지점에서 햇빛의 그림자와 감쇠를 평가하고, Henyey-Greenstein 위상 함수로 빛과 시선 방향의 관계를 반영했음.
+
+![동일한 카메라에서 수중 셰이더를 단계별로 적용한 비교](/assets/img/projects/point-nemo/point-nemo-shader-breakdown.gif)
+
+수면, RGB 감쇠, 산란과 환경 합성을 순서대로 추가한 비교. 카메라와 셰이더 시간을 고정한 정지 캡처이며, 실제 움직임은 상단 영상으로 제시함. 현재 구도에서 ON/OFF 차이가 검출되지 않은 바닥 카우스틱 단계는 제외했음.
+
+### 파랗게 뭉개지는 모래 바닥 수정
+
+가까운 모래가 먼 배경처럼 파랗게 처리되는 문제는 수중 효과 ON/OFF와 깊이 값 시각화로 추적했음. 바닥 셰이더에 SSAO의 깊이/법선 prepass에 참여하는 <code>DepthNormals</code> 패스를 추가하고, 첫 캡처의 검은 바닥은 카메라 예열로 분리해 처리함.
+
+이후 가까운 모래의 색과 깊이 처리가 함께 표시되는 것을 확인하고, 패스의 존재와 opaque texture 설정을 회귀 검사 대상으로 남겼음.
+
+### 수면과 장면 설정 연결
+
+Gerstner 파도에 프레넬 계산과 전반사 조건을 적용해, 수면을 보는 각도에 따라 하늘이 보이는 영역과 반사가 강한 영역을 구분함. 카우스틱은 표면 방향, 수심과 주광원 그림자에 따라 강도를 조절했음. 반사는 환경색 근사이며 카우스틱은 해석적 무늬 계산임.
+
+산호 배치와 광학 설정은 씬에 저장하고, 베이크 시 재질과 런타임 컴포넌트의 계수를 동기화함. 런타임에는 저장된 시각 객체의 상태를 갱신하도록 구성했으며, Play Mode에서 계층이 늘어나지 않고 광학 값이 유지되는 것을 확인했음.
+
+GPU frame time과 메모리 비교는 아직 측정하지 않았음. 산호는 Smithsonian CC0/Open Access 스캔, 물고기와 일부 환경 소품은 Kenney 에셋을 사용했으며 직접 모델링한 작업에 포함하지 않음. 코드 수정, 씬 베이크, 진단과 테스트 실행에는 AI 코딩 도구를 활용했으며, 개인 설계와 검증 범위는 정리 중임.
+
+[Point Nemo 소스 코드](https://github.com/haelime/Point-nemo)
