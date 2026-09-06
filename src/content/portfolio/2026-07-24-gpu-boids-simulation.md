@@ -17,8 +17,8 @@ project_group: graphics
 portfolio: true
 toc: true
 ---
+Sebastian Lague의 [Coding Adventure: Boids](https://www.youtube.com/watch?v=bqtqltqcQhw) 영상에서 영감을 받아 시작한 프로젝트입니다.
 
-Sebastian Lague의 [Coding Adventure: Boids](https://www.youtube.com/watch?v=bqtqltqcQhw) 영상에서 영감을 받아 시작한 프로젝트.
 
 ## Boid의 움직임 이해하기
 
