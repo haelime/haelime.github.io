@@ -21,6 +21,7 @@ const expectedRoutes = [
   '/posts/minirt/',
   '/posts/rimworld-portrait-overlay/',
   '/posts/idle-together/',
+  '/demos/idle-piano/',
   '/posts/model-activity/',
   '/posts/oiia-cat/',
   '/posts/cat-meme-detector/'
