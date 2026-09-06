@@ -189,6 +189,7 @@
   },
   "active": "516373237a8f0abb",
   "lastOpenFiles": [
+    "public/assets/img/projects/game-jam/for-the-people-gameplay.gif",
     "src/content/portfolio/2026-09-05-point-nemo.md",
     "src/content/portfolio/2026-07-27-rimworld-portrait-overlay.md",
     "src/content/portfolio/2026-08-09-idle-together.md",
@@ -233,7 +234,6 @@
     "_tabs/about.md",
     "_tabs/archives.md",
     "_tabs/categories.md",
-    "_tabs/tags.md",
-    "_tabs/projects.md"
+    "_tabs/tags.md"
   ]
 }
