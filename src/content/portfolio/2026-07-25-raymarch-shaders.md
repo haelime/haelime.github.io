@@ -19,6 +19,10 @@ toc: true
 
 좋은 비주얼을 연출하고 실시간 렌더링을 위해 여러 셰이더들을 보고 연구했습니다.
 
+3D 모델 아티스트와 협업해 작업했습니다.
+
+[BOOTH에서 협업 작업 보기](https://fuwahebiya.booth.pm/items/7770402)
+
 ## Cloudy Crystal
 
 <div class="ratio ratio-16x9 mb-4">

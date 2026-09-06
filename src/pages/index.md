@@ -9,7 +9,7 @@ description: C++ / C# Game Programmer
 - 언어: `C++` `C#` `Python` `GLSL` `Shell`
 - 게임: `Unity`, `Godot`
 - 그래픽스
-- System / Tools: `ROS2` `Linux` `CMake` `Git`
+- System / Tools: `ROS2` `Linux` `CMake` `Docker` 
 
 ## 교육
 
