@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { frontmatter } = Astro.props;
-const projects = visibleProjects(await getCollection('portfolio'));
+const projects = visibleProjects(await getCollection('portfolio'), false);
 ---
 
 <BaseLayout title={frontmatter.title} description={frontmatter.description}>

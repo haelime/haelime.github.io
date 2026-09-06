@@ -13,8 +13,9 @@ thumbnail: /assets/img/projects/flappy-boids/thumbnail.jpg
 stack: C# · Unity 6 · Burst · URP · Marching Cubes
 period: 2026.08.26–2026.08.28
 repository: https://github.com/haelime/FlappyBoids
-project_order: 2
+project_order: 4
 project_group: games
+hide_from_home: true
 portfolio: true
 toc: true
 ---

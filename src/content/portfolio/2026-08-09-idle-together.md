@@ -17,10 +17,10 @@ thumbnail: /assets/img/projects/idle-together/gameplay.gif
 stack: C# , Unity 6 , Netcode for GameObjects , Steamworks.NET , URP
 period: 2026.06–진행 중
 repository: https://github.com/haelime/IdleTogether-2026-06-24_16-19-29
-project_order: 1
+project_order: 2
 project_group: games
 portfolio: true
-hide_from_home: true
+hide_from_home: false
 toc: true
 ---
 

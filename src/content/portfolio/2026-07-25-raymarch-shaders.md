@@ -7,7 +7,7 @@ description: "표면 렌더링과 볼륨 레이마칭을 결합한 Cloudy Crysta
 image:
   path: /assets/img/projects/raymarch-shaders/cover.png
   alt: 레이마칭 셰이더 미리보기
-thumbnail: /assets/img/projects/raymarch-shaders/thumb.webp
+thumbnail: /assets/img/projects/raymarch-shaders/cloudy-crystal.gif
 stack: "GLSL, HLSL, 레이마칭, SDF"
 project_order: 6
 project_group: graphics
