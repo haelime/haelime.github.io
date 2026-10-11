@@ -23,7 +23,8 @@ const expectedRoutes = [
   '/posts/idle-together/',
   '/posts/model-activity/',
   '/posts/oiia-cat/',
-  '/posts/cat-meme-detector/'
+  '/posts/cat-meme-detector/',
+  '/posts/here-catch/'
 ];
 
 const routeFile = (route) =>
