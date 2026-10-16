@@ -18,6 +18,7 @@ live_demo: https://haelime.itch.io/here-catch
 project_order: 0
 project_group: games
 portfolio: true
+hide_from_home: true
 toc: true
 ---
 [**Here, Catch! 플레이하기**](https://haelime.itch.io/here-catch)
