@@ -8,9 +8,15 @@
   </head>
   <body>
     <main>
-      <header>
-        <h1>코사인 팔레트 조절기</h1>
-        <p class="formula"><code>color(t) = a + b · cos(2π · (c · t + d))</code></p>
+      <header class="page-head">
+        <div>
+          <h1>코사인 팔레트 조절기</h1>
+          <p class="formula"><code>color(t) = a + b · cos(2π · (c · t + d))</code></p>
+        </div>
+        <div class="toolbar">
+          <button type="button" id="randomize" class="primary" aria-keyshortcuts="R">랜덤 <kbd>R</kbd></button>
+          <button type="button" id="undo" disabled>되돌리기</button>
+        </div>
       </header>
 
       <section class="previews" aria-label="미리보기">
@@ -54,6 +60,14 @@
       <section aria-label="프리셋">
         <h2>프리셋</h2>
         <div id="presets" class="presets"></div>
+      </section>
+
+      <section aria-label="추천 팔레트">
+        <div class="sec-head">
+          <h2>추천 팔레트 <span class="sub">지금 팔레트를 바탕으로 만든 변형이에요</span></h2>
+          <button type="button" id="reroll">비슷한 팔레트 다시 뽑기</button>
+        </div>
+        <div id="recs" class="recs"></div>
       </section>
 
       <form id="params" aria-label="팔레트 값" onsubmit="return false"></form>
@@ -108,18 +122,99 @@
 
       let pal: Palette = fromHash() ?? clone(PRESETS[0].p);
 
-      const evalPal = (t: number): Vec3 =>
-        [0, 1, 2].map((i) => pal.a[i] + pal.b[i] * Math.cos(6.28318 * (pal.c[i] * t + pal.d[i]))) as Vec3;
+      const evalP = (p: Palette, t: number): Vec3 =>
+        [0, 1, 2].map((i) => p.a[i] + p.b[i] * Math.cos(6.28318 * (p.c[i] * t + p.d[i]))) as Vec3;
+      const evalPal = (t: number): Vec3 => evalP(pal, t);
       const to255 = (v: number) => Math.round(Math.min(Math.max(v, 0), 1) * 255);
+      const swatchCss = (p: Palette, n = 9) => {
+        const stops = Array.from({ length: n }, (_, k) => `rgb(${evalP(p, k / (n - 1)).map(to255).join(',')})`);
+        return `linear-gradient(90deg, ${stops.join(',')})`;
+      };
+
+      // ---- 랜덤·추천용 도구
+      const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
+      const r2 = (v: number) => Math.round(v * 100) / 100;
+      const wrap = (v: number) => r2(((v % 1) + 1) % 1);
+      const map3 = (f: (i: number) => number): Vec3 => [f(0), f(1), f(2)];
+      const tidy = (p: Palette): Palette => ({
+        a: map3((i) => r2(clamp(p.a[i], 0, 1))),
+        b: map3((i) => r2(clamp(p.b[i], 0, 1))),
+        c: map3((i) => r2(clamp(p.c[i], 0, 3))),
+        d: map3((i) => wrap(p.d[i]))
+      });
+      // 시드가 있는 난수: 같은 시드면 같은 추천이 나와서 슬라이더를 움직여도 깜빡이지 않아요.
+      const rngFrom = (seed: number) => () => {
+        seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+        let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+      const lumaOf = (v: Vec3) => 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+      // 점수: 밝기 폭이 넓고, 색이 살아 있고, 0~1 밖으로 잘 안 나가는 팔레트가 높아요.
+      const score = (p: Palette) => {
+        let clip = 0, lo = 1, hi = 0, chroma = 0;
+        const n = 48;
+        for (let k = 0; k < n; k++) {
+          const v = evalP(p, k / (n - 1));
+          if (v.some((x) => x < -0.02 || x > 1.02)) clip++;
+          const c = v.map((x) => clamp(x, 0, 1)) as Vec3;
+          const l = lumaOf(c);
+          lo = Math.min(lo, l); hi = Math.max(hi, l);
+          chroma += Math.max(...c) - Math.min(...c);
+        }
+        return (hi - lo) * 1.2 + chroma / n - (clip / n) * 1.5;
+      };
+      const pick = <T,>(rng: () => number, xs: T[]): T => xs[Math.floor(rng() * xs.length)];
+      const between = (rng: () => number, lo: number, hi: number) => lo + rng() * (hi - lo);
+
+      const DIFFS: number[][] = [[0, 1 / 3, 2 / 3], [0, 0.1, 0.2], [0, 0.15, 0.3], [0, 0.25, 0.5], [0, 0.5, 0.25]];
+      const randomPalette = (rng: () => number, base: Palette, locked: Record<Key, boolean>): Palette => {
+        const p = clone(base);
+        if (!locked.a) {
+          const m = between(rng, 0.35, 0.65);
+          p.a = map3(() => clamp(m + between(rng, -0.12, 0.12), 0.2, 0.8));
+        }
+        if (!locked.b) p.b = map3((i) => Math.min(p.a[i], 1 - p.a[i]) * between(rng, 0.55, 1));
+        if (!locked.c) {
+          const freq = pick(rng, [0.5, 1, 1, 1, 1.5, 2]);
+          const mixed = rng() < 0.35;
+          p.c = map3(() => freq * (mixed ? pick(rng, [0.5, 1, 1, 1.5]) : 1));
+        }
+        if (!locked.d) {
+          const offset = rng();
+          const diffs = rng() < 0.25 ? map3(() => rng()) : [...pick(rng, DIFFS)];
+          if (rng() < 0.5) diffs.reverse();
+          p.d = map3((i) => offset + diffs[i] + between(rng, -0.03, 0.03));
+        }
+        return tidy(p);
+      };
+      // 후보를 여러 개 만들어 점수가 가장 높은 것을 골라요.
+      const bestOf = (count: number, make: () => Palette) => {
+        let best = make(), bestScore = score(best);
+        for (let k = 1; k < count; k++) {
+          const cand = make(), s = score(cand);
+          if (s > bestScore) { best = cand; bestScore = s; }
+        }
+        return best;
+      };
 
       // ---- 슬라이더 만들기
       const form = document.querySelector<HTMLFormElement>('#params')!;
       const inputs = {} as Record<Key, HTMLInputElement[]>;
       const outputs = {} as Record<Key, HTMLOutputElement[]>;
+      const locks = {} as Record<Key, HTMLInputElement>;
       for (const k of KEYS) {
         const fieldset = document.createElement('fieldset');
         const legend = document.createElement('legend');
         legend.textContent = INFO[k].label;
+        const lock = document.createElement('label');
+        lock.className = 'lock';
+        lock.title = '랜덤을 눌러도 이 값은 그대로 둬요';
+        const lockBox = document.createElement('input');
+        lockBox.type = 'checkbox';
+        lock.append(lockBox, '고정');
+        locks[k] = lockBox;
+        legend.append(lock);
         fieldset.append(legend);
         inputs[k] = []; outputs[k] = [];
         CHANNELS.forEach((ch, i) => {
@@ -140,21 +235,108 @@
         form.append(fieldset);
       }
 
+      // ---- 되돌리기: 프리셋·랜덤·추천으로 바꾸기 직전 팔레트를 쌓아 둬요.
+      const undoBtn = document.querySelector<HTMLButtonElement>('#undo')!;
+      const undoStack: Palette[] = [];
+      const applyPalette = (next: Palette) => {
+        undoStack.push(clone(pal));
+        if (undoStack.length > 50) undoStack.shift();
+        undoBtn.disabled = false;
+        pal = clone(next);
+        update(true);
+      };
+      undoBtn.addEventListener('click', () => {
+        const prev = undoStack.pop();
+        undoBtn.disabled = undoStack.length === 0;
+        if (prev) { pal = prev; update(true); }
+      });
+
+      // ---- 랜덤
+      const randomize = () => {
+        const locked = { a: locks.a.checked, b: locks.b.checked, c: locks.c.checked, d: locks.d.checked };
+        applyPalette(bestOf(30, () => randomPalette(Math.random, pal, locked)));
+      };
+      document.querySelector('#randomize')!.addEventListener('click', randomize);
+      document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() !== 'r' || e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+        const el = e.target as HTMLElement;
+        if (el.isContentEditable || (el instanceof HTMLInputElement && el.type === 'text')) return;
+        randomize();
+      });
+
       // ---- 프리셋 버튼
       const presetBox = document.querySelector<HTMLElement>('#presets')!;
       for (const preset of PRESETS) {
         const button = document.createElement('button');
         button.type = 'button';
         button.textContent = preset.name;
-        const stops = [0, 0.25, 0.5, 0.75, 1].map((t) => {
-          const c = preset.p;
-          const rgb = [0, 1, 2].map((i) => to255(c.a[i] + c.b[i] * Math.cos(6.28318 * (c.c[i] * t + c.d[i]))));
-          return `rgb(${rgb.join(',')})`;
-        });
-        button.style.setProperty('--swatch', `linear-gradient(90deg, ${stops.join(',')})`);
-        button.addEventListener('click', () => { pal = clone(preset.p); update(true); });
+        button.style.setProperty('--swatch', swatchCss(preset.p, 5));
+        button.addEventListener('click', () => applyPalette(preset.p));
         presetBox.append(button);
       }
+
+      // ---- 추천 팔레트: 지금 팔레트에서 한 가지씩 바꾼 변형 + 비슷한 팔레트
+      const mean3 = (v: Vec3) => (v[0] + v[1] + v[2]) / 3;
+      const VARIANTS: { name: string; make: (p: Palette) => Palette }[] = [
+        { name: '색 돌리기', make: (p) => ({ ...p, d: map3((i) => p.d[i] + 1 / 3) }) },
+        { name: '보색으로', make: (p) => ({ ...p, d: map3((i) => p.d[i] + 0.5) }) },
+        { name: '색 간격 넓게', make: (p) => ({ ...p, d: map3((i) => mean3(p.d) + (p.d[i] - mean3(p.d)) * 1.6) }) },
+        { name: '색 간격 좁게', make: (p) => ({ ...p, d: map3((i) => mean3(p.d) + (p.d[i] - mean3(p.d)) * 0.5) }) },
+        { name: '선명하게', make: (p) => ({ ...p, b: map3((i) => Math.max(p.b[i] * 1.3, Math.min(p.a[i], 1 - p.a[i]))) }) },
+        { name: '부드럽게', make: (p) => ({ ...p, b: map3((i) => p.b[i] * 0.6) }) },
+        {
+          name: '밝게',
+          make: (p) => {
+            const a = map3((i) => p.a[i] + 0.12);
+            return { ...p, a, b: map3((i) => Math.min(p.b[i], Math.max(1 - a[i], 0.05))) };
+          }
+        },
+        {
+          name: '어둡게',
+          make: (p) => {
+            const a = map3((i) => p.a[i] - 0.12);
+            return { ...p, a, b: map3((i) => Math.min(p.b[i], Math.max(a[i], 0.05))) };
+          }
+        },
+        { name: '반복 두 배', make: (p) => ({ ...p, c: map3((i) => p.c[i] * 2) }) },
+        { name: '반복 절반', make: (p) => ({ ...p, c: map3((i) => p.c[i] * 0.5) }) }
+      ];
+      const SIMILAR = 4;
+      let rerollSeed = 1;
+      const similar = (p: Palette, k: number): Palette => {
+        const rng = rngFrom(rerollSeed * 977 + k * 131);
+        return bestOf(6, () => tidy({
+          a: map3((i) => p.a[i] + between(rng, -0.06, 0.06)),
+          b: map3((i) => p.b[i] + between(rng, -0.1, 0.1)),
+          c: map3((i) => p.c[i] * pick(rng, [1, 1, 1, 0.75, 1.25])),
+          d: map3((i) => p.d[i] + between(rng, -0.1, 0.1))
+        }));
+      };
+
+      const recBox = document.querySelector<HTMLElement>('#recs')!;
+      const recCards = [...VARIANTS.map((v) => v.name), ...Array.from({ length: SIMILAR }, (_, k) => `비슷한 팔레트 ${k + 1}`)]
+        .map((name) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'rec';
+          const bar = document.createElement('i');
+          const label = document.createElement('span');
+          label.textContent = name;
+          button.append(bar, label);
+          recBox.append(button);
+          const card = { button, bar, palette: pal };
+          button.addEventListener('click', () => applyPalette(card.palette));
+          return card;
+        });
+      const renderRecs = () => {
+        const base = clone(pal);
+        const list = [...VARIANTS.map((v) => tidy(v.make(clone(base)))), ...Array.from({ length: SIMILAR }, (_, k) => similar(base, k))];
+        list.forEach((p, k) => {
+          recCards[k].palette = p;
+          recCards[k].bar.style.background = swatchCss(p);
+        });
+      };
+      document.querySelector('#reroll')!.addEventListener('click', () => { rerollSeed++; renderRecs(); });
 
       // ---- 캔버스
       const strip = document.querySelector<HTMLCanvasElement>('#strip')!;
@@ -376,6 +558,7 @@
           }
         }
         codeEl.textContent = makeCode();
+        renderRecs();
         syncFx();
         history.replaceState(null, '', '#' + KEYS.flatMap((k) => pal[k].map((n) => +n.toFixed(2))).join(','));
         if (!frame) frame = requestAnimationFrame(draw);
@@ -409,6 +592,20 @@
   .previews #radial { aspect-ratio: 1; height: auto; border-radius: 50%; border: 0; background: none; }
   .warn { color: #ffb36b; }
 
+  .page-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .toolbar { display: flex; gap: 8px; padding-top: 2px; }
+  .toolbar button { padding: 6px 14px; }
+  button.primary { background: #1b3a55; border-color: #72d9ff; }
+  button:disabled { opacity: 0.45; cursor: default; border-color: #294057; }
+  kbd { font: 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin-left: 4px; padding: 0 4px; border: 1px solid #3a5a78; border-radius: 3px; color: #9fb7cc; }
+  .sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  .sub { margin-left: 6px; font-weight: 400; font-size: 12px; color: #7f97ad; }
+  .recs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 8px; }
+  .rec { display: flex; flex-direction: column; gap: 6px; padding: 6px; text-align: left; font-size: 12px; }
+  .rec i { display: block; height: 26px; border-radius: 4px; }
+  .rec span { padding: 0 2px; }
+  label.lock { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 0 8px; font-size: 11px; color: #7f97ad; cursor: pointer; vertical-align: middle; }
+  label.lock input { margin: 0; accent-color: #72d9ff; }
   section { margin-top: 22px; }
   a { color: #72d9ff; }
 
