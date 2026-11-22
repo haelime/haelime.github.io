@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>코사인 팔레트 조절기</title>
+    <meta name="description" content="iq의 코사인 팔레트 a + b·cos(2π(c·t + d))를 슬라이더로 조절하고 GLSL 코드로 복사합니다." />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>코사인 팔레트 조절기</h1>
+        <p class="formula"><code>color(t) = a + b · cos(2π · (c · t + d))</code></p>
+      </header>
+
+      <section class="previews" aria-label="미리보기">
+        <figure>
+          <canvas id="strip" aria-label="t가 0에서 1까지 변할 때의 그라데이션"></canvas>
+          <figcaption>그라데이션 (t = 0 → 1)</figcaption>
+        </figure>
+        <figure>
+          <canvas id="curves" aria-label="R, G, B 채널 곡선"></canvas>
+          <figcaption>채널 곡선 <span id="clip-note" class="warn" hidden>· 0~1 밖으로 나가는 구간이 있어요</span></figcaption>
+        </figure>
+        <figure class="radial-figure">
+          <canvas id="radial" aria-label="중심으로부터의 거리를 t로 쓴 고리 미리보기"></canvas>
+          <figcaption>고리 (t = 중심에서의 거리)</figcaption>
+        </figure>
+      </section>
+
+      <section aria-label="프리셋">
+        <h2>프리셋</h2>
+        <div id="presets" class="presets"></div>
+      </section>
+
+      <form id="params" aria-label="팔레트 값" onsubmit="return false"></form>
+
+      <section aria-label="GLSL 코드">
+        <div class="code-head">
+          <h2>GLSL</h2>
+          <button type="button" id="copy">복사</button>
+        </div>
+        <pre><code id="code"></code></pre>
+        <p class="hint">주소창의 URL에 지금 값이 저장돼서, 그대로 공유하면 같은 팔레트가 열려요.</p>
+      </section>
+    </main>
+
+    <script>
+      type Vec3 = [number, number, number];
+      type Key = 'a' | 'b' | 'c' | 'd';
+      type Palette = Record<Key, Vec3>;
+
+      const KEYS: Key[] = ['a', 'b', 'c', 'd'];
+      const CHANNELS = ['R', 'G', 'B'] as const;
+      const CHANNEL_COLORS = ['#ff6b6b', '#5fe08a', '#5fa8ff'];
+      const INFO: Record<Key, { label: string; max: number }> = {
+        a: { label: 'a · 기본 밝기', max: 1 },
+        b: { label: 'b · 대비', max: 1 },
+        c: { label: 'c · 반복 빈도', max: 3 },
+        d: { label: 'd · 위상 (색 배치)', max: 1 }
+      };
+
+      const half: Vec3 = [0.5, 0.5, 0.5];
+      const PRESETS: { name: string; p: Palette }[] = [
+        { name: '무지개', p: { a: half, b: half, c: [1, 1, 1], d: [0, 0.33, 0.67] } },
+        { name: '따뜻한 계열', p: { a: half, b: half, c: [1, 1, 1], d: [0, 0.1, 0.2] } },
+        { name: '차가운 계열', p: { a: half, b: half, c: [1, 1, 1], d: [0.3, 0.2, 0.2] } },
+        { name: '청록~노랑', p: { a: half, b: half, c: [1, 1, 0.5], d: [0.8, 0.9, 0.3] } },
+        { name: '보라~주황', p: { a: half, b: half, c: [1, 0.7, 0.4], d: [0, 0.15, 0.2] } },
+        { name: '네온', p: { a: half, b: half, c: [2, 1, 0], d: [0.5, 0.2, 0.25] } },
+        { name: '파스텔', p: { a: [0.8, 0.5, 0.4], b: [0.2, 0.4, 0.2], c: [2, 1, 1], d: [0, 0.25, 0.25] } }
+      ];
+
+      const clone = (p: Palette): Palette => ({
+        a: [...p.a] as Vec3, b: [...p.b] as Vec3, c: [...p.c] as Vec3, d: [...p.d] as Vec3
+      });
+
+      const fromHash = (): Palette | null => {
+        const nums = location.hash.slice(1).split(',').map(Number);
+        if (nums.length !== 12 || nums.some((n) => !Number.isFinite(n))) return null;
+        const p = {} as Palette;
+        KEYS.forEach((k, i) => { p[k] = nums.slice(i * 3, i * 3 + 3) as Vec3; });
+        return p;
+      };
+
+      let pal: Palette = fromHash() ?? clone(PRESETS[0].p);
+
+      const evalPal = (t: number): Vec3 =>
+        [0, 1, 2].map((i) => pal.a[i] + pal.b[i] * Math.cos(6.28318 * (pal.c[i] * t + pal.d[i]))) as Vec3;
+      const to255 = (v: number) => Math.round(Math.min(Math.max(v, 0), 1) * 255);
+
+      // ---- 슬라이더 만들기
+      const form = document.querySelector<HTMLFormElement>('#params')!;
+      const inputs = {} as Record<Key, HTMLInputElement[]>;
+      const outputs = {} as Record<Key, HTMLOutputElement[]>;
+      for (const k of KEYS) {
+        const fieldset = document.createElement('fieldset');
+        const legend = document.createElement('legend');
+        legend.textContent = INFO[k].label;
+        fieldset.append(legend);
+        inputs[k] = []; outputs[k] = [];
+        CHANNELS.forEach((ch, i) => {
+          const label = document.createElement('label');
+          const name = document.createElement('span');
+          name.textContent = ch;
+          name.style.color = CHANNEL_COLORS[i];
+          const output = document.createElement('output');
+          const input = document.createElement('input');
+          input.type = 'range'; input.min = '0'; input.max = String(INFO[k].max); input.step = '0.01';
+          input.setAttribute('aria-label', `${k} ${ch}`);
+          input.style.accentColor = CHANNEL_COLORS[i];
+          input.addEventListener('input', () => { pal[k][i] = Number(input.value); update(false); });
+          label.append(name, output, input);
+          fieldset.append(label);
+          inputs[k].push(input); outputs[k].push(output);
+        });
+        form.append(fieldset);
+      }
+
+      // ---- 프리셋 버튼
+      const presetBox = document.querySelector<HTMLElement>('#presets')!;
+      for (const preset of PRESETS) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.textContent = preset.name;
+        const stops = [0, 0.25, 0.5, 0.75, 1].map((t) => {
+          const c = preset.p;
+          const rgb = [0, 1, 2].map((i) => to255(c.a[i] + c.b[i] * Math.cos(6.28318 * (c.c[i] * t + c.d[i]))));
+          return `rgb(${rgb.join(',')})`;
+        });
+        button.style.setProperty('--swatch', `linear-gradient(90deg, ${stops.join(',')})`);
+        button.addEventListener('click', () => { pal = clone(preset.p); update(true); });
+        presetBox.append(button);
+      }
+
+      // ---- 캔버스
+      const strip = document.querySelector<HTMLCanvasElement>('#strip')!;
+      const curves = document.querySelector<HTMLCanvasElement>('#curves')!;
+      const radial = document.querySelector<HTMLCanvasElement>('#radial')!;
+      const clipNote = document.querySelector<HTMLElement>('#clip-note')!;
+      const fit = (canvas: HTMLCanvasElement) => {
+        const dpr = Math.min(devicePixelRatio, 2);
+        const w = Math.max(1, Math.round(canvas.clientWidth * dpr));
+        const h = Math.max(1, Math.round(canvas.clientHeight * dpr));
+        if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+        return canvas.getContext('2d')!;
+      };
+
+      const drawStrip = () => {
+        const ctx = fit(strip);
+        const { width: w, height: h } = strip;
+        for (let x = 0; x < w; x++) {
+          const [r, g, b] = evalPal(x / (w - 1));
+          ctx.fillStyle = `rgb(${to255(r)},${to255(g)},${to255(b)})`;
+          ctx.fillRect(x, 0, 1, h);
+        }
+      };
+
+      const drawCurves = () => {
+        const ctx = fit(curves);
+        const { width: w, height: h } = curves;
+        const pad = h * 0.15;
+        const y = (v: number) => h - pad - v * (h - 2 * pad);
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#ffffff08';
+        ctx.fillRect(0, y(1), w, y(0) - y(1));
+        ctx.strokeStyle = '#294057'; ctx.lineWidth = 1;
+        for (const v of [0, 1]) { ctx.beginPath(); ctx.moveTo(0, y(v)); ctx.lineTo(w, y(v)); ctx.stroke(); }
+        ctx.lineWidth = Math.max(1.5, w / 400);
+        let clipped = false;
+        for (let i = 0; i < 3; i++) {
+          ctx.strokeStyle = CHANNEL_COLORS[i];
+          ctx.beginPath();
+          for (let x = 0; x < w; x++) {
+            const v = evalPal(x / (w - 1))[i];
+            if (v < -0.001 || v > 1.001) clipped = true;
+            const yy = Math.min(Math.max(y(v), 0), h);
+            if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+          }
+          ctx.stroke();
+        }
+        clipNote.hidden = !clipped;
+      };
+
+      const drawRadial = () => {
+        const ctx = fit(radial);
+        const { width: w, height: h } = radial;
+        const img = ctx.createImageData(w, h);
+        const cx = w / 2, cy = h / 2, rMax = Math.min(w, h) / 2;
+        for (let py = 0; py < h; py++) {
+          for (let px = 0; px < w; px++) {
+            const t = Math.hypot(px - cx, py - cy) / rMax;
+            const o = (py * w + px) * 4;
+            if (t > 1) { img.data[o + 3] = 0; continue; }
+            const [r, g, b] = evalPal(t);
+            img.data[o] = to255(r); img.data[o + 1] = to255(g); img.data[o + 2] = to255(b); img.data[o + 3] = 255;
+          }
+        }
+        ctx.putImageData(img, 0, 0);
+      };
+
+      // ---- 코드 출력
+      const codeEl = document.querySelector<HTMLElement>('#code')!;
+      const fmt = (v: Vec3) => `vec3(${v.map((n) => n.toFixed(2)).join(', ')})`;
+      const makeCode = () =>
+        `vec3 palette(float t) {\n` +
+        `    vec3 a = ${fmt(pal.a)};\n` +
+        `    vec3 b = ${fmt(pal.b)};\n` +
+        `    vec3 c = ${fmt(pal.c)};\n` +
+        `    vec3 d = ${fmt(pal.d)};\n` +
+        `    return a + b * cos(6.28318 * (c * t + d));\n` +
+        `}`;
+
+      const copyBtn = document.querySelector<HTMLButtonElement>('#copy')!;
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(makeCode());
+          copyBtn.textContent = '복사됨';
+        } catch {
+          copyBtn.textContent = '복사 실패';
+        }
+        setTimeout(() => { copyBtn.textContent = '복사'; }, 1200);
+      });
+
+      let frame = 0;
+      const draw = () => { frame = 0; drawStrip(); drawCurves(); drawRadial(); };
+      const update = (syncInputs: boolean) => {
+        for (const k of KEYS) {
+          for (let i = 0; i < 3; i++) {
+            if (syncInputs) inputs[k][i].value = String(pal[k][i]);
+            outputs[k][i].value = pal[k][i].toFixed(2);
+          }
+        }
+        codeEl.textContent = makeCode();
+        history.replaceState(null, '', '#' + KEYS.flatMap((k) => pal[k].map((n) => +n.toFixed(2))).join(','));
+        if (!frame) frame = requestAnimationFrame(draw);
+      };
+
+      new ResizeObserver(() => { if (!frame) frame = requestAnimationFrame(draw); }).observe(document.body);
+      update(true);
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 system-ui, sans-serif; color: #e5f3ff; background: #0d1b2b; }
+  main { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 14px; margin: 0; color: #9fb7cc; font-weight: 600; }
+  .formula { margin: 0 0 18px; color: #9fb7cc; }
+  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .formula code { color: #72d9ff; }
+
+  .previews { display: grid; grid-template-columns: 1fr 200px; grid-template-rows: auto auto; gap: 12px; }
+  figure { margin: 0; }
+  figcaption { font-size: 12px; color: #7f97ad; margin-top: 4px; }
+  canvas { display: block; width: 100%; border: 1px solid #294057; border-radius: 8px; background: #0a1522; }
+  #strip { height: 72px; }
+  #curves { height: 140px; }
+  .radial-figure { grid-column: 2; grid-row: 1 / span 2; }
+  #radial { aspect-ratio: 1; height: auto; border-radius: 50%; border: 0; background: none; }
+  .warn { color: #ffb36b; }
+
+  section { margin-top: 22px; }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .presets button { position: relative; padding: 18px 10px 6px; min-width: 96px; font-size: 12px; }
+  .presets button::before { content: ''; position: absolute; left: 6px; right: 6px; top: 6px; height: 8px; border-radius: 4px; background: var(--swatch); }
+
+  form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+  fieldset { margin: 0; padding: 10px 12px 4px; border: 1px solid #294057; border-radius: 8px; min-width: 0; }
+  legend { padding: 0 4px; font-size: 12px; color: #9fb7cc; }
+  label { display: block; font-size: 12px; margin-bottom: 8px; }
+  label span { font-weight: 700; }
+  output { float: right; color: #72d9ff; font-variant-numeric: tabular-nums; }
+  input[type='range'] { display: block; width: 100%; margin: 4px 0 0; }
+
+  button { font: inherit; color: #e5f3ff; background: #142a3e; border: 1px solid #294057; border-radius: 6px; padding: 4px 12px; cursor: pointer; }
+  button:hover { border-color: #72d9ff; }
+  button:focus-visible, input:focus-visible { outline: 2px solid #72d9ff; outline-offset: 3px; }
+
+  .code-head { display: flex; align-items: center; justify-content: space-between; }
+  pre { margin: 8px 0 0; padding: 12px 14px; background: #0a1522; border: 1px solid #294057; border-radius: 8px; overflow-x: auto; font-size: 13px; color: #cfe6f7; }
+  .hint { font-size: 12px; color: #7f97ad; margin: 6px 0 0; }
+
+  @media (max-width: 720px) {
+    .previews { grid-template-columns: 1fr; }
+    .radial-figure { grid-column: 1; grid-row: auto; max-width: 220px; margin: 0 auto; text-align: center; }
+    form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
