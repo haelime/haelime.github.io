@@ -28,6 +28,29 @@
         </figure>
       </section>
 
+      <section aria-label="효과 미리보기">
+        <div class="fx-head">
+          <h2>효과 미리보기 <span id="fx-name" class="fx-name"></span></h2>
+          <div class="fx-controls">
+            <button type="button" id="fx-prev" aria-label="이전 효과">←</button>
+            <button type="button" id="fx-next" aria-label="다음 효과">→</button>
+            <button type="button" id="fx-seed">새 시드</button>
+            <label class="toggle"><input type="checkbox" id="fx-dark" checked /> 배경 어둡게 고정</label>
+          </div>
+        </div>
+        <div id="fx-frame" class="fx-frame">
+          <p id="fx-status" class="fx-status" role="status">효과를 불러오는 중이에요.</p>
+        </div>
+        <div class="fx-roles" aria-label="효과에 쓰인 색">
+          <span><i id="role-bg"></i>배경 · 가장 어두운 색</span>
+          <span><i id="role-ink"></i>글자 · 가장 밝은 색</span>
+          <span><i id="role-accent"></i>강조 · 채도 높고 배경과 먼 색</span>
+          <span id="fx-warn" class="warn" hidden>이 효과는 어두운 배경용이에요</span>
+        </div>
+        <div id="fx-list" class="fx-list" role="group" aria-label="효과 고르기"></div>
+        <p class="hint">효과: <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> by Leonxlnx (MIT). 팔레트를 64곳에서 샘플링해 배경·글자·강조색을 골라 넘겨요.</p>
+      </section>
+
       <section aria-label="프리셋">
         <h2>프리셋</h2>
         <div id="presets" class="presets"></div>
@@ -222,6 +245,127 @@
         setTimeout(() => { copyBtn.textContent = '복사'; }, 1200);
       });
 
+      // ---- taste-skill 효과 미리보기
+      type FxPalette = { bg: string; ink: string; accent: string };
+      type FxApi = { setPalette(p: FxPalette): FxApi | Promise<FxApi>; destroy(): void };
+      type FxLib = {
+        mount(el: HTMLElement, id: string, o: { palette: FxPalette; seed: number }): Promise<FxApi>;
+        paletteKind(p: FxPalette): string;
+      };
+      const FX_BASE = '/lib/taste-fx/';
+      const EFFECTS: [string, string, string][] = [
+        ['film-light-leak', 'Film light leak', 'Grain'], ['grain-gradient', 'Grain gradient', 'Grain'],
+        ['ascii-shade', 'ASCII shade', 'Dither'], ['bayer-dither', 'Bayer dither', 'Dither'],
+        ['halftone-screen', 'Halftone screen', 'Dither'], ['line-engraving', 'Line engraving', 'Dither'],
+        ['aurora-curtains', 'Aurora curtains', 'Mesh'], ['gradient-mesh', 'Gradient mesh', 'Mesh'],
+        ['painterly-landscape', 'Painterly landscape', 'Mesh'], ['edge-glow', 'Edge glow', 'Light'],
+        ['god-rays', 'God rays', 'Light'], ['orb-sphere', 'Light orb', 'Light'],
+        ['prism-dispersion', 'Prism light', 'Light'], ['soft-light-bars', 'Soft light bars', 'Light'],
+        ['spotlight-cone', 'Stage spotlight', 'Light'], ['caustics', 'Water caustics', 'Light'],
+        ['dot-terrain', 'Dot terrain', 'Pattern'], ['dotted-globe', 'Dotted globe', 'Pattern'],
+        ['grid-pulse', 'Grid pulse', 'Pattern'], ['ridgeline', 'Ridgeline', 'Pattern'],
+        ['ruled-grounds', 'Ruled dot ground', 'Pattern'], ['contour-lines', 'Topographic contours', 'Pattern'],
+        ['fluted-glass', 'Fluted glass', 'Material'], ['silk-folds', 'Silk folds', 'Material'],
+        ['duotone-grade', 'Duotone grade', 'Photo']
+      ];
+      const DARK_ONLY = new Set(['aurora-curtains', 'film-light-leak', 'god-rays', 'prism-dispersion', 'spotlight-cone']);
+
+      const fxFrame = document.querySelector<HTMLElement>('#fx-frame')!;
+      const fxStatus = document.querySelector<HTMLElement>('#fx-status')!;
+      const fxName = document.querySelector<HTMLElement>('#fx-name')!;
+      const fxWarn = document.querySelector<HTMLElement>('#fx-warn')!;
+      const fxDark = document.querySelector<HTMLInputElement>('#fx-dark')!;
+      const fxList = document.querySelector<HTMLElement>('#fx-list')!;
+      const roleEls = {
+        bg: document.querySelector<HTMLElement>('#role-bg')!,
+        ink: document.querySelector<HTMLElement>('#role-ink')!,
+        accent: document.querySelector<HTMLElement>('#role-accent')!
+      };
+
+      const hex = (v: Vec3) => '#' + v.map((n) => to255(n).toString(16).padStart(2, '0')).join('');
+      const luma = (v: Vec3) => 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+      const fxPalette = (): FxPalette => {
+        const samples = Array.from({ length: 64 }, (_, i) =>
+          evalPal(i / 63).map((n) => Math.min(Math.max(n, 0), 1)) as Vec3);
+        const by = (score: (v: Vec3) => number) => samples.reduce((a, b) => (score(b) > score(a) ? b : a));
+        const dark = by((v) => -luma(v));
+        const bgV: Vec3 = fxDark.checked ? [11 / 255, 17 / 255, 26 / 255] : dark;
+        const far = (v: Vec3) => Math.hypot(v[0] - bgV[0], v[1] - bgV[1], v[2] - bgV[2]);
+        // 강조색: 채도가 높으면서 배경과 멀리 떨어진 색
+        const accent = by((v) => (Math.max(...v) - Math.min(...v) + 0.05) * far(v));
+        return { bg: hex(bgV), ink: hex(by(luma)), accent: hex(accent) };
+      };
+
+      let fxLib: FxLib | null = null;
+      let fxApi: FxApi | null = null;
+      let fxIndex = Math.max(0, EFFECTS.findIndex(([id]) => id === 'orb-sphere'));
+      let fxSeed = 21;
+      let fxToken = 0;
+      let fxPending = false;
+      let fxLastKey = '';
+
+      const fxButtons = EFFECTS.map(([, name, family], i) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.innerHTML = `${name}<small>${family}</small>`;
+        button.addEventListener('click', () => mountFx(i));
+        fxList.append(button);
+        return button;
+      });
+
+      const showRoles = (p: FxPalette) => {
+        for (const k of ['bg', 'ink', 'accent'] as const) roleEls[k].style.background = p[k];
+        fxWarn.hidden = !(fxLib && DARK_ONLY.has(EFFECTS[fxIndex][0]) && fxLib.paletteKind(p) === 'light');
+      };
+
+      async function mountFx(i: number) {
+        fxIndex = (i + EFFECTS.length) % EFFECTS.length;
+        const [id, name] = EFFECTS[fxIndex];
+        fxName.textContent = name;
+        fxButtons.forEach((b, k) => b.setAttribute('aria-pressed', String(k === fxIndex)));
+        const token = ++fxToken;
+        try {
+          fxLib ??= ((await import(/* @vite-ignore */ FX_BASE + 'fx.js')).default as FxLib);
+          const p = fxPalette();
+          fxApi?.destroy();
+          fxApi = null;
+          const api = await fxLib.mount(fxFrame, id, { palette: p, seed: fxSeed });
+          if (token !== fxToken) { api.destroy(); return; }
+          fxApi = api;
+          fxLastKey = JSON.stringify(p);
+          fxStatus.hidden = true;
+          showRoles(p);
+        } catch {
+          fxStatus.textContent = '효과를 불러오지 못했어요.';
+          fxStatus.hidden = false;
+        }
+      }
+
+      // 슬라이더를 끄는 동안에는 너무 자주 다시 그리지 않도록 120ms에 한 번만 색을 넘겨요.
+      const syncFx = () => {
+        if (fxPending || !fxApi) return;
+        fxPending = true;
+        setTimeout(async () => {
+          fxPending = false;
+          const p = fxPalette();
+          const key = JSON.stringify(p);
+          if (!fxApi || key === fxLastKey) return;
+          fxLastKey = key;
+          showRoles(p);
+          const token = fxToken;
+          const next = await fxApi.setPalette(p);
+          if (token === fxToken) fxApi = next;
+        }, 120);
+      };
+
+      document.querySelector('#fx-prev')!.addEventListener('click', () => mountFx(fxIndex - 1));
+      document.querySelector('#fx-next')!.addEventListener('click', () => mountFx(fxIndex + 1));
+      document.querySelector('#fx-seed')!.addEventListener('click', () => {
+        fxSeed = Math.floor(Math.random() * 10000);
+        mountFx(fxIndex);
+      });
+      fxDark.addEventListener('change', syncFx);
+
       let frame = 0;
       const draw = () => { frame = 0; drawStrip(); drawCurves(); drawRadial(); };
       const update = (syncInputs: boolean) => {
@@ -232,18 +376,21 @@
           }
         }
         codeEl.textContent = makeCode();
+        syncFx();
         history.replaceState(null, '', '#' + KEYS.flatMap((k) => pal[k].map((n) => +n.toFixed(2))).join(','));
         if (!frame) frame = requestAnimationFrame(draw);
       };
 
       new ResizeObserver(() => { if (!frame) frame = requestAnimationFrame(draw); }).observe(document.body);
       update(true);
+      mountFx(fxIndex);
     </script>
   </body>
 </html>
 
 <style is:global>
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body { margin: 0; font: 14px/1.5 system-ui, sans-serif; color: #e5f3ff; background: #0d1b2b; }
   main { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
   h1 { font-size: 22px; margin: 0 0 4px; }
@@ -255,14 +402,30 @@
   .previews { display: grid; grid-template-columns: 1fr 200px; grid-template-rows: auto auto; gap: 12px; }
   figure { margin: 0; }
   figcaption { font-size: 12px; color: #7f97ad; margin-top: 4px; }
-  canvas { display: block; width: 100%; border: 1px solid #294057; border-radius: 8px; background: #0a1522; }
+  .previews canvas { display: block; width: 100%; border: 1px solid #294057; border-radius: 8px; background: #0a1522; }
   #strip { height: 72px; }
   #curves { height: 140px; }
   .radial-figure { grid-column: 2; grid-row: 1 / span 2; }
-  #radial { aspect-ratio: 1; height: auto; border-radius: 50%; border: 0; background: none; }
+  .previews #radial { aspect-ratio: 1; height: auto; border-radius: 50%; border: 0; background: none; }
   .warn { color: #ffb36b; }
 
   section { margin-top: 22px; }
+  a { color: #72d9ff; }
+
+  .fx-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+  .fx-name { color: #e5f3ff; font-weight: 600; margin-left: 6px; }
+  .fx-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .toggle { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 12px; color: #9fb7cc; cursor: pointer; }
+  .toggle input { margin: 0; accent-color: #72d9ff; }
+  .fx-frame { position: relative; isolation: isolate; overflow: hidden; margin-top: 10px; aspect-ratio: 16 / 9; max-height: 480px; width: 100%; border: 1px solid #294057; border-radius: 10px; background: #0a1522; }
+  .fx-status { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: #7f97ad; font-size: 13px; }
+  .fx-roles { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 12px; color: #7f97ad; }
+  .fx-roles span { display: inline-flex; align-items: center; gap: 6px; }
+  .fx-roles i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 1px solid #ffffff33; }
+  .fx-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .fx-list button { font-size: 12px; padding: 4px 10px; }
+  .fx-list button small { margin-left: 6px; color: #7f97ad; font-size: 10px; }
+  .fx-list button[aria-pressed='true'] { border-color: #72d9ff; background: #1b3a55; }
   .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   .presets button { position: relative; padding: 18px 10px 6px; min-width: 96px; font-size: 12px; }
   .presets button::before { content: ''; position: absolute; left: 6px; right: 6px; top: 6px; height: 8px; border-radius: 4px; background: var(--swatch); }
