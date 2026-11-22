@@ -7,79 +7,90 @@
     <meta name="description" content="iq의 코사인 팔레트 a + b·cos(2π(c·t + d))를 슬라이더로 조절하고 GLSL 코드로 복사합니다." />
   </head>
   <body>
-    <main>
+    <main class="app">
       <header class="page-head">
         <div>
           <h1>코사인 팔레트 조절기</h1>
           <p class="formula"><code>color(t) = a + b · cos(2π · (c · t + d))</code></p>
         </div>
         <div class="toolbar">
-          <button type="button" id="randomize" class="primary" aria-keyshortcuts="R">랜덤 <kbd>R</kbd></button>
           <button type="button" id="undo" disabled>되돌리기</button>
+          <button type="button" id="randomize" class="primary" aria-keyshortcuts="R">랜덤 <kbd>R</kbd></button>
         </div>
       </header>
 
-      <section class="previews" aria-label="미리보기">
-        <figure>
-          <canvas id="strip" aria-label="t가 0에서 1까지 변할 때의 그라데이션"></canvas>
-          <figcaption>그라데이션 (t = 0 → 1)</figcaption>
-        </figure>
-        <figure>
-          <canvas id="curves" aria-label="R, G, B 채널 곡선"></canvas>
-          <figcaption>채널 곡선 <span id="clip-note" class="warn" hidden>· 0~1 밖으로 나가는 구간이 있어요</span></figcaption>
-        </figure>
-        <figure class="radial-figure">
-          <canvas id="radial" aria-label="중심으로부터의 거리를 t로 쓴 고리 미리보기"></canvas>
-          <figcaption>고리 (t = 중심에서의 거리)</figcaption>
-        </figure>
-      </section>
+      <div class="workspace">
+        <div class="stage">
+          <section class="previews" aria-label="미리보기">
+            <figure>
+              <canvas id="strip" aria-label="t가 0에서 1까지 변할 때의 그라데이션"></canvas>
+              <figcaption>그라데이션 <span class="meta">t = 0 → 1</span></figcaption>
+            </figure>
+            <figure>
+              <canvas id="curves" aria-label="R, G, B 채널 곡선"></canvas>
+              <figcaption>채널 곡선 <span id="clip-note" class="warn" hidden>0~1 밖으로 넘치는 구간이 있어요</span></figcaption>
+            </figure>
+            <figure class="radial-figure">
+              <canvas id="radial" aria-label="중심으로부터의 거리를 t로 쓴 고리 미리보기"></canvas>
+              <figcaption>고리 <span class="meta">t = 중심에서의 거리</span></figcaption>
+            </figure>
+          </section>
 
-      <section aria-label="효과 미리보기">
-        <div class="fx-head">
-          <h2>효과 미리보기 <span id="fx-name" class="fx-name"></span></h2>
-          <div class="fx-controls">
-            <button type="button" id="fx-prev" aria-label="이전 효과">←</button>
-            <button type="button" id="fx-next" aria-label="다음 효과">→</button>
-            <button type="button" id="fx-seed">새 시드</button>
-            <label class="toggle"><input type="checkbox" id="fx-dark" checked /> 배경 어둡게 고정</label>
-          </div>
+          <section class="fx" aria-label="효과 미리보기">
+            <div class="fx-head">
+              <label class="fx-pick">
+                <span>효과</span>
+                <select id="fx-select"></select>
+              </label>
+              <div class="fx-controls">
+                <button type="button" id="fx-prev" class="icon" aria-label="이전 효과">←</button>
+                <button type="button" id="fx-next" class="icon" aria-label="다음 효과">→</button>
+                <button type="button" id="fx-seed">새 시드</button>
+                <label class="toggle"><input type="checkbox" id="fx-dark" checked /> 배경 어둡게</label>
+              </div>
+            </div>
+            <div id="fx-frame" class="fx-frame">
+              <p id="fx-status" class="fx-status" role="status">효과를 불러오는 중</p>
+            </div>
+            <div class="fx-roles" aria-label="효과에 쓰인 색">
+              <span><i id="role-bg"></i>배경</span>
+              <span><i id="role-ink"></i>글자</span>
+              <span><i id="role-accent"></i>강조</span>
+              <span id="fx-warn" class="warn" hidden>이 효과는 어두운 배경용이에요</span>
+            </div>
+            <p class="hint">효과는 <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> (Leonxlnx, MIT). 팔레트를 64곳에서 뽑아 가장 어두운 색을 배경, 가장 밝은 색을 글자, 채도가 높고 배경과 먼 색을 강조로 넘겨요.</p>
+          </section>
         </div>
-        <div id="fx-frame" class="fx-frame">
-          <p id="fx-status" class="fx-status" role="status">효과를 불러오는 중이에요.</p>
-        </div>
-        <div class="fx-roles" aria-label="효과에 쓰인 색">
-          <span><i id="role-bg"></i>배경 · 가장 어두운 색</span>
-          <span><i id="role-ink"></i>글자 · 가장 밝은 색</span>
-          <span><i id="role-accent"></i>강조 · 채도 높고 배경과 먼 색</span>
-          <span id="fx-warn" class="warn" hidden>이 효과는 어두운 배경용이에요</span>
-        </div>
-        <div id="fx-list" class="fx-list" role="group" aria-label="효과 고르기"></div>
-        <p class="hint">효과: <a href="https://github.com/Leonxlnx/taste-skill">taste-skill</a> by Leonxlnx (MIT). 팔레트를 64곳에서 샘플링해 배경·글자·강조색을 골라 넘겨요.</p>
-      </section>
 
-      <section aria-label="프리셋">
-        <h2>프리셋</h2>
-        <div id="presets" class="presets"></div>
-      </section>
+        <div class="panel">
+          <section aria-label="프리셋">
+            <div class="sec-head"><h2>프리셋</h2></div>
+            <div id="presets" class="presets"></div>
+          </section>
 
-      <section aria-label="추천 팔레트">
-        <div class="sec-head">
-          <h2>추천 팔레트 <span class="sub">지금 팔레트를 바탕으로 만든 변형이에요</span></h2>
-          <button type="button" id="reroll">비슷한 팔레트 다시 뽑기</button>
+          <section aria-label="추천 팔레트">
+            <div class="sec-head">
+              <h2>추천 <span class="meta">지금 팔레트에서 만든 변형</span></h2>
+              <button type="button" id="reroll">다시 뽑기</button>
+            </div>
+            <div id="recs" class="recs"></div>
+          </section>
+
+          <section aria-label="팔레트 값">
+            <div class="sec-head"><h2>값</h2></div>
+            <form id="params" onsubmit="return false"></form>
+          </section>
+
+          <section aria-label="GLSL 코드">
+            <div class="sec-head">
+              <h2>GLSL</h2>
+              <button type="button" id="copy">복사</button>
+            </div>
+            <pre><code id="code"></code></pre>
+            <p class="hint">URL에 지금 값이 저장돼서, 주소를 그대로 공유하면 같은 팔레트가 열려요.</p>
+          </section>
         </div>
-        <div id="recs" class="recs"></div>
-      </section>
-
-      <form id="params" aria-label="팔레트 값" onsubmit="return false"></form>
-
-      <section aria-label="GLSL 코드">
-        <div class="code-head">
-          <h2>GLSL</h2>
-          <button type="button" id="copy">복사</button>
-        </div>
-        <pre><code id="code"></code></pre>
-        <p class="hint">주소창의 URL에 지금 값이 저장돼서, 그대로 공유하면 같은 팔레트가 열려요.</p>
-      </section>
+      </div>
     </main>
 
     <script>
@@ -89,12 +100,12 @@
 
       const KEYS: Key[] = ['a', 'b', 'c', 'd'];
       const CHANNELS = ['R', 'G', 'B'] as const;
-      const CHANNEL_COLORS = ['#ff6b6b', '#5fe08a', '#5fa8ff'];
+      const CHANNEL_COLORS = ['#f07178', '#4cc38a', '#6ea8fe'];
       const INFO: Record<Key, { label: string; max: number }> = {
-        a: { label: 'a · 기본 밝기', max: 1 },
+        a: { label: 'a · 밝기', max: 1 },
         b: { label: 'b · 대비', max: 1 },
-        c: { label: 'c · 반복 빈도', max: 3 },
-        d: { label: 'd · 위상 (색 배치)', max: 1 }
+        c: { label: 'c · 빈도', max: 3 },
+        d: { label: 'd · 위상', max: 1 }
       };
 
       const half: Vec3 = [0.5, 0.5, 0.5];
@@ -367,9 +378,9 @@
         const pad = h * 0.15;
         const y = (v: number) => h - pad - v * (h - 2 * pad);
         ctx.clearRect(0, 0, w, h);
-        ctx.fillStyle = '#ffffff08';
+        ctx.fillStyle = 'rgba(237, 237, 237, 0.03)';
         ctx.fillRect(0, y(1), w, y(0) - y(1));
-        ctx.strokeStyle = '#294057'; ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(237, 237, 237, 0.12)'; ctx.lineWidth = 1;
         for (const v of [0, 1]) { ctx.beginPath(); ctx.moveTo(0, y(v)); ctx.lineTo(w, y(v)); ctx.stroke(); }
         ctx.lineWidth = Math.max(1.5, w / 400);
         let clipped = false;
@@ -454,10 +465,9 @@
 
       const fxFrame = document.querySelector<HTMLElement>('#fx-frame')!;
       const fxStatus = document.querySelector<HTMLElement>('#fx-status')!;
-      const fxName = document.querySelector<HTMLElement>('#fx-name')!;
       const fxWarn = document.querySelector<HTMLElement>('#fx-warn')!;
       const fxDark = document.querySelector<HTMLInputElement>('#fx-dark')!;
-      const fxList = document.querySelector<HTMLElement>('#fx-list')!;
+      const fxSelect = document.querySelector<HTMLSelectElement>('#fx-select')!;
       const roleEls = {
         bg: document.querySelector<HTMLElement>('#role-bg')!,
         ink: document.querySelector<HTMLElement>('#role-ink')!,
@@ -471,7 +481,7 @@
           evalPal(i / 63).map((n) => Math.min(Math.max(n, 0), 1)) as Vec3);
         const by = (score: (v: Vec3) => number) => samples.reduce((a, b) => (score(b) > score(a) ? b : a));
         const dark = by((v) => -luma(v));
-        const bgV: Vec3 = fxDark.checked ? [11 / 255, 17 / 255, 26 / 255] : dark;
+        const bgV: Vec3 = fxDark.checked ? [15 / 255, 15 / 255, 16 / 255] : dark;
         const far = (v: Vec3) => Math.hypot(v[0] - bgV[0], v[1] - bgV[1], v[2] - bgV[2]);
         // 강조색: 채도가 높으면서 배경과 멀리 떨어진 색
         const accent = by((v) => (Math.max(...v) - Math.min(...v) + 0.05) * far(v));
@@ -486,14 +496,21 @@
       let fxPending = false;
       let fxLastKey = '';
 
-      const fxButtons = EFFECTS.map(([, name, family], i) => {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.innerHTML = `${name}<small>${family}</small>`;
-        button.addEventListener('click', () => mountFx(i));
-        fxList.append(button);
-        return button;
+      const fxGroups = new Map<string, HTMLOptGroupElement>();
+      EFFECTS.forEach(([, name, family], i) => {
+        let group = fxGroups.get(family);
+        if (!group) {
+          group = document.createElement('optgroup');
+          group.label = family;
+          fxGroups.set(family, group);
+          fxSelect.append(group);
+        }
+        const option = document.createElement('option');
+        option.value = String(i);
+        option.textContent = name;
+        group.append(option);
       });
+      fxSelect.addEventListener('change', () => mountFx(Number(fxSelect.value)));
 
       const showRoles = (p: FxPalette) => {
         for (const k of ['bg', 'ink', 'accent'] as const) roleEls[k].style.background = p[k];
@@ -502,9 +519,8 @@
 
       async function mountFx(i: number) {
         fxIndex = (i + EFFECTS.length) % EFFECTS.length;
-        const [id, name] = EFFECTS[fxIndex];
-        fxName.textContent = name;
-        fxButtons.forEach((b, k) => b.setAttribute('aria-pressed', String(k === fxIndex)));
+        const [id] = EFFECTS[fxIndex];
+        fxSelect.value = String(fxIndex);
         const token = ++fxToken;
         try {
           fxLib ??= ((await import(/* @vite-ignore */ FX_BASE + 'fx.js')).default as FxLib);
@@ -572,80 +588,147 @@
 </html>
 
 <style is:global>
+  /* unslop 기준으로 정리: graphite 무채색 램프, 8% 헤어라인, 강조색은 포커스와 선택에만, 4px 격자 */
+  :root {
+    --deep: #0f0f10;
+    --bg: #141415;
+    --card: #19191b;
+    --raised: #232325;
+    --hover: #2a2a2d;
+    --line: rgba(237, 237, 237, 0.08);
+    --line-strong: rgba(237, 237, 237, 0.14);
+    --text: #ededed;
+    --text-2: #a1a1a6;
+    --muted: #85858b;
+    --accent: #7db0ff;
+    --warn: #e5a54b;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    color-scheme: dark;
+  }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
-  body { margin: 0; font: 14px/1.5 system-ui, sans-serif; color: #e5f3ff; background: #0d1b2b; }
-  main { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
-  h1 { font-size: 22px; margin: 0 0 4px; }
-  h2 { font-size: 14px; margin: 0; color: #9fb7cc; font-weight: 600; }
-  .formula { margin: 0 0 18px; color: #9fb7cc; }
-  code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-  .formula code { color: #72d9ff; }
+  body {
+    margin: 0;
+    font: 14px/20px Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+    color: var(--text);
+    background: var(--bg);
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  a { color: var(--text-2); text-decoration-color: var(--line-strong); text-underline-offset: 2px; }
+  a:hover { color: var(--text); }
 
-  .previews { display: grid; grid-template-columns: 1fr 200px; grid-template-rows: auto auto; gap: 12px; }
+  .app { max-width: 1440px; margin: 0 auto; padding: 32px 32px 64px; }
+  .page-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 24px; }
+  h1 { margin: 0; font-size: 28px; line-height: 32px; font-weight: 500; }
+  .formula { margin: 8px 0 0; }
+  .formula code { font: 13px/20px var(--mono); color: var(--text-2); }
+  h2 { margin: 0; font-size: 14px; line-height: 20px; font-weight: 500; }
+  .meta { margin-left: 8px; font-size: 12px; font-weight: 400; color: var(--muted); }
+  .warn { margin-left: 8px; color: var(--warn); }
+  .hint { margin: 8px 0 0; font-size: 12px; line-height: 16px; color: var(--muted); }
+
+  /* 작업 공간: 왼쪽은 미리보기(고정), 오른쪽은 조절 패널 */
+  .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 32px; align-items: start; }
+  .stage { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 24px; }
+  .panel { display: flex; flex-direction: column; gap: 32px; }
+  section { margin: 0; }
+  .sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; min-height: 32px; margin-bottom: 8px; }
+
+  /* 미리보기 */
+  .previews { display: grid; grid-template-columns: minmax(0, 1fr) 168px; gap: 12px 16px; }
   figure { margin: 0; }
-  figcaption { font-size: 12px; color: #7f97ad; margin-top: 4px; }
-  .previews canvas { display: block; width: 100%; border: 1px solid #294057; border-radius: 8px; background: #0a1522; }
-  #strip { height: 72px; }
-  #curves { height: 140px; }
+  figcaption { margin-top: 8px; font-size: 12px; line-height: 16px; color: var(--text-2); }
+  .previews canvas { display: block; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: var(--deep); }
+  #strip { height: 56px; }
+  #curves { height: 104px; }
   .radial-figure { grid-column: 2; grid-row: 1 / span 2; }
-  .previews #radial { aspect-ratio: 1; height: auto; border-radius: 50%; border: 0; background: none; }
-  .warn { color: #ffb36b; }
+  .previews #radial { aspect-ratio: 1; height: auto; border: 0; border-radius: 50%; background: none; }
 
-  .page-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
-  .toolbar { display: flex; gap: 8px; padding-top: 2px; }
-  .toolbar button { padding: 6px 14px; }
-  button.primary { background: #1b3a55; border-color: #72d9ff; }
-  button:disabled { opacity: 0.45; cursor: default; border-color: #294057; }
-  kbd { font: 11px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin-left: 4px; padding: 0 4px; border: 1px solid #3a5a78; border-radius: 3px; color: #9fb7cc; }
-  .sec-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
-  .sub { margin-left: 6px; font-weight: 400; font-size: 12px; color: #7f97ad; }
-  .recs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin-top: 8px; }
-  .rec { display: flex; flex-direction: column; gap: 6px; padding: 6px; text-align: left; font-size: 12px; }
-  .rec i { display: block; height: 26px; border-radius: 4px; }
-  .rec span { padding: 0 2px; }
-  label.lock { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 0 8px; font-size: 11px; color: #7f97ad; cursor: pointer; vertical-align: middle; }
-  label.lock input { margin: 0; accent-color: #72d9ff; }
-  section { margin-top: 22px; }
-  a { color: #72d9ff; }
-
-  .fx-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
-  .fx-name { color: #e5f3ff; font-weight: 600; margin-left: 6px; }
+  /* 효과 */
+  .fx-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; }
+  .fx-pick { display: inline-flex; align-items: center; gap: 12px; font-weight: 500; }
   .fx-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-  .toggle { display: inline-flex; align-items: center; gap: 6px; margin: 0; font-size: 12px; color: #9fb7cc; cursor: pointer; }
-  .toggle input { margin: 0; accent-color: #72d9ff; }
-  .fx-frame { position: relative; isolation: isolate; overflow: hidden; margin-top: 10px; aspect-ratio: 16 / 9; max-height: 480px; width: 100%; border: 1px solid #294057; border-radius: 10px; background: #0a1522; }
-  .fx-status { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; color: #7f97ad; font-size: 13px; }
-  .fx-roles { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 8px; font-size: 12px; color: #7f97ad; }
-  .fx-roles span { display: inline-flex; align-items: center; gap: 6px; }
-  .fx-roles i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; border: 1px solid #ffffff33; }
-  .fx-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
-  .fx-list button { font-size: 12px; padding: 4px 10px; }
-  .fx-list button small { margin-left: 6px; color: #7f97ad; font-size: 10px; }
-  .fx-list button[aria-pressed='true'] { border-color: #72d9ff; background: #1b3a55; }
-  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-  .presets button { position: relative; padding: 18px 10px 6px; min-width: 96px; font-size: 12px; }
-  .presets button::before { content: ''; position: absolute; left: 6px; right: 6px; top: 6px; height: 8px; border-radius: 4px; background: var(--swatch); }
+  select {
+    height: 32px; min-width: 200px; padding: 0 32px 0 12px;
+    font: inherit; font-size: 13px; color: var(--text);
+    background: var(--raised) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23a1a1a6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 8px center;
+    border: 1px solid var(--line); border-radius: 8px; appearance: none; cursor: pointer;
+    transition: border-color 150ms var(--ease);
+  }
+  select:hover { border-color: var(--line-strong); }
+  .fx-frame {
+    position: relative; isolation: isolate; overflow: hidden;
+    width: 100%; aspect-ratio: 16 / 9; max-height: calc(100vh - 400px); min-height: 240px;
+    margin-top: 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--deep);
+  }
+  .fx-status { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; font-size: 13px; color: var(--muted); }
+  .fx-roles { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; font-size: 12px; line-height: 16px; color: var(--text-2); }
+  .fx-roles span { display: inline-flex; align-items: center; gap: 8px; }
+  .fx-roles i { width: 12px; height: 12px; border-radius: 4px; box-shadow: inset 0 0 0 1px var(--line-strong); }
+  .fx-roles .warn { margin-left: 0; }
 
-  form { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
-  fieldset { margin: 0; padding: 10px 12px 4px; border: 1px solid #294057; border-radius: 8px; min-width: 0; }
-  legend { padding: 0 4px; font-size: 12px; color: #9fb7cc; }
-  label { display: block; font-size: 12px; margin-bottom: 8px; }
-  label span { font-weight: 700; }
-  output { float: right; color: #72d9ff; font-variant-numeric: tabular-nums; }
-  input[type='range'] { display: block; width: 100%; margin: 4px 0 0; }
+  /* 버튼 */
+  button {
+    height: 32px; padding: 0 12px;
+    font: inherit; font-size: 13px; color: var(--text);
+    background: var(--raised); border: 1px solid var(--line); border-radius: 8px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06); cursor: pointer;
+    transition: background-color 150ms var(--ease), border-color 150ms var(--ease), color 150ms var(--ease), transform 150ms var(--ease);
+  }
+  button:hover:not(:disabled) { background: var(--hover); border-color: var(--line-strong); }
+  button:active:not(:disabled) { transform: scale(0.98); }
+  button:disabled { color: var(--muted); background: transparent; box-shadow: none; cursor: default; }
+  button.icon { width: 32px; padding: 0; }
+  button.primary { color: var(--deep); background: var(--text); border-color: transparent; }
+  button.primary:hover:not(:disabled) { background: #ffffff; border-color: transparent; }
+  .toolbar { display: flex; gap: 8px; }
+  .toolbar button { height: 36px; padding: 0 16px; }
+  kbd { margin-left: 8px; padding: 0 4px; font: 11px/16px var(--mono); color: var(--text-2); border: 1px solid var(--line-strong); border-radius: 4px; }
+  button.primary kbd { color: #5c5c61; border-color: rgba(0, 0, 0, 0.2); }
+  input[type='checkbox'] { width: 14px; height: 14px; margin: 0; accent-color: var(--accent); }
+  .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-2); cursor: pointer; }
 
-  button { font: inherit; color: #e5f3ff; background: #142a3e; border: 1px solid #294057; border-radius: 6px; padding: 4px 12px; cursor: pointer; }
-  button:hover { border-color: #72d9ff; }
-  button:focus-visible, input:focus-visible { outline: 2px solid #72d9ff; outline-offset: 3px; }
+  /* 프리셋·추천 카드: 카드 12 - 안쪽 여백 8 = 견본 4 */
+  .presets, .recs { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 8px; }
+  .presets button, .rec {
+    display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+    height: auto; padding: 8px; text-align: left;
+    font-size: 12px; line-height: 16px; color: var(--text-2);
+    background: var(--card); border-radius: 12px; box-shadow: none;
+  }
+  .presets button:hover, .rec:hover { color: var(--text); }
+  .presets button::before { content: ''; display: block; height: 20px; border-radius: 4px; background: var(--swatch); }
+  .rec i { display: block; height: 20px; border-radius: 4px; }
 
-  .code-head { display: flex; align-items: center; justify-content: space-between; }
-  pre { margin: 8px 0 0; padding: 12px 14px; background: #0a1522; border: 1px solid #294057; border-radius: 8px; overflow-x: auto; font-size: 13px; color: #cfe6f7; }
-  .hint { font-size: 12px; color: #7f97ad; margin: 6px 0 0; }
+  /* 값 */
+  form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+  fieldset { min-width: 0; margin: 0; padding: 8px 16px 4px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; }
+  legend { padding: 0 4px; font-size: 12px; line-height: 16px; color: var(--text-2); }
+  form label { display: block; margin-bottom: 8px; font-size: 12px; line-height: 16px; }
+  form label > span { font-family: var(--mono); font-weight: 500; }
+  output { float: right; font-family: var(--mono); font-variant-numeric: tabular-nums; color: var(--text); }
+  input[type='range'] { display: block; width: 100%; height: 16px; margin: 4px 0 0; }
+  label.lock { display: inline-flex; align-items: center; gap: 4px; margin: 0 0 0 8px; vertical-align: middle; color: var(--muted); cursor: pointer; }
 
-  @media (max-width: 720px) {
-    .previews { grid-template-columns: 1fr; }
-    .radial-figure { grid-column: 1; grid-row: auto; max-width: 220px; margin: 0 auto; text-align: center; }
-    form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* 코드 */
+  pre {
+    margin: 0; padding: 12px 16px; overflow-x: auto;
+    font: 12px/20px var(--mono); color: var(--text);
+    background: var(--deep); border: 1px solid var(--line); border-radius: 12px;
+  }
+
+  @media (max-width: 1080px) {
+    .workspace { grid-template-columns: minmax(0, 1fr); }
+    .stage { position: static; }
+    .fx-frame { max-height: none; }
+  }
+  @media (max-width: 600px) {
+    .app { padding: 24px 16px 48px; }
+    h1 { font-size: 24px; line-height: 28px; }
+    .previews { grid-template-columns: minmax(0, 1fr); }
+    .radial-figure { grid-column: 1; grid-row: auto; width: 168px; margin: 0 auto; text-align: center; }
+    select { min-width: 0; flex: 1; }
+    .fx-pick { flex: 1; }
   }
 </style>
